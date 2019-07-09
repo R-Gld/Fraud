@@ -1,0 +1,27 @@
+name: Fraud
+author: Rgld_
+version: InDev
+
+main: fr.Rgld_.Fraud.Fraud
+
+description: Detects if a player is fraudding the server.
+
+
+
+permissions:
+  # Global permissions
+  fraud.*:
+    description: Give all the permission of the plugin Fraud.
+    default: op
+    children:
+      fraud.bypass.*: true
+  fraud.bypass.*:
+    description: Give all the bypass available
+    default: op
+    children:
+      fraud.bypass.ip: true
+
+  # Basic permissions
+  fraud.bypass.ip:
+    default: op
+    description: If a player have this permission, his ip is not registered on the data's file(can be disabled by config).
