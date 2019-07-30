@@ -1,0 +1,52 @@
+package fr.Rgld_.Fraud.Helpers;
+
+import org.bukkit.ChatColor;
+
+public enum Messages {
+
+    // Configurable message.
+
+    PREFIX(Messages.defaultMessage),
+    NO_PERMISSION(Messages.defaultMessage),
+
+    HELP_COMMAND_CHECK(Messages.defaultMessage),
+    HELP_COMMAND_VERSION(Messages.defaultMessage),
+    HELP_COMMAND_RELOAD(Messages.defaultMessage),
+    HELP_COMMAND_CONTACT(Messages.defaultMessage),
+    HELP_COMMAND_CLEAN_DATAS(Messages.defaultMessage),
+
+    ALTS_DETECTED(Messages.defaultMessage),
+    ALTS_ASKED(Messages.defaultMessage),
+    NO_ALTS(Messages.defaultMessage),
+
+    RELOAD_SUCCESS(Messages.defaultMessage),
+    RELOAD_FAILED(Messages.defaultMessage),
+
+    // final message.
+
+    COMMAND_CLEAN_DATA_YES("§6The datas has been reset."),
+    COMMAND_CLEAN_DATA_NO("§cAn error occur during the reset of datas. Please call an administrator or the developer of this plugin via /{0} contact."),
+    ;
+
+    public static final String defaultMessage = "";
+
+    private String message;
+
+    Messages(String message) {
+        this.message = message;
+    }
+
+    public String getMessage() {
+        String out;
+        if (this == PREFIX || String.valueOf(this).startsWith("HELP_COMMAND_")){
+            out = message;
+        } else {
+            out = Messages.PREFIX.getMessage() + message;
+        }
+        return ChatColor.translateAlternateColorCodes('&', out);
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+}

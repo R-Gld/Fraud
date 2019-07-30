@@ -1,12 +1,17 @@
 name: Fraud
 author: Rgld_
-version: InDev
+version: 1.0
+description: Detects if a player is fraudding the server.
+website: https://github.com/R-Gld/Fraud
 
 main: fr.Rgld_.Fraud.Fraud
-
-description: Detects if a player is fraudding the server.
-
-
+commands:
+  fraud:
+    description: This command is the only one of the "Fraud" plugin. It allows to know if players have connected with double accounts.
+    aliases:
+      - fd
+      - alts
+      - double-accounts
 
 permissions:
   # Global permissions
@@ -15,13 +20,46 @@ permissions:
     default: op
     children:
       fraud.bypass.*: true
+      fraud.check.*: true
+      fraud.notcause.alert: true
+      fraud.receive.alert: true
+      fraud.clean-datas: true
+      fraud.reload: true
   fraud.bypass.*:
     description: Give all the bypass available
     default: op
     children:
       fraud.bypass.ip: true
+      fraud.bypass.alert: true
+  fraud.check.*:
+    description: Give all the check permissions.
+    default: op
+    children:
+      fraud.check.player: true
+      fraud.check.ip: true
 
   # Basic permissions
   fraud.bypass.ip:
     default: op
     description: If a player have this permission, his ip is not registered on the data's file(can be disabled by config).
+  fraud.bypass.alert:
+    default: op
+    description: If a player have this permission, there will never be a double-count alert about it.
+  fraud.notcause.alert:
+    default: op
+    description: The players who has the permission "fraud.receive.alert" never receive an alert from this player if the number of his alts is below the limit defined in the config.
+  fraud.receive.alert:
+    default: op
+    description: When a player join for the first time the server, all the player who has this permission will receive a message if this player have a alt.
+  fraud.check.player:
+    default: op
+    description: Let a player check if an other player has some alts.
+  fraud.check.ip:
+    default: op
+    description: Let a player check if an ip has some alts.
+  fraud.clean-datas:
+    default: op
+    description: Let a player to reset the datas.
+  fraud.reload:
+    default: op
+    description: Let a player to reload the configuration and datas files.
