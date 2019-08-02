@@ -1,11 +1,8 @@
 name: Fraud
 author: Rgld_
-version: 1.2
+version: 1.2.0
 description: Detects if a player is fraudding the server.
 website: https://github.com/R-Gld/Fraud
-
-softdepend:
-  - PlugMan
 
 main: fr.Rgld_.Fraud.Fraud
 commands:

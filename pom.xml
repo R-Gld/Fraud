@@ -43,11 +43,11 @@
             <artifactId>spigot-api</artifactId>
             <version>1.8.8-R0.1-SNAPSHOT</version>
         </dependency>
-        <dependency>
+        <!--<dependency>
             <groupId>com.github.r-clancy</groupId>
-            <artifactId>PlugMan</artifactId>
+            <artifactId>PlugMan</artifactId>        TODO Updater who download auto the file.
             <version>master</version>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>com.googlecode.json-simple</groupId>
             <artifactId>json-simple</artifactId>
