@@ -22,7 +22,7 @@ import static org.bukkit.ChatColor.*;
 public class Fraud extends JavaPlugin {
 
 
-    public String actualVersionBc;
+    public String actualVersionBc = "";
     private Configuration configuration;
     private Datas datas;
     private Console c;
