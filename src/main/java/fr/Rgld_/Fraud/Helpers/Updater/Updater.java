@@ -77,8 +77,8 @@ public class Updater implements Runnable {
                             "§6§m---------------------------------------\n" +
                                     "\n" +
                                     "§eA new Update of §6Fraud §eis now available !\n" +
-                                    "§8§nActual Version: §7" + actualVersion + "\n" +
-                                    "§8§nNext Version:   §7" + version);
+                                    "§8§nActual Version:§7 " + actualVersion + "\n" +
+                                    "§8§nNext Version:§7   " + version);
                     p.spigot().sendMessage(tc);
                     p.sendMessage(
                             "\n" +
@@ -89,8 +89,8 @@ public class Updater implements Runnable {
                     "§6§m---------------------------------------\n" +
                             "\n" +
                             "§eA new Update of §6Fraud §eis now available !\n" +
-                            "§8§nActual Version: §7" + actualVersion + "\n" +
-                            "§8§nNext Version:   §7" + version + "\n" +
+                            "§8§nActual Version:§7 " + actualVersion + "\n" +
+                            "§8§nNext Version:§7   " + version + "\n" +
                             "§6Go to the Spigot Page: " + url +
                             "\n" +
                             "§6§m---------------------------------------");
