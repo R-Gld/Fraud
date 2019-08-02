@@ -21,7 +21,7 @@ messages:
   alts asked: "&cHere is the list of alts of &6{0}&c:\n{1}"
   all alts asked: "  &6{0}&c:\n      {1}"
   all alts announcer: "&cHere is the list of alts of all connected players:"
-  all alts empty: "&cThere is no players who has alts."
+  all alts empty: "&cThere is no players connected who has alts."
   # {0} is the name of the player.
   no alts: "&6{0}&c never connected double accounts."
   reload:
