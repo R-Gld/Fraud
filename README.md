@@ -11,13 +11,12 @@
 
 - Put the jar on the plugin directory of the server.
 - Restart the server or if you have a PluginManager plugin on it, load the plugin.
-- Configure the plugin in the file `config.yml`
-- Restart the server
+- Configure the plugin in the file `config.yml`. You can translate or just change the messages in this file.
+- Restart the server or just the plugin if you can.
 
 ## Contact
 ### Emails
-- [*`contact@rgld.fr`*](mailto:contact@rgld.fr)
+- [*`spigot@rgld.fr`*](mailto:spigot@rgld.fr)
 
 ### Discord
 - *`Romain | Rgld_#8275`*
-- [*`Discord Server`*][discord-invite]

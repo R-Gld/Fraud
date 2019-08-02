@@ -3,6 +3,7 @@ package fr.Rgld_.Fraud;
 import fr.Rgld_.Fraud.Commands.FraudCommand;
 import fr.Rgld_.Fraud.Events.JoinQuitEvent;
 import fr.Rgld_.Fraud.Helpers.Console;
+import fr.Rgld_.Fraud.Helpers.Updater.Updater;
 import fr.Rgld_.Fraud.Storage.Configuration;
 import fr.Rgld_.Fraud.Storage.Datas;
 import org.bukkit.Bukkit;
@@ -21,14 +22,10 @@ import static org.bukkit.ChatColor.*;
 public class Fraud extends JavaPlugin {
 
 
-    private static Fraud INSTANCE;
+    public String actualVersionBc;
     private Configuration configuration;
     private Datas datas;
     private Console c;
-
-    public static Fraud getInstance() {
-        return INSTANCE;
-    }
 
     public Configuration getConfiguration() {
         return configuration;
@@ -37,6 +34,7 @@ public class Fraud extends JavaPlugin {
     public Datas getDatas() {
         return datas;
     }
+
     public void setDatas(Datas datas) {
         this.datas = datas;
     }
@@ -48,7 +46,6 @@ public class Fraud extends JavaPlugin {
     @Override
     public void onEnable() {
         this.c = new Console();
-        INSTANCE = this;
         PluginDescriptionFile pdf = this.getDescription();
         c.sm(MessageFormat.format("{0}--- {1} ---", GOLD, pdf.getName()));
         c.sm();
@@ -84,7 +81,7 @@ public class Fraud extends JavaPlugin {
         } catch (Throwable t) {
             c.sm(RED + "Configurations File loading / creating failed: ");
             File f = new File(getDataFolder(), "config.yml");
-            if(f.exists()){
+            if (f.exists()) {
                 c.sm(RED + "Resetting of the Configuration File.");
                 f.renameTo(new File(getDataFolder(), "config.yml.old"));
                 try {
@@ -106,6 +103,14 @@ public class Fraud extends JavaPlugin {
         } catch (Throwable t) {
             c.sm(RED + "Datas Files loading / creating failed: ");
             t.printStackTrace();
+        }
+
+        if (configuration.checkForUpdate()) {
+            Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
+                Updater updater = new Updater(this);
+                Thread updaterThread = new Thread(updater);
+                updaterThread.start();
+            }, 0, 20 * 60 * 5);
         }
 
         c.sm();

@@ -1,19 +1,26 @@
 # You can enabled or disabled the alerts when a player join.
 onJoin alert: true
+
 # With this limit, you can let a player to have some alts without cause any alert on player who has the "fraud.receive.alert" permission.
 # Set to 1 to deactivate this limit.
 # Set to -1 to infinite.
 alts limit: 2
+
+# If this is true, every 5 minutes, a check will be made to see if the plugin is up to date.
+# If it is not up to date, a message will be sent to all players with the permission "fraud.update".
+check for update: true
 
 messages:
   # |---------------------------------------------------------------------|
   # | These messages accept the chat color format with the '&' character. |
   # |---------------------------------------------------------------------|
   prefix: "&6&l Fraud &7» &e"
-  no permission: "&cSorry but you can't do that. You don't have the permission !"
+  no permission: "&cSorry but you can't do that. You don't have the permission!"
   # {0} is the name of the player | {1} is the list of alts
   alts detected: "&cSome double-accounts where been detected in the account of &6{0}&c, here there are:\n&r{1}"
-  alts asked: "&cHere is the list of alts of &6{0}&c:\n&r{1}"
+  alts asked: "&cHere is the list of alts of &6{0}&c:\n{1}"
+  all alts announcer: "&cHere is the list of alts of all connected players:"
+  all alts asked: "  &6{0}&c:\n      {1}"
   # {0} is the name of the player.
   no alts: "&6{0}&c never connected double accounts."
   reload:
@@ -23,6 +30,7 @@ messages:
     command:
       # {0} is the label of the command. Ex: "fraud" It can change if you use some alias of the command.
       check: "&f&l/{0} check <player> &7- Check if a player have some alts / double-accounts."
+      all: "&f&l/{0} all &7- Check all players about alts / double-accounts."
       version: "&f&l/{0} version &7- Give the version of the plugin."
       reload: "&f&l/{0} reload &7- Reload the configuration and data files."
       contact: "&f&l/{0} contact &7- Contact me if you have any problem, plugin error or requests."

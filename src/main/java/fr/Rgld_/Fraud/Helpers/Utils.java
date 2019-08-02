@@ -1,9 +1,11 @@
 package fr.Rgld_.Fraud.Helpers;
 
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.regex.Pattern;
 
 public class Utils {
@@ -14,6 +16,22 @@ public class Utils {
         } catch (Throwable t) {
             return false;
         }
+    }
+
+    public static boolean canGetAnAlt(List<String> altsList) {
+        for (String str : altsList) {
+            Player p;
+            try {
+                p = Bukkit.getPlayer(str);
+            } catch (NullPointerException e) {
+                continue;
+            }
+            if (p == null) continue;
+            if (p.hasPermission("fraud.notcause.alert")) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static boolean isValidIP(String ipAddress) {
@@ -37,11 +55,7 @@ public class Utils {
             if ((each instanceof Collection)) {
                 buf.append(joinList(separator, ((Collection) each).toArray()));
             } else {
-                try {
-                    buf.append(each.toString());
-                } catch (Exception e) {
-                    buf.append(each.toString());
-                }
+                buf.append(each.toString());
             }
         }
         return buf.toString();

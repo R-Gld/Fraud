@@ -9,7 +9,7 @@
 
     <groupId>fr.Rgld_</groupId>
     <artifactId>Fraud</artifactId>
-    <version>1.0</version>
+    <version>1.2</version>
 
     <developers>
         <developer>
@@ -32,12 +32,21 @@
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
     </repositories>
     <dependencies>
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
             <version>1.8.8-R0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.r-clancy</groupId>
+            <artifactId>PlugMan</artifactId>
+            <version>master</version>
         </dependency>
         <dependency>
             <groupId>com.googlecode.json-simple</groupId>
@@ -47,6 +56,8 @@
     </dependencies>
 
     <build>
+        <finalName>${project.artifactId}</finalName>
+        <defaultGoal>clean install</defaultGoal>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

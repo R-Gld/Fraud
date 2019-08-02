@@ -39,7 +39,7 @@ public class Configuration {
     }
 
     private Boolean getBoolean(String path) {
-        return fileConfig.getBoolean(path, true);
+        return fileConfig.getBoolean(path);
     }
 
     private int getInt(String path) {
@@ -48,13 +48,17 @@ public class Configuration {
 
     //\\ ---------------------------------------------------------------------------- //\\
 
-    public int getDoubleAccountLimit(){
+    public int getDoubleAccountLimit() {
         int i = getInt("alts limit");
-        if(i == -1) i = Integer.MAX_VALUE;
+        if (i == -1) i = Integer.MAX_VALUE;
         return i;
     }
 
-    public boolean alertOnJoinIsEnabled(){
+    public boolean checkForUpdate() {
+        return getBoolean("check for update");
+    }
+
+    public boolean alertOnJoinIsEnabled() {
         return getBoolean("onJoin alert");
     }
 
@@ -62,6 +66,7 @@ public class Configuration {
         i18n(Messages.PREFIX, "prefix");
         i18n(Messages.NO_PERMISSION, "no permission");
         i18n(Messages.HELP_COMMAND_CHECK, "help.command.check");
+        i18n(Messages.HELP_COMMAND_ALL, "help.command.all");
         i18n(Messages.HELP_COMMAND_VERSION, "help.command.version");
         i18n(Messages.HELP_COMMAND_RELOAD, "help.command.reload");
         i18n(Messages.HELP_COMMAND_CONTACT, "help.command.contact");
@@ -70,6 +75,8 @@ public class Configuration {
         i18n(Messages.RELOAD_FAILED, "reload.failed");
         i18n(Messages.ALTS_DETECTED, "alts detected");
         i18n(Messages.ALTS_ASKED, "alts asked");
+        i18n(Messages.ALL_ALTS_ASKED_ANNOUNCER, "all alts announcer");
+        i18n(Messages.ALL_ALTS_ASKED, "all alts asked");
         i18n(Messages.NO_ALTS, "no alts");
     }
 

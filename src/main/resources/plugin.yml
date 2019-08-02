@@ -1,8 +1,11 @@
 name: Fraud
 author: Rgld_
-version: 1.0
+version: 1.2
 description: Detects if a player is fraudding the server.
 website: https://github.com/R-Gld/Fraud
+
+softdepend:
+  - PlugMan
 
 main: fr.Rgld_.Fraud.Fraud
 commands:
@@ -25,6 +28,7 @@ permissions:
       fraud.receive.alert: true
       fraud.clean-datas: true
       fraud.reload: true
+      fraud.update: true
   fraud.bypass.*:
     description: Give all the bypass available
     default: op
@@ -37,6 +41,12 @@ permissions:
     children:
       fraud.check.player: true
       fraud.check.ip: true
+  fraud.check.player:
+    description: Give all the check permissions for players.
+    default: op
+    children:
+      fraud.check.player.one: true
+      fraud.check.player.all: true
 
   # Basic permissions
   fraud.bypass.ip:
@@ -51,9 +61,12 @@ permissions:
   fraud.receive.alert:
     default: op
     description: When a player join for the first time the server, all the player who has this permission will receive a message if this player have a alt.
-  fraud.check.player:
+  fraud.check.player.one:
     default: op
     description: Let a player check if an other player has some alts.
+  fraud.check.player.all:
+    default: op
+    description: Let a player check if all players has some alts.
   fraud.check.ip:
     default: op
     description: Let a player check if an ip has some alts.
@@ -63,3 +76,6 @@ permissions:
   fraud.reload:
     default: op
     description: Let a player to reload the configuration and datas files.
+  fraud.update:
+    default: op
+    description: Let a player update the plugin.
