@@ -80,13 +80,22 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
                             sender.sendMessage(Messages.NO_PERMISSION.getMessage());
                             return false;
                         }
-                        sender.sendMessage(Messages.ALL_ALTS_ASKED_ANNOUNCER.getMessage());
                         List<String> everChecked = Lists.newArrayList();
+                        List<Player> concernedPlayers = Lists.newArrayList();
                         for (Player pls : Bukkit.getOnlinePlayers()) {
                             if (everChecked.contains(pls.getName())) continue;
                             List<String> plsAlts = datas.getListByPlayer(pls);
                             everChecked.addAll(plsAlts);
                             if (plsAlts.size() >= 2 && !Utils.canGetAnAlt(plsAlts)) {
+                                concernedPlayers.add(pls);
+                            }
+                        }
+                        if(concernedPlayers.isEmpty()){
+                            sender.sendMessage(Messages.ALL_EMPTY.getMessage());
+                        } else {
+                            sender.sendMessage(Messages.ALL_ALTS_ASKED_ANNOUNCER.getMessage());
+                            for(Player pls : concernedPlayers){
+                                List<String> plsAlts = datas.getListByPlayer(pls);
                                 listAlts(plsAlts,
                                         sender,
                                         !pls.getName().equals(pls.getDisplayName()) ? pls.getName() + "§8(" + pls.getDisplayName() + "§8)" : pls.getName(),

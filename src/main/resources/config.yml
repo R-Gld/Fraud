@@ -10,17 +10,18 @@ alts limit: 2
 # If it is not up to date, a message will be sent to all players with the permission "fraud.update".
 check for update: true
 
+# |---------------------------------------------------------------------|
+# | These messages accept the chat color format with the '&' character. |
+# |---------------------------------------------------------------------|
 messages:
-  # |---------------------------------------------------------------------|
-  # | These messages accept the chat color format with the '&' character. |
-  # |---------------------------------------------------------------------|
   prefix: "&6&l Fraud &7» &e"
   no permission: "&cSorry but you can't do that. You don't have the permission!"
-  # {0} is the name of the player | {1} is the list of alts
+  # {0} is the name of the player/ip | {1} is the list of alts
   alts detected: "&cSome double-accounts where been detected in the account of &6{0}&c, here there are:\n&r{1}"
   alts asked: "&cHere is the list of alts of &6{0}&c:\n{1}"
-  all alts announcer: "&cHere is the list of alts of all connected players:"
   all alts asked: "  &6{0}&c:\n      {1}"
+  all alts announcer: "&cHere is the list of alts of all connected players:"
+  all alts empty: "&cThere is no players who has alts."
   # {0} is the name of the player.
   no alts: "&6{0}&c never connected double accounts."
   reload:

@@ -22,6 +22,7 @@ public enum Messages {
 
     ALL_ALTS_ASKED_ANNOUNCER(Messages.defaultMessage),
     ALL_ALTS_ASKED(Messages.defaultMessage),
+    ALL_EMPTY(Messages.defaultMessage),
 
     RELOAD_SUCCESS(Messages.defaultMessage),
     RELOAD_FAILED(Messages.defaultMessage),

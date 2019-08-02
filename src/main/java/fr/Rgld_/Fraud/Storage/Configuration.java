@@ -77,6 +77,7 @@ public class Configuration {
         i18n(Messages.ALTS_ASKED, "alts asked");
         i18n(Messages.ALL_ALTS_ASKED_ANNOUNCER, "all alts announcer");
         i18n(Messages.ALL_ALTS_ASKED, "all alts asked");
+        i18n(Messages.ALL_EMPTY, "all alts empty");
         i18n(Messages.NO_ALTS, "no alts");
     }
 
