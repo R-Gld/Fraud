@@ -15,7 +15,7 @@ check for update: true
 # |---------------------------------------------------------------------|
 messages:
   prefix: "&6&l Fraud &7» &e"
-  no permission: "&cSorry but you can't do that. You don't have the permission!"
+  no permission: "&cSorry but you can''t do that. You don''t have the permission!"
   # {0} is the name of the player/ip | {1} is the list of alts
   alts detected: "&cSome double-accounts where been detected in the account of &6{0}&c, here there are:\n&r{1}"
   alts asked: "&cHere is the list of alts of &6{0}&c:\n{1}"
