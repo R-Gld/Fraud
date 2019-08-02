@@ -86,7 +86,7 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
                             if (everChecked.contains(pls.getName())) continue;
                             List<String> plsAlts = datas.getListByPlayer(pls);
                             everChecked.addAll(plsAlts);
-                            if (plsAlts.size() >= 2 && !Utils.canGetAnAlt(plsAlts)) {
+                            if (plsAlts.size() >= 2 && !Utils.canGetAnAlt(plsAlts) || (plsAlts.size() >= (fraud.getConfiguration().getDoubleAccountLimit() + 1))) {
                                 concernedPlayers.add(pls);
                             }
                         }
