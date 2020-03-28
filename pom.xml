@@ -42,12 +42,18 @@
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
             <version>1.8.8-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
         <!--<dependency>
             <groupId>com.github.r-clancy</groupId>
             <artifactId>PlugMan</artifactId>        TODO Updater who download auto the file.
             <version>master</version>
         </dependency>-->
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.5</version>
+        </dependency>
         <dependency>
             <groupId>com.googlecode.json-simple</groupId>
             <artifactId>json-simple</artifactId>
@@ -70,5 +76,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

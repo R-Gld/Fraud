@@ -2,13 +2,23 @@
 onJoin alert: true
 
 # With this limit, you can let a player to have some alts without cause any alert on player who has the "fraud.receive.alert" permission.
-# Set to 1 to deactivate this limit.
-# Set to -1 to infinite.
+# Set to -1 to untoggle this limit.
+# Default is 2
 alts limit: 2
 
-# If this is true, every 5 minutes, a check will be made to see if the plugin is up to date.
-# If it is not up to date, a message will be sent to all players with the permission "fraud.update".
-check for update: true
+update:
+  # If this is true, every 5 minutes, a check will be made to see if the plugin is up to date.
+  # If it is not up to date, a message will be sent to all players with the permission "fraud.update".
+  check for update: true
+  auto download: true
+  
+kick:
+  # If this is set to enabled, if it is set that the player has too much double count, he will be kick.
+  enabled: false
+  # The number of alts to trigger the kick is adjustable on "alts limit" on line 7.
+  # {0} is the number of accounts on the ip. | \n is used to returned to the line.
+  kick reason: "§f§lThe server has detected that you have too many accounts on your ip §7§l({0} accounts)§f§l.\n§f§lYou can not log in with as much of an account as that!\n§f§lContact an administrator if you think this is an error."
+
 
 # |---------------------------------------------------------------------|
 # | These messages accept the chat color format with the '&' character. |
@@ -24,6 +34,8 @@ messages:
   all alts empty: "&cThere is no players connected who has alts."
   # {0} is the name of the player.
   no alts: "&6{0}&c never connected double accounts."
+  not in datas: "&6{0}&c isn't in the files."
+  player forgotten: "&6{0} has been removed of the files."
   reload:
     success: "&cReload success."
     failed: "&cReload failed. &oStacktrace print in console."
@@ -33,6 +45,8 @@ messages:
       check: "&f&l/{0} check <player> &7- Check if a player have some alts / double-accounts."
       all: "&f&l/{0} all &7- Check all players about alts / double-accounts."
       version: "&f&l/{0} version &7- Give the version of the plugin."
-      reload: "&f&l/{0} reload &7- Reload the configuration and data files."
-      contact: "&f&l/{0} contact &7- Contact me if you have any problem, plugin error or requests."
       clean datas: "&f&l/{0} clean-datas &7- Reset the datas(the \"before\" file will be renamed, not deleted)."
+      forgot: "&f&l/{0} forgot <player> &7- Remove all the datas about this player. &8&o&n(WARNING: this is not cancellable)."
+      reload: "&f&l/{0} reload &7- Reload the configuration and data files."
+      download: "&f&l/{0} download &7- Download the latest version of the plugin (must be restart after this)."
+      contact: "&f&l/{0} contact &7- Contact me if you have any problem, plugin error or requests."
