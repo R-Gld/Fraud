@@ -1,13 +1,11 @@
 package fr.Rgld_.Fraud.Helpers;
 
-import com.google.gson.GsonBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
 public class Console {
 
-    public Console() {
-    }
+    public Console() {}
 
 
     public void sm(String message) {
@@ -26,9 +24,5 @@ public class Console {
         sm("");
     }
 
-
-    public void sendObject(Object obj) {
-        sm(new GsonBuilder().create().toJson(obj));
-    }
 
 }

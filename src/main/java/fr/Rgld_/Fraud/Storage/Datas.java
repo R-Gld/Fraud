@@ -16,80 +16,107 @@ import java.util.List;
 public class Datas {
 
     private final Fraud fraud;
-    private final File jsonFile;
     private final File file;
     private final String TABLE_NAME_ips = "ips";
 
     public Datas(Fraud fraud) throws Throwable {
         this.fraud = fraud;
-        jsonFile = new File(fraud.getDataFolder(), "data.json");
-        if (jsonFile.exists()) {
-            jsonFile.delete();
-            fraud.getConsole().sm("§eThe data file system has been changed. The file \"data.json\" has been deleted and replaced by a \"data.sqlite\". Sorry for the incovenient.");
-        }
         file = new File(fraud.getDataFolder(), "data.sqlite");
         createConnectionTable();
     }
 
-    private void createConnectionTable() {
-        try (Connection connection = connect()) {
-            String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME_ips + "(id integer PRIMARY KEY,pseudo text NOT NULL,ip text NOT NULL);";
-            connection.createStatement().execute(sql);
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
-
     private Connection connect() throws SQLException, ClassNotFoundException {
         File dataFolder = fraud.getDataFolder();
-        if (!file.exists())
-            try {
-                file.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        if(!file.exists()) try {
+            file.createNewFile();
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
 
         Class.forName("org.sqlite.JDBC");
         return DriverManager.getConnection("jdbc:sqlite:" + file.getAbsolutePath().replace("\\", File.separator));
+    }
+
+    private void createConnectionTable() {
+        try(Connection connection = connect()) {
+            String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME_ips + "(id integer PRIMARY KEY,pseudo text NOT NULL,ip text NOT NULL);";
+            connection.createStatement().execute(sql);
+        } catch(SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     public File getFile() {
         return file;
     }
 
-
     public void putPlayer(Player p) {
-        if (p.hasPermission("fraud.bypass.ip")) return;
-        try (Connection connection = connect()) {
-            if (isEverRegistered(p)) {
+        if(p.hasPermission("fraud.bypass.ip")) return;
+        putPlayer(p.getName(), p.getAddress());
+    }
+
+    public void putPlayer(String name, InetSocketAddress address) {
+        try(Connection connection = connect()) {
+            if(isEverRegistered(name)) {
                 String sql = MessageFormat.format("UPDATE {0} SET ip = ? WHERE pseudo = ?", TABLE_NAME_ips);
                 PreparedStatement psst = connection.prepareStatement(sql);
-                psst.setString(1, getAddress(p.getAddress()));
-                psst.setString(2, p.getName());
+                psst.setString(1, getAddress(address));
+                psst.setString(2, name);
                 psst.executeUpdate();
             } else {
                 String sql = MessageFormat.format("INSERT INTO {0}(pseudo,ip) VALUES(?,?);", TABLE_NAME_ips);
                 PreparedStatement psst = connection.prepareStatement(sql);
-                psst.setString(1, p.getName());
-                psst.setString(2, getAddress(p.getAddress()));
+                psst.setString(1, getAddress(address));
+                psst.setString(2, name);
                 psst.executeUpdate();
             }
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch(SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void forgotPlayer(Player p) {
+        forgotPlayer(p.getName());
+    }
+
+    public void forgotPlayer(String name) {
+        try(Connection connection = connect()) {
+            String sql = MessageFormat.format("DELETE FROM `{0}` WHERE pseudo = ?", TABLE_NAME_ips);
+            PreparedStatement psst = connection.prepareStatement(sql);
+            psst.setString(1, name);
+            psst.executeUpdate();
+        } catch(SQLException e) {
+            e.printStackTrace();
+        } catch(ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
 
     public boolean isEverRegistered(Player p) {
-        try (Connection connection = connect()) {
-            String sql = MessageFormat.format("SELECT ip FROM {0} WHERE pseudo = ?", TABLE_NAME_ips);
+        try(Connection connection = connect()) {
+            String sql = MessageFormat.format("SELECT ip FROM `{0}` WHERE pseudo = ?", TABLE_NAME_ips);
             PreparedStatement psst = connection.prepareStatement(sql);
             psst.setString(1, p.getName());
             ResultSet rs = psst.executeQuery();
-            while (rs.next()) {
-                if (rs.getString("ip") != getAddress(p.getAddress()))
-                    return true;
+            while(rs.next()) {
+                if(rs.getString("ip") != getAddress(p.getAddress())) return true;
             }
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch(SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean isEverRegistered(String name) {
+        try(Connection connection = connect()) {
+            String sql = MessageFormat.format("SELECT pseudo FROM `{0}` WHERE pseudo = ?", TABLE_NAME_ips);
+            PreparedStatement psst = connection.prepareStatement(sql);
+            psst.setString(1, name);
+            ResultSet rs = psst.executeQuery();
+            while(rs.next()) {
+                if(rs.getString("pseudo") != name) return true;
+            }
+        } catch(SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
         return false;
@@ -98,15 +125,15 @@ public class Datas {
     public HashMap<String, String> getAllDatas() {
         String sql = MessageFormat.format("SELECT * FROM `{0}`", TABLE_NAME_ips);
         HashMap<String, String> map = new HashMap<>();
-        try (Connection connection = connect()) {
+        try(Connection connection = connect()) {
             ResultSet rs = connection.prepareStatement(sql).executeQuery();
             try {
-                while (rs.next()) {
+                while(rs.next()) {
                     map.put(rs.getString("pseudo"), rs.getString("ip"));
                 }
-            } catch (SQLException ignored) {
+            } catch(SQLException ignored) {
             }
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch(SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
         return map;
@@ -115,15 +142,15 @@ public class Datas {
     public List<String> getListByPseudo(String pseudo) {
         String ipFromPseudo = null;
 
-        try (Connection connection = connect()) {
+        try(Connection connection = connect()) {
             String sql_getIp = "SELECT ip FROM `" + TABLE_NAME_ips + "` WHERE pseudo = ?";
             PreparedStatement psst_getIp = connection.prepareStatement(sql_getIp);
             psst_getIp.setString(1, pseudo);
             ResultSet rs_getIp = psst_getIp.executeQuery();
-            while (rs_getIp.next()) {
+            while(rs_getIp.next()) {
                 ipFromPseudo = rs_getIp.getString("ip");
             }
-            if (ipFromPseudo == null) {
+            if(ipFromPseudo == null) {
                 return Lists.newArrayList();
             }
             String sql_getPseudos = "SELECT pseudo FROM `" + TABLE_NAME_ips + "` WHERE ip = ?";
@@ -131,32 +158,36 @@ public class Datas {
             psst_getPseudos.setString(1, ipFromPseudo);
             ResultSet rs = psst_getPseudos.executeQuery();
             List<String> pseudos = Lists.newArrayList();
-            while (rs.next()) {
+            while(rs.next()) {
                 pseudos.add(rs.getString("pseudo"));
             }
             return pseudos;
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch(SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
         return Lists.newArrayList();
     }
 
-    public List<String> getListByPlayer(Player player) {
-        return getListByAddress(getAddress(player.getAddress()));
+    public List<String> getList(Player player) {
+        return getList(player.getAddress());
     }
 
-    public List<String> getListByAddress(String address) {
-        try (Connection connection = connect()) {
+    public List<String> getList(InetSocketAddress address) {
+        return getList(getAddress(address));
+    }
+
+    public List<String> getList(String address) {
+        try(Connection connection = connect()) {
             String sql = "SELECT pseudo FROM `" + TABLE_NAME_ips + "` WHERE ip = ?";
             PreparedStatement psst = connection.prepareStatement(sql);
             psst.setString(1, address);
             ResultSet rs = psst.executeQuery();
             List<String> pseudos = Lists.newArrayList();
-            while (rs.next()) {
+            while(rs.next()) {
                 pseudos.add(rs.getString("pseudo"));
             }
             return pseudos;
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch(SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
         return Lists.newArrayList();
@@ -165,5 +196,4 @@ public class Datas {
     private String getAddress(InetSocketAddress address) {
         return address.toString().split(":")[0].substring(1);
     }
-
 }
