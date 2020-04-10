@@ -49,11 +49,11 @@ messages:
       # {0} is the label of the command. Ex: "fraud" It can change if you use some alias of the command.
       all: "&f&l/{0} all &7- Check all players about alts / double-accounts."
       check: "&f&l/{0} check <player> &7- Check if a player have some alts / double-accounts."
-      clean datas: "&f&l/{0} clean-datas &7- Reset the datas(the \"before\" file will be renamed, not deleted)."
       contact: "&f&l/{0} contact &7- Contact me if you have any problem, plugin error or requests."
       download: "&f&l/{0} download &7- Download the latest version of the plugin (must be restart after this)."
       forgot: "&f&l/{0} forgot <player> &7- Remove all the datas about this player. &8&o&n(WARNING: this is not cancellable)."
       info: "&f&l/{0} info <player> &7- Give some info about the connection of a player."
+      link: "&f&l/{0} link &7- Give some links about the plugin(Source-code, Spigot, Direct Download)."
       version: "&f&l/{0} version &7- Give the version of the plugin."
       reload: "&f&l/{0} reload &7- Reload the configuration and data files."
   time:

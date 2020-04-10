@@ -16,7 +16,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
-import java.io.File;
 import java.net.InetSocketAddress;
 import java.text.MessageFormat;
 import java.util.List;
@@ -61,27 +60,15 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
                             t.printStackTrace();
                         }
                         return false;
-                    case "clean-datas":
-                        if(!sender.hasPermission("fraud.clean-datas")) {
-                            sender.sendMessage(Messages.NO_PERMISSION.getMessage());
-                            return false;
-                        }
-                        try {
-                            if(datas.getFile().renameTo(new File(fraud.getDataFolder(), "datas-before-reset.sqlite"))) {
-                                fraud.setDatas(new Datas(fraud));
-                                for(Player pls : Bukkit.getOnlinePlayers()) datas.putPlayer(pls);
-                                sender.sendMessage(Messages.COMMAND_CLEAN_DATA_YES.getMessage());
-                            } else {
-                                sender.sendMessage(Messages.COMMAND_CLEAN_DATA_NO.getMessage());
-                            }
-                        } catch(Throwable t) {
-                            sender.sendMessage(Messages.COMMAND_CLEAN_DATA_NO.getMessage());
-                        }
-                        return false;
                     case "contact":
                         sender.sendMessage("§6§lYou can contact the developer of this plugin via:");
                         sender.sendMessage("§6 - Discord: §e§l§oRomain | Rgld_#5344");
                         sender.sendMessage("§6 - Email: §e§l§ospigot@rgld.fr");
+                        return false;
+                    case "link":
+                        sender.sendMessage("§6Github Page: §9§nhttps://github.com/R-Gld/Fraud");
+                        sender.sendMessage("§6Spigot Ressource: §9§nhttps://www.spigotmc.org/resources/fraud-alts-finder.69872/");
+                        sender.sendMessage("§6Latest Version Download: §9§nhttp://fraud.rgld.fr");
                         return false;
                     case "all":
                         if(!sender.hasPermission("fraud.check.player.all")) {
@@ -157,6 +144,10 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
                         }
                         return false;
                     case "forgot":
+                        if(!sender.hasPermission("fraud.forgot")) {
+                            sender.sendMessage(Messages.NO_PERMISSION.getMessage());
+                            return false;
+                        }
                         if(datas.isRegisteredInIps(arg1)) {
                             datas.forgotPlayer(arg1);
                             sender.sendMessage(Messages.PLAYER_FORGOTTEN.format(arg1));
@@ -164,7 +155,7 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
                         return false;
                     case "info":
                         List<String> alts = datas.getListByPseudo(arg1);
-                        if(!sender.hasPermission("fraud.info") && !alts.contains(arg1)) {
+                        if(!alts.contains(sender.getName()) && !sender.hasPermission("fraud.info")) {
                             sender.sendMessage(Messages.NO_PERMISSION.getMessage());
                             return false;
                         }
@@ -226,11 +217,8 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
                     } else if(str.startsWith("co")) {
                         list = Lists.newArrayList("contact");
                         break;
-                    } else if(str.startsWith("cl")) {
-                        list = Lists.newArrayList("clean-datas");
-                        break;
                     }
-                    list = Lists.newArrayList("check", "clean-datas", "contact");
+                    list = Lists.newArrayList("check", "contact");
                 } else if(str.startsWith("d")) {
                     list = Lists.newArrayList("download");
                 } else if(str.startsWith("f")) {
@@ -244,7 +232,7 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
                         list = Lists.newArrayList("version");
                     } else list = Lists.newArrayList("v", "version");
                 } else {
-                    list = Lists.newArrayList("all", "check", "clean-datas", "contact", "download", "forgot", "info", "reload", "v", "version");
+                    list = Lists.newArrayList("all", "check", "contact", "download", "forgot", "info", "reload", "v", "version");
                 }
                 break;
             case 2:
@@ -262,11 +250,11 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
         sender.sendMessage("");
         sender.sendMessage(Messages.HELP_COMMAND_ALL.format(label));
         sender.sendMessage(Messages.HELP_COMMAND_CHECK.format(label));
-        sender.sendMessage(Messages.HELP_COMMAND_CLEAN_DATAS.format(label));
         sender.sendMessage(Messages.HELP_COMMAND_CONTACT.format(label));
         sender.sendMessage(Messages.HELP_COMMAND_DOWNLOAD.format(label));
         sender.sendMessage(Messages.HELP_COMMAND_FORGOT.format(label));
         sender.sendMessage(Messages.HELP_COMMAND_INFO.format(label));
+        sender.sendMessage(Messages.HELP_COMMAND_LINK.format(label));
         sender.sendMessage(Messages.HELP_COMMAND_RELOAD.format(label));
         sender.sendMessage(Messages.HELP_COMMAND_VERSION.format(label));
         sender.sendMessage("");

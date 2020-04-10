@@ -7,6 +7,9 @@ import fr.Rgld_.Fraud.Helpers.Messages;
 import fr.Rgld_.Fraud.Helpers.Utils;
 import fr.Rgld_.Fraud.Storage.Configuration;
 import fr.Rgld_.Fraud.Storage.Datas;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -58,9 +61,13 @@ public class JoinQuitEvent implements Listener {
 
                 String formatted = Messages.ALTS_DETECTED.format(p.getName(), Utils.joinList(altsList));
                 fraud.getConsole().sendMessage(formatted);
+                TextComponent info = new TextComponent("   §e§l➤ (i)");
+                info.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(Messages.INFO_HOVER.getMessage())));
+                info.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/fraud info " + altsList.get(0).substring(2)));
                 for(Player pls : Bukkit.getOnlinePlayers()) {
                     if(pls.hasPermission("fraud.receive.alert")) {
                         pls.sendMessage(formatted);
+                        pls.spigot().sendMessage(info);
                     }
                 }
             }
