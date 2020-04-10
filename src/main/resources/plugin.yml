@@ -1,10 +1,10 @@
 name: Fraud
 author: Rgld_
-version: 1.3 # Seuls caracteres acceptes: "0123456789."
+version: 1.3 # Only chars accepted for the version: "0123456789."
 description: Detects if a player is fraudding the server.
 website: https://www.spigotmc.org/resources/fraud-alts-finder.69872/
-
 main: fr.Rgld_.Fraud.Fraud
+
 commands:
   fraud:
     description: This command is the only one of the "Fraud" plugin. It allows to know if players have connected with double accounts.
@@ -26,6 +26,7 @@ permissions:
       fraud.clean-datas: true
       fraud.reload: true
       fraud.update: true
+      fraud.download: true
   fraud.bypass.*:
     description: Give all the bypass available
     default: op
@@ -38,6 +39,7 @@ permissions:
     children:
       fraud.check.player: true
       fraud.check.ip: true
+      fraud.info: true
   fraud.check.player:
     description: Give all the check permissions for players.
     default: op
@@ -76,3 +78,9 @@ permissions:
   fraud.update:
     default: op
     description: Let a player update the plugin.
+  fraud.download:
+    default: op
+    description: Let a player download the latest version of the plugin on spigot.
+  fraud.info:
+    default: op
+    description: Let a player execute the /fd info

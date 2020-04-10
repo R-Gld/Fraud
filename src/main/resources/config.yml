@@ -10,7 +10,7 @@ update:
   # If this is true, every 5 minutes, a check will be made to see if the plugin is up to date.
   # If it is not up to date, a message will be sent to all players with the permission "fraud.update".
   check for update: true
-  auto download: true
+  auto download: false
   
 kick:
   # If this is set to enabled, if it is set that the player has too much double count, he will be kick.
@@ -25,13 +25,18 @@ kick:
 # |---------------------------------------------------------------------|
 messages:
   prefix: "&6&l Fraud &7» &e"
-  no permission: "&cSorry but you can''t do that. You don''t have the permission!"
+  no permission: "&cSorry but you can't do that. You don't have the permission!"
   # {0} is the name of the player/ip | {1} is the list of alts
   alts detected: "&cSome double-accounts where been detected in the account of &6{0}&c, here there are:\n&r{1}"
   alts asked: "&cHere is the list of alts of &6{0}&c:\n{1}"
-  all alts asked: "  &6{0}&c:\n      {1}"
   all alts announcer: "&cHere is the list of alts of all connected players:"
+  all alts asked: "  &6{0}&c:\n      {1}"
   all alts empty: "&cThere is no players connected who has alts."
+  # {0} is the name of the player | {1} is the first join | {2} is the last join
+  info:
+    hover: "&6Click to get more information&6."
+    header: "&cHere is the information about the alts of &6{0}&c:"
+    player: "  &c- &6{0}&c:\n     &c• First Join: &6{1}\n     &c• Last Join: &6{2}"
   # {0} is the name of the player.
   no alts: "&6{0}&c never connected double accounts."
   not in datas: "&6{0}&c isn't in the files."
@@ -42,11 +47,26 @@ messages:
   help:
     command:
       # {0} is the label of the command. Ex: "fraud" It can change if you use some alias of the command.
-      check: "&f&l/{0} check <player> &7- Check if a player have some alts / double-accounts."
       all: "&f&l/{0} all &7- Check all players about alts / double-accounts."
-      version: "&f&l/{0} version &7- Give the version of the plugin."
+      check: "&f&l/{0} check <player> &7- Check if a player have some alts / double-accounts."
       clean datas: "&f&l/{0} clean-datas &7- Reset the datas(the \"before\" file will be renamed, not deleted)."
-      forgot: "&f&l/{0} forgot <player> &7- Remove all the datas about this player. &8&o&n(WARNING: this is not cancellable)."
-      reload: "&f&l/{0} reload &7- Reload the configuration and data files."
-      download: "&f&l/{0} download &7- Download the latest version of the plugin (must be restart after this)."
       contact: "&f&l/{0} contact &7- Contact me if you have any problem, plugin error or requests."
+      download: "&f&l/{0} download &7- Download the latest version of the plugin (must be restart after this)."
+      forgot: "&f&l/{0} forgot <player> &7- Remove all the datas about this player. &8&o&n(WARNING: this is not cancellable)."
+      info: "&f&l/{0} info <player> &7- Give some info about the connection of a player."
+      version: "&f&l/{0} version &7- Give the version of the plugin."
+      reload: "&f&l/{0} reload &7- Reload the configuration and data files."
+  time:
+    now: "now"
+    year: "year"
+    years: "years"
+    month: "month"
+    months: "months"
+    day: "day"
+    days: "days"
+    hour: "hour"
+    hours: "hours"
+    minute: "minute"
+    minutes: "minutes"
+    second: "second"
+    seconds: "seconds"

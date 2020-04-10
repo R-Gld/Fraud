@@ -98,8 +98,20 @@ public class Fraud extends JavaPlugin {
         if(configuration.checkForUpdate()) {
             Bukkit.getScheduler().scheduleSyncRepeatingTask(
                     this, this::launchUpdater,
-                    0, 20 * 60 * 5);
+                    0, 5 * 60 * 5);
         }
+
+        c.sm();
+        c.sm(MessageFormat.format("{0}--- {1} ---", GOLD, pdf.getName()));
+    }
+
+    @Override
+    public void onDisable() {
+        PluginDescriptionFile pdf = this.getDescription();
+        c.sm(MessageFormat.format("{0}--- {1} ---", GOLD, pdf.getName()));
+        c.sm();
+
+        c.sm(RED + "Disabling Fraud...");
 
         c.sm();
         c.sm(MessageFormat.format("{0}--- {1} ---", GOLD, pdf.getName()));

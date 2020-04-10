@@ -9,7 +9,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 import java.text.MessageFormat;
 
-@SuppressWarnings("ResultOfMethodCallIgnored")
 public class Configuration {
 
     private final Fraud fraud;
@@ -66,7 +65,7 @@ public class Configuration {
         for(Messages message : Messages.values()) {
             if(!message.isEditable()) continue;
             if(getString("messages." + message.getConfig()) == null || getString("messages." + message.getConfig()).equals("null")) {
-                System.err.println("An error occur during the initialisation of the messages:");
+                System.err.println("An error occur during the initialisation of a message:");
                 System.err.println("getString(\"messages." + message.getConfig() + "\") return " + getString("messages." + message.getConfig()));
                 continue;
             }

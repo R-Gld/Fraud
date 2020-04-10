@@ -7,7 +7,6 @@ public class Console {
 
     public Console() {}
 
-
     public void sm(String message) {
         sendMessage(message);
     }
@@ -23,6 +22,4 @@ public class Console {
     private void sendMessage() {
         sm("");
     }
-
-
 }

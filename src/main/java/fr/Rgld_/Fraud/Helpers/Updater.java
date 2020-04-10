@@ -6,7 +6,6 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
 import org.bukkit.entity.Player;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -55,20 +54,25 @@ public class Updater implements Runnable {
         }
     }
 
-    @Override
-    public void run() {
+    public String getLatestVersionFormatted() {
         JSONObject obj;
         try {
             obj = (JSONObject) new JSONParser().parse(getLatestVersion());
         } catch(ParseException parseException) {
             System.err.println("An error occur while executing the updater: " + parseException.getMessage());
-            return;
+            return "ERRORE";
         }
-        String version = (String) obj.get("name");
-        Long vFormat = Long.valueOf(version.replace(".", ""));
+        return (String) obj.get("name");
+    }
+
+    @Override
+    public void run() {
+        String version = getLatestVersionFormatted();
+        double vFormat = Double.parseDouble(version)*10;
         String actualVersion = fraud.getDescription().getVersion();
-        Long actualVFormat = Long.valueOf(actualVersion.replace(".", ""));
-        Long actualVBcFormat = Long.valueOf(fraud.actualVersionBc);
+        fraud.actualVersionBc = actualVersion;
+        double actualVFormat = Double.parseDouble(actualVersion)*10;
+        double actualVBcFormat = Double.parseDouble(fraud.actualVersionBc)*10;
         if(actualVFormat < vFormat || actualVBcFormat < vFormat) {
             String url = "https://www.spigotmc.org/resources/fraud.69872/";
             if(fraud.getConfiguration().autoDownloadLatest()) {
@@ -92,7 +96,7 @@ public class Updater implements Runnable {
                                 "§eA new Update of §6Fraud §ehas been installed !\n" +
                                 "§eYou have to restart the plugin or the server to update the plugin.\n" +
                                 "§8§nLast Version:§7 " + actualVersion + "\n" +
-                                "§8§nActual Version just instaled:§7 " + version + "\n" +
+                                "§8§nActual Version just installed:§7 " + version + "\n" +
                                 "\n" +
                                 "§6§m---------------------------------------");
             } else {
@@ -138,7 +142,7 @@ public class Updater implements Runnable {
                     Integer.MAX_VALUE);
             return true;
         } catch(IOException | URISyntaxException e) {
-                    e.printStackTrace();
+            e.printStackTrace();
             return false;
         }
     }

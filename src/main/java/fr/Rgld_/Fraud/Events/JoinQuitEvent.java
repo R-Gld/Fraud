@@ -15,7 +15,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,12 +31,12 @@ public class JoinQuitEvent implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
         Configuration config = fraud.getConfiguration();
-        if(!config.alertOnJoinIsEnabled()) return;
 
         Player p = e.getPlayer();
         if(p.hasPermission("fraud.bypass.ip")) return;
         Datas data = fraud.getDatas();
         data.putPlayer(p);
+        if(!config.alertOnJoinIsEnabled()) return;
         List<String> altsList = Lists.newArrayList();
         altsList.addAll(data.getList(p));
         int altsNum = altsList.size();
@@ -57,7 +56,7 @@ public class JoinQuitEvent implements Listener {
                     altsList.set(i, (Utils.isConnected(abc) ? ChatColor.GREEN + abc : ChatColor.RED + abc));
                 }
 
-                String formatted = MessageFormat.format(Messages.ALTS_DETECTED.getMessage(), p.getName(), Utils.joinList(altsList));
+                String formatted = Messages.ALTS_DETECTED.format(p.getName(), Utils.joinList(altsList));
                 fraud.getConsole().sendMessage(formatted);
                 for(Player pls : Bukkit.getOnlinePlayers()) {
                     if(pls.hasPermission("fraud.receive.alert")) {

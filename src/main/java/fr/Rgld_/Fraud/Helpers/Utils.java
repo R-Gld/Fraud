@@ -3,9 +3,7 @@ package fr.Rgld_.Fraud.Helpers;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Pattern;
 
 public class Utils {
@@ -56,5 +54,62 @@ public class Utils {
             }
         }
         return buf.toString();
+    }
+
+
+    /**
+     * Method taken into EssentialsX (com.earth2me.essentials.utils.DateUtil) adapted for this plugin.
+     * Download link to essentialsX: https://www.spigotmc.org/resources/essentialsx.9089/
+     */
+    public static String formatDate(long time) {
+        boolean future = false;
+        Calendar c = new GregorianCalendar(); /* -> */ c.setTimeInMillis(time);
+        Calendar now = new GregorianCalendar();
+        if(c.equals(now)) return Messages.NOW.getMessage();
+        if(c.after(now)) future = true;
+        StringBuilder sb = new StringBuilder();
+        int[] types = { 1, 2, 5, 11, 12, 13 };
+        String[] names =
+              { Messages.YEAR.getMessage(), Messages.YEARS.getMessage(),
+                Messages.MONTH.getMessage(), Messages.MONTHS.getMessage(),
+                Messages.DAY.getMessage(), Messages.DAYS.getMessage(),
+                Messages.HOUR.getMessage(), Messages.HOURS.getMessage(),
+                Messages.MINUTE.getMessage(), Messages.MINUTES.getMessage(),
+                Messages.SECOND.getMessage(), Messages.SECONDS.getMessage() };
+        int accuracy = 0;
+        for (int i = 0; i < types.length && accuracy <= 2; i++) {
+            int diff = dateDiff(types[i], now, c, future);
+            if (diff > 0) {
+                accuracy++;
+                sb.append(" ").append(diff).append(" ").append(names[i * 2 + ((diff > 1) ? 1 : 0)]);
+            }
+        }
+        if (sb.length() == 0) {
+            return Messages.NOW.getMessage();
+        }
+        return sb.toString().trim();
+    }
+
+
+    private static int dateDiff(int type, Calendar fromDate, Calendar toDate, boolean future) {
+        int year = 1;
+
+        int fromYear = fromDate.get(year);
+        int toYear = toDate.get(year);
+        if (Math.abs(fromYear - toYear) > 100000) {
+            toDate.set(year, fromYear + (future ? 100000 : -100000));
+        }
+
+
+        int diff = 0;
+        long savedDate = fromDate.getTimeInMillis();
+        while ((future && !fromDate.after(toDate)) || (!future && !fromDate.before(toDate))) {
+            savedDate = fromDate.getTimeInMillis();
+            fromDate.add(type, future ? 1 : -1);
+            diff++;
+        }
+        diff--;
+        fromDate.setTimeInMillis(savedDate);
+        return diff;
     }
 }

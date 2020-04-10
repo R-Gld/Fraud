@@ -5,6 +5,9 @@ import fr.Rgld_.Fraud.Fraud;
 import fr.Rgld_.Fraud.Helpers.Messages;
 import fr.Rgld_.Fraud.Helpers.Utils;
 import fr.Rgld_.Fraud.Storage.Datas;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -21,21 +24,28 @@ import java.util.List;
 public class FraudCommand implements CommandExecutor, TabCompleter {
 
     private final Fraud fraud;
+    private Datas datas;
     public FraudCommand(Fraud fraud) {
         this.fraud = fraud;
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        Datas datas = fraud.getDatas();
+        this.datas = fraud.getDatas();
         switch(args.length) {
             case 0:
                 break;
             case 1:
                 switch(args[0].toLowerCase()) {
+                    case "v":
                     case "version":
                         String version = fraud.getDescription().getVersion();
-                        sender.sendMessage("Fraud version: " + (version.startsWith("v") ? version : "v" + version));
+                        double dVersion = Double.parseDouble(version);
+                        String latest = fraud.getUpdater().getLatestVersionFormatted();
+                        double dLatest = Double.parseDouble(latest);
+                        sender.sendMessage(ChatColor.GRAY + "Actual Fraud version: " + (version.startsWith("v") ? version : "v" + version));
+                        sender.sendMessage(ChatColor.GRAY + "Latest Fraud version: " + (latest.startsWith("v") ? latest : "v" + latest));
+                        sender.sendMessage(ChatColor.DARK_GRAY + (dLatest>dVersion ? "Not Up-to-date" : (dLatest==dVersion ? "Up-to-date" : "Ur a precursor :o")));
                         return false;
                     case "reload":
                         if(!sender.hasPermission("fraud.reload")) {
@@ -70,7 +80,7 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
                         return false;
                     case "contact":
                         sender.sendMessage("§6§lYou can contact the developer of this plugin via:");
-                        sender.sendMessage("§6 - Discord: §e§l§oRomain | Rgld_#8275");
+                        sender.sendMessage("§6 - Discord: §e§l§oRomain | Rgld_#5344");
                         sender.sendMessage("§6 - Email: §e§l§ospigot@rgld.fr");
                         return false;
                     case "all":
@@ -99,31 +109,40 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
                         }
                         return false;
                     case "download":
+                        if(!sender.hasPermission("fraud.download")) {
+                            sender.sendMessage(Messages.NO_PERMISSION.getMessage());
+                            return false;
+                        }
                         if(fraud.getUpdater().downloadAndInstall()) {
                             sender.sendMessage(ChatColor.GOLD + "The download of the latest release of Fraud was a " + ChatColor.YELLOW + "success" + ChatColor.GOLD + ".");
                             sender.sendMessage(ChatColor.GOLD + "The new release of Fraud will be effective at the next restart or reload of the plugin. You can use a plugin like PlugMan to reload just one plugin.");
                         } else {
                             sender.sendMessage(ChatColor.GOLD + "The download of the latest release of Fraud was a " + ChatColor.YELLOW + "failure" + ChatColor.GOLD + ".");
                         }
+                        sender.sendMessage(ChatColor.GRAY + "§o(You can download it manually with this url: " + ChatColor.BLUE + "§nhttp://fraud.rgld.fr" + ChatColor.GRAY + "§o)");
                         return false;
                 }
                 break;
             case 2:
+                String arg1 = args[1];
                 switch(args[0].toLowerCase()) {
                     case "check":
-                        if(!sender.hasPermission("fraud.check.player.one")) {
+                        if(!sender.hasPermission("fraud.check.player.one") && !arg1.equals(sender.getName())) {
                             sender.sendMessage(Messages.NO_PERMISSION.getMessage());
                             return false;
                         }
                         Player target;
-                        String arg1 = args[1];
                         try {
                             target = Bukkit.getPlayer(arg1);
                         } catch(NullPointerException e) {
                             target = null;
                         }
                         if(target != null) {
-                            listAlts(datas.getList(target), sender, !target.getName().equals(target.getDisplayName()) ? target.getName() + "§8(" + target.getDisplayName() + "§8)" : target.getName(), false);
+                            listAlts(
+                                    datas.getList(target),
+                                    sender,
+                                    !target.getName().equals(target.getDisplayName()) ? target.getName() + "§8(" + target.getDisplayName() + "§8)" : target.getName(),
+                                    false);
                         } else {
                             if(Utils.isValidIP(arg1)) {
                                 if(sender.hasPermission("fraud.check.ip")) {
@@ -138,13 +157,29 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
                         }
                         return false;
                     case "forgot":
-                        String name = args[1];
-                        if(datas.isEverRegistered(name)) {
-                            datas.forgotPlayer(name);
-                            sender.sendMessage(Messages.PLAYER_FORGOTTEN.getMessage());
-                        } else {
-                            sender.sendMessage(Messages.NOT_IN_DATAS.getMessage());
+                        if(datas.isRegisteredInIps(arg1)) {
+                            datas.forgotPlayer(arg1);
+                            sender.sendMessage(Messages.PLAYER_FORGOTTEN.format(arg1));
+                        } else sender.sendMessage(Messages.NOT_IN_DATAS.format(arg1));
+                        return false;
+                    case "info":
+                        List<String> alts = datas.getListByPseudo(arg1);
+                        if(!sender.hasPermission("fraud.info") && !alts.contains(arg1)) {
+                            sender.sendMessage(Messages.NO_PERMISSION.getMessage());
+                            return false;
                         }
+                        if(datas.isFullRegistered(arg1)) {
+                            sender.sendMessage(Messages.INFO_HEADER.format(arg1));
+                            for(String alt : alts) {
+                                sender.sendMessage(
+                                        Messages.INFO_ITERATION.format(
+                                                (Utils.isConnected(alt) ? ChatColor.GREEN + alt : ChatColor.RED + alt), // {0}
+                                                Utils.formatDate(datas.getFirstJoin(alt)), // {1}
+                                                Utils.formatDate(datas.getLastJoin(alt)) // {2}
+                                        )
+                                );
+                            }
+                        } else sender.sendMessage(Messages.NOT_IN_DATAS.format(arg1));
                         return false;
                 }
                 break;
@@ -167,6 +202,13 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
         }
         String joined = Utils.joinList(copyOfList);
         sender.sendMessage(MessageFormat.format((all ? Messages.ALL_ALTS_ASKED.getMessage() : Messages.ALTS_ASKED.getMessage()), target, joined));
+        String name = copyOfList.get(0).substring(2);
+        if(sender instanceof Player && datas.isFullRegistered(name)) {
+            TextComponent info = new TextComponent("   §e§l➤ (i)");
+            info.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(Messages.INFO_HOVER.getMessage())));
+            info.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/fraud info " + name));
+            ((Player) sender).spigot().sendMessage(info);
+        }
     }
 
     @Override
@@ -193,17 +235,21 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
                     list = Lists.newArrayList("download");
                 } else if(str.startsWith("f")) {
                     list = Lists.newArrayList("forgot");
+                } else if(str.startsWith("i")) {
+                    list = Lists.newArrayList("info");
                 } else if(str.startsWith("r")) {
                     list = Lists.newArrayList("reload");
                 } else if(str.startsWith("v")) {
-                    list = Lists.newArrayList("version");
+                    if(!str.equals("v")) {
+                        list = Lists.newArrayList("version");
+                    } else list = Lists.newArrayList("v", "version");
                 } else {
-                    list = Lists.newArrayList("all", "check", "clean-datas", "contact", "download", "forgot", "reload", "version");
+                    list = Lists.newArrayList("all", "check", "clean-datas", "contact", "download", "forgot", "info", "reload", "v", "version");
                 }
                 break;
             case 2:
                 String arg = args[0].toLowerCase();
-                if(arg.equals("check") || arg.equals("forgot")) list = null;
+                if(arg.equals("check") || arg.equals("forgot") || arg.equals("info")) list = null;
                 else list = Lists.newArrayList();
                 break;
         }
@@ -220,6 +266,7 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
         sender.sendMessage(Messages.HELP_COMMAND_CONTACT.format(label));
         sender.sendMessage(Messages.HELP_COMMAND_DOWNLOAD.format(label));
         sender.sendMessage(Messages.HELP_COMMAND_FORGOT.format(label));
+        sender.sendMessage(Messages.HELP_COMMAND_INFO.format(label));
         sender.sendMessage(Messages.HELP_COMMAND_RELOAD.format(label));
         sender.sendMessage(Messages.HELP_COMMAND_VERSION.format(label));
         sender.sendMessage("");
