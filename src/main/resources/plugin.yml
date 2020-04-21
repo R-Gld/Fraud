@@ -1,6 +1,6 @@
 name: Fraud
 author: Rgld_
-version: 1.4 # Only chars accepted for the version: "0123456789."
+version: 1.5 # Only chars accepted for the version: "0123456789."
 description: Detects if a player is fraudding the server.
 website: https://www.spigotmc.org/resources/fraud-alts-finder.69872/
 main: fr.Rgld_.Fraud.Fraud

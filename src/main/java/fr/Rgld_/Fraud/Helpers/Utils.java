@@ -1,5 +1,6 @@
 package fr.Rgld_.Fraud.Helpers;
 
+import com.google.common.collect.Lists;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -77,17 +78,19 @@ public class Utils {
                 Messages.MINUTE.getMessage(), Messages.MINUTES.getMessage(),
                 Messages.SECOND.getMessage(), Messages.SECONDS.getMessage() };
         int accuracy = 0;
-        for (int i = 0; i < types.length && accuracy <= 2; i++) {
+        for(int i = 0; i < types.length && accuracy <= 2; i++) {
             int diff = dateDiff(types[i], now, c, future);
-            if (diff > 0) {
+            if(diff > 0) {
                 accuracy++;
                 sb.append(" ").append(diff).append(" ").append(names[i * 2 + ((diff > 1) ? 1 : 0)]);
             }
         }
-        if (sb.length() == 0) {
+        if(sb.length() == 0) {
             return Messages.NOW.getMessage();
         }
-        return sb.toString().trim();
+        LinkedList<String> words = new LinkedList<>(Lists.newArrayList(sb.toString().trim().split(" ")));
+        words.add(words.size() - 2, Messages.AND.getMessage());
+        return String.join(" ", words);
     }
 
 
@@ -99,7 +102,6 @@ public class Utils {
         if (Math.abs(fromYear - toYear) > 100000) {
             toDate.set(year, fromYear + (future ? 100000 : -100000));
         }
-
 
         int diff = 0;
         long savedDate = fromDate.getTimeInMillis();

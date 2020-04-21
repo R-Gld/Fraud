@@ -20,28 +20,30 @@ import static org.bukkit.ChatColor.*;
 public class Fraud extends JavaPlugin {
 
     public String actualVersionBc = "";
+    private Updater updater;
     private Configuration configuration;
     private Datas datas;
-    private Console c;
-    private Updater updater;
 
     public Configuration getConfiguration() {
         return configuration;
     }
 
+    private Console c;
+
     public Datas getDatas() {
         return datas;
     }
+
     public void setDatas(Datas datas) {
         this.datas = datas;
     }
 
-    public Console getConsole() {
-        return c;
-    }
-
     public Updater getUpdater() {
         return updater;
+    }
+
+    public Console getConsole() {
+        return c;
     }
 
     @Override
@@ -111,7 +113,7 @@ public class Fraud extends JavaPlugin {
         c.sm(MessageFormat.format("{0}--- {1} ---", GOLD, pdf.getName()));
         c.sm();
 
-        c.sm(RED + "Disabling Fraud...");
+        c.sm(RED + "Disabling " + pdf.getName() + "...");
 
         c.sm();
         c.sm(MessageFormat.format("{0}--- {1} ---", GOLD, pdf.getName()));
@@ -131,7 +133,6 @@ public class Fraud extends JavaPlugin {
         void register() {
             a(new JoinQuitEvent(fraud));
         }
-
         private void a(Listener listener) {
             Bukkit.getPluginManager().registerEvents(listener, fraud);
         }

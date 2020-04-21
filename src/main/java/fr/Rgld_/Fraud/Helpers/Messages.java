@@ -36,24 +36,14 @@ public enum Messages {
     // Time Messages
     YEAR("time.year", true),
     YEARS("time.years", true),
-    MONTH("time.month", true),
-    MONTHS("time.months", true),
-    DAY("time.day", true),
-    DAYS("time.days", true),
-    HOUR("time.hour", true),
-    HOURS("time.hours", true),
-    MINUTE("time.minute", true),
-    MINUTES("time.minutes", true),
-    SECOND("time.second", true),
-    SECONDS("time.seconds", true),
-    NOW("time.now", true),
+    MONTH("time.month", true), MONTHS("time.months", true), DAY("time.day", true), DAYS("time.days", true), HOUR("time.hour", true), HOURS("time.hours", true), MINUTE("time.minute", true), MINUTES("time.minutes", true), SECOND("time.second", true), SECONDS("time.seconds", true), NOW("time.now", true), AND("time.and", true),
 
     // final messages.
-    COMMAND_CLEAN_DATA_YES("§6The datas has been reset.", false),
-    COMMAND_CLEAN_DATA_NO("§cAn error occur during the reset of datas. Please call an administrator or the developer of this plugin via /{0} contact.", false),
+    COMMAND_CLEAN_DATA_YES("§6The datas has been reset.", false), COMMAND_CLEAN_DATA_NO("§cAn error occur during the reset of datas. Please call an administrator or the developer of this plugin via /{0} contact.", false),
     ;
 
     private static final String defaultMessage = "§6§l§nPlease contact the developer to report this bug: /fraud contact !";
+
     private String getNotConfigurableDefaultMessage() {
         return "not editable";
     }

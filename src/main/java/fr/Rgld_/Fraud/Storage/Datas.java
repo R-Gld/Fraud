@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.sql.*;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("ALL")
@@ -27,18 +28,17 @@ public class Datas {
     }
 
     private Connection connect() throws SQLException, ClassNotFoundException {
-        File dataFolder = fraud.getDataFolder();
         if(!file.exists()) try {
             file.createNewFile();
         } catch(IOException e) {
             e.printStackTrace();
         }
-
         Class.forName("org.sqlite.JDBC");
         return DriverManager.getConnection("jdbc:sqlite:" + file.getAbsolutePath().replace("\\", File.separator));
     }
 
 
+    // ALTER TABLE ips ADD last boolean DEFAULT true
     private void createIpsTable() {
         try(Connection connection = connect()) {
             String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME_ips + "(id integer PRIMARY KEY,pseudo text NOT NULL,ip text NOT NULL);";
@@ -120,6 +120,21 @@ public class Datas {
         } catch(SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
+    }
+
+    public ArrayList<String> getAllConnectionsPseudo() {
+        ArrayList<String> pseudos = Lists.newArrayList();
+        try(Connection connection = connect()) {
+            String sql = MessageFormat.format("SELECT pseudo FROM `{0}`", TABLE_NAME_connection);
+            PreparedStatement psst = connection.prepareStatement(sql);
+            ResultSet rs = psst.executeQuery();
+            while(rs.next()) {
+                pseudos.add(rs.getString("pseudo"));
+            }
+        } catch(SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return pseudos;
     }
 
     public long getFirstJoin(String pseudo) {

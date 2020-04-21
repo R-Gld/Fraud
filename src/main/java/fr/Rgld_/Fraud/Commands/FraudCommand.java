@@ -237,11 +237,10 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
                 break;
             case 2:
                 String arg = args[0].toLowerCase();
-                if(arg.equals("check") || arg.equals("forgot") || arg.equals("info")) list = null;
-                else list = Lists.newArrayList();
+                if(arg.equals("check") || arg.equals("forgot")) list = null;
+                else if(arg.equals("info")) list = datas.getAllConnectionsPseudo();
                 break;
         }
-        if(args.length > 2) list = Lists.newArrayList();
         return list;
     }
 
