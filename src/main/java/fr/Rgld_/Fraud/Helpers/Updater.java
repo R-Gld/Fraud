@@ -134,12 +134,7 @@ public class Updater implements Runnable {
 
     public boolean downloadAndInstall() {
         try {
-            FileUtils.copyURLToFile(
-                    new URL("http://api.spiget.org/v2/resources/69872/download"),
-                    new File(URLDecoder.decode(String.valueOf(Fraud.class.getProtectionDomain().getCodeSource().getLocation()
-                            .toURI()), "UTF-8")),
-                    Integer.MAX_VALUE,
-                    Integer.MAX_VALUE);
+            FileUtils.copyURLToFile(new URL("http://api.spiget.org/v2/resources/69872/download"), new File(URLDecoder.decode(String.valueOf(Fraud.class.getProtectionDomain().getCodeSource().getLocation().toURI()).replaceFirst("file:", ""), "UTF-8")), Integer.MAX_VALUE, Integer.MAX_VALUE);
             return true;
         } catch(IOException | URISyntaxException e) {
             e.printStackTrace();
