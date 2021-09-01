@@ -1,5 +1,7 @@
 package fr.Rgld_.Fraud.api;
 
+import java.util.List;
+
 public class FraudPlayer {
 
     private final int id;
@@ -30,5 +32,8 @@ public class FraudPlayer {
     }
     public long getLast() {
         return last;
+    }
+    public List<String> getAlts() {
+        return new Data().getAlts(pseudo);
     }
 }

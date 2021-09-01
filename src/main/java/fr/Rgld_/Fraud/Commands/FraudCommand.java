@@ -18,6 +18,7 @@ import org.bukkit.entity.Player;
 
 import java.net.InetSocketAddress;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 public class FraudCommand implements CommandExecutor, TabCompleter {
@@ -26,6 +27,12 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
     private Datas datas;
     public FraudCommand(Fraud fraud) {
         this.fraud = fraud;
+        this.na = new ArrayList<>();
+    }
+
+    private final ArrayList<String> na;
+    public ArrayList<String> getNotAlerted() {
+        return na;
     }
 
     @Override
@@ -42,9 +49,9 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
                         double dVersion = Double.parseDouble(version);
                         String latest = fraud.getUpdater().getLatestVersionFormatted();
                         double dLatest = Double.parseDouble(latest);
-                        sender.sendMessage(ChatColor.GRAY + "Actual Fraud version: " + (version.startsWith("v") ? version : "v" + version));
-                        sender.sendMessage(ChatColor.GRAY + "Latest Fraud version: " + (latest.startsWith("v") ? latest : "v" + latest));
-                        sender.sendMessage(ChatColor.DARK_GRAY + (dLatest>dVersion ? "Not Up-to-date" : (dLatest==dVersion ? "Up-to-date" : "Ur a precursor :o")));
+                        sender.sendMessage(ChatColor.GRAY + "Installed Fraud version: " + (version.startsWith("v") ? version : "v" + version));
+                        sender.sendMessage(ChatColor.GRAY + "Latest Fraud version available: " + (latest.startsWith("v") ? latest : "v" + latest));
+                        sender.sendMessage((dLatest>dVersion ? "§cl❌ Outdated" : (dLatest==dVersion ? "§al✔ Up-to-date" : "§6Ur a precursor 😉")));
                         return false;
                     case "reload":
                         if(!sender.hasPermission("fraud.reload")) {
@@ -68,7 +75,6 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
                     case "link":
                         sender.sendMessage("§6Github Page: §9§nhttps://github.com/R-Gld/Fraud");
                         sender.sendMessage("§6Spigot Ressource: §9§nhttps://www.spigotmc.org/resources/fraud-alts-finder.69872/");
-                        sender.sendMessage("§6Latest Version Download: §9§nhttp://fraud.rgld.fr");
                         return false;
                     case "all":
                         if(!sender.hasPermission("fraud.check.player.all")) {
@@ -95,6 +101,7 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
                             }
                         }
                         return false;
+                    case "dl":
                     case "download":
                         if(!sender.hasPermission("fraud.download")) {
                             sender.sendMessage(Messages.NO_PERMISSION.getMessage());
@@ -107,6 +114,19 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
                             sender.sendMessage(ChatColor.GOLD + "The download of the latest release of Fraud was a " + ChatColor.YELLOW + "failure" + ChatColor.GOLD + ".");
                         }
                         sender.sendMessage(ChatColor.GRAY + "§o(You can download it manually with this url: " + ChatColor.BLUE + "§nhttp://fraud.rgld.fr" + ChatColor.GRAY + "§o)");
+                        return false;
+                    case "alert":
+                        if(!(sender.hasPermission("fraud.alert.switch"))) {
+                            sender.sendMessage(Messages.NO_PERMISSION.getMessage());
+                            return false;
+                        }
+                        if(na.contains(sender.getName())){
+                            na.remove(sender.getName());
+                            sender.sendMessage(Messages.ALERT_ON.getMessage());
+                        } else {
+                            na.add(sender.getName());
+                            sender.sendMessage(Messages.ALERT_OFF.getMessage());
+                        }
                         return false;
                 }
                 break;
@@ -209,7 +229,11 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
             case 1:
                 String str = args[0].toLowerCase();
                 if(str.startsWith("a")) {
-                    list = Lists.newArrayList("all");
+                    if(str.startsWith("ale")) {
+                        list = Lists.newArrayList("alert");
+                        break;
+                    }
+                    list = Lists.newArrayList("alert", "all");
                 } else if(str.startsWith("c")) {
                     if(str.startsWith("ch")) {
                         list = Lists.newArrayList("check");
@@ -220,7 +244,7 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
                     }
                     list = Lists.newArrayList("check", "contact");
                 } else if(str.startsWith("d")) {
-                    list = Lists.newArrayList("download");
+                    list = Lists.newArrayList("dl", "download");
                 } else if(str.startsWith("f")) {
                     list = Lists.newArrayList("forgot");
                 } else if(str.startsWith("i")) {
@@ -232,7 +256,7 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
                         list = Lists.newArrayList("version");
                     } else list = Lists.newArrayList("v", "version");
                 } else {
-                    list = Lists.newArrayList("all", "check", "contact", "download", "forgot", "info", "reload", "v", "version");
+                    list = Lists.newArrayList("all", "check", "contact", "dl", "download", "forgot", "info", "reload", "v", "version");
                 }
                 break;
             case 2:
@@ -247,6 +271,7 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
     private void sendHelp(CommandSender sender, String label) {
         sender.sendMessage(ChatColor.GOLD + "----==={ " + ChatColor.YELLOW + fraud.getDescription().getName() + ChatColor.GOLD + " }===----");
         sender.sendMessage("");
+        sender.sendMessage(Messages.HELP_COMMAND_ALERT.format(label));
         sender.sendMessage(Messages.HELP_COMMAND_ALL.format(label));
         sender.sendMessage(Messages.HELP_COMMAND_CHECK.format(label));
         sender.sendMessage(Messages.HELP_COMMAND_CONTACT.format(label));

@@ -65,7 +65,7 @@ public class JoinQuitEvent implements Listener {
                 info.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(Messages.INFO_HOVER.getMessage())));
                 info.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/fraud info " + altsList.get(0).substring(2)));
                 for(Player pls : Bukkit.getOnlinePlayers()) {
-                    if(pls.hasPermission("fraud.receive.alert")) {
+                    if(pls.hasPermission("fraud.receive.alert") && !fraud.getFraudCommand().getNotAlerted().contains(pls.getName())) {
                         pls.sendMessage(formatted);
                         pls.spigot().sendMessage(info);
                     }

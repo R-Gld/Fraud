@@ -23,12 +23,16 @@ public class Fraud extends JavaPlugin {
     private Updater updater;
     private Configuration configuration;
     private Datas datas;
+    private Console c;
+    private FraudCommand fraudCommand;
+
+    public Updater getUpdater() {
+        return updater;
+    }
 
     public Configuration getConfiguration() {
         return configuration;
     }
-
-    private Console c;
 
     public Datas getDatas() {
         return datas;
@@ -38,12 +42,12 @@ public class Fraud extends JavaPlugin {
         this.datas = datas;
     }
 
-    public Updater getUpdater() {
-        return updater;
-    }
-
     public Console getConsole() {
         return c;
+    }
+
+    public FraudCommand getFraudCommand() {
+        return fraudCommand;
     }
 
     @Override
@@ -65,9 +69,9 @@ public class Fraud extends JavaPlugin {
 
         try {
             PluginCommand fraudPluginCommand = getCommand("fraud");
-            FraudCommand fraudClass = new FraudCommand(this);
-            fraudPluginCommand.setExecutor(fraudClass);
-            fraudPluginCommand.setTabCompleter(fraudClass);
+            fraudCommand = new FraudCommand(this);
+            fraudPluginCommand.setExecutor(fraudCommand);
+            fraudPluginCommand.setTabCompleter(fraudCommand);
             c.sm(GREEN + "Commands register success.");
         } catch(Exception e) {
             c.sm(RED + "Commands register failed: ");
@@ -97,10 +101,17 @@ public class Fraud extends JavaPlugin {
             t.printStackTrace();
         }
 
-        if(configuration.checkForUpdate()) {
-            Bukkit.getScheduler().scheduleSyncRepeatingTask(
-                    this, this::launchUpdater,
-                    0, 5 * 60 * 5);
+        try {
+            this.updater = new Updater(this);
+            c.sm(GREEN + "Updater launched with success.");
+            if(configuration.checkForUpdate()) {
+                Bukkit.getScheduler().scheduleSyncRepeatingTask(
+                        this, this::launchUpdater,
+                        0, 5 * 60 * 5);
+            }
+        } catch(Throwable t) {
+            c.sm(RED + "Updated failed to launch.");
+            t.printStackTrace();
         }
 
         c.sm();
@@ -120,12 +131,11 @@ public class Fraud extends JavaPlugin {
     }
 
     private void launchUpdater() {
-        new Thread(this.updater = new Updater(this)).start();
+        new Thread(new Updater(this)).start();
     }
 
     private static class EventManager {
         final Fraud fraud;
-
         EventManager(Fraud fraud) {
             this.fraud = fraud;
         }

@@ -21,6 +21,7 @@ public enum Messages {
     HELP_COMMAND_RELOAD("help.command.reload", true),
     HELP_COMMAND_VERSION("help.command.version", true),
     HELP_COMMAND_INFO("help.command.info", true),
+    HELP_COMMAND_ALERT("help.command.alert", true),
     NO_ALTS("no alts", true),
     NO_PERMISSION("no permission", true),
     NOT_IN_DATAS("not in datas", true),
@@ -28,6 +29,9 @@ public enum Messages {
     PREFIX("prefix", true),
     RELOAD_SUCCESS("reload.success", true),
     RELOAD_FAILED("reload.failed", true),
+
+    ALERT_ON("alert.on_", true),
+    ALERT_OFF("alert.off_", true),
 
     INFO_HEADER("info.header", true),
     INFO_ITERATION("info.player", true),
@@ -53,7 +57,7 @@ public enum Messages {
 
     Messages(String value, boolean isConfigurable) {
         if(isConfigurable) {
-            this.message = defaultMessage + ChatColor.GRAY + ChatColor.ITALIC + "(" + this.toString() + ")";
+            this.message = defaultMessage + ChatColor.GRAY + ChatColor.ITALIC + "(" + this + ")";
             this.config = value;
         } else {
             this.message = value;

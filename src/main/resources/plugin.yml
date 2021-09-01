@@ -1,6 +1,6 @@
 name: Fraud
 author: Rgld_
-version: 1.5 # Only chars accepted for the version: "0123456789."
+version: 1.7 # Only chars accepted for the version: "0123456789."
 description: Detects if a player is fraudding the server.
 website: https://www.spigotmc.org/resources/fraud-alts-finder.69872/
 main: fr.Rgld_.Fraud.Fraud
@@ -60,6 +60,9 @@ permissions:
   fraud.receive.alert:
     default: op
     description: When a player join for the first time the server, all the player who has this permission will receive a message if this player have a alt.
+  fraud.alert.switch:
+    default: op
+    description: Allows someone who receives the alerts to disable them. (/fd alert)
   fraud.check.player.one:
     default: op
     description: Let a player check if an other player has some alts.
@@ -83,7 +86,7 @@ permissions:
     description: Let a player download the latest version of the plugin on spigot.
   fraud.info:
     default: op
-    description: Let a player execute the /fd info
+    description: Let a player execute the /fd info.
   fraud.forgot:
     default: op
-    description: Let a player delete an entry into the database
+    description: Let a player delete an entry into the database.

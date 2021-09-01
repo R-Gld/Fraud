@@ -56,7 +56,6 @@ public class Datas {
         }
     }
 
-
     public File getFile() {
         return file;
     }

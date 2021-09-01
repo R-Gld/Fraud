@@ -19,6 +19,8 @@ import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class Updater implements Runnable {
 
@@ -134,7 +136,11 @@ public class Updater implements Runnable {
 
     public boolean downloadAndInstall() {
         try {
-            FileUtils.copyURLToFile(new URL("http://api.spiget.org/v2/resources/69872/download"), new File(URLDecoder.decode(String.valueOf(Fraud.class.getProtectionDomain().getCodeSource().getLocation().toURI()).replaceFirst("file:", ""), "UTF-8")), Integer.MAX_VALUE, Integer.MAX_VALUE);
+            final String name = URLDecoder.decode(String.valueOf(Fraud.class.getProtectionDomain().getCodeSource().getLocation().toURI()).replaceFirst("file:", "") + "_new", "UTF-8");
+            final String original = name.substring(0, name.length() - 4);
+            FileUtils.copyURLToFile(new URL("https://cdn.spiget.org/file/spiget-resources/69872.jar"), new File(name));
+            Files.delete(Paths.get(original));
+            Files.move(Paths.get(name), Paths.get(original));
             return true;
         } catch(IOException | URISyntaxException e) {
             e.printStackTrace();
