@@ -89,14 +89,13 @@
                         </goals>
                         <configuration>
                             <minimizeJar>true</minimizeJar>
+                            <relocations>
+                                <relocation>
+                                    <pattern>org.bstats</pattern>
+                                    <shadedPattern>fr.Rgld_.bstats</shadedPattern>
+                                </relocation>
+                            </relocations>
                         </configuration>
-                        <relocations>
-                            <relocation>
-                                <pattern>org.bstats</pattern>
-
-                                <shadedPattern>fr.Rgld_.bstats</shadedPattern>
-                            </relocation>
-                        </relocations>
                     </execution>
                 </executions>
             </plugin>
