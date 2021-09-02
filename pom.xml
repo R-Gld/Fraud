@@ -56,6 +56,12 @@
             <version>1.1.1</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>org.bstats</groupId>
+            <artifactId>bstats-bukkit</artifactId>
+            <version>2.2.1</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -84,6 +90,13 @@
                         <configuration>
                             <minimizeJar>true</minimizeJar>
                         </configuration>
+                        <relocations>
+                            <relocation>
+                                <pattern>org.bstats</pattern>
+
+                                <shadedPattern>fr.Rgld_.bstats</shadedPattern>
+                            </relocation>
+                        </relocations>
                     </execution>
                 </executions>
             </plugin>
