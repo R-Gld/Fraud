@@ -67,7 +67,7 @@ public class Updater implements Runnable {
         return (String) obj.get("name");
     }
 
-    private double parseVersion(String version) {
+    public double parseVersion(String version) {
         String[] spl = version.split("\\.");
         if(spl.length <= 2) {
             return Double.parseDouble(version);

@@ -3,6 +3,7 @@ package fr.Rgld_.Fraud.Commands;
 import com.google.common.collect.Lists;
 import fr.Rgld_.Fraud.Fraud;
 import fr.Rgld_.Fraud.Helpers.Messages;
+import fr.Rgld_.Fraud.Helpers.Updater;
 import fr.Rgld_.Fraud.Helpers.Utils;
 import fr.Rgld_.Fraud.Storage.Datas;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -25,9 +26,12 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
 
     private final Fraud fraud;
     private Datas datas;
+
+    private Updater up;
     public FraudCommand(Fraud fraud) {
         this.fraud = fraud;
         this.na = new ArrayList<>();
+        this.up = fraud.getUpdater();
     }
 
     private final ArrayList<String> na;
@@ -46,12 +50,12 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
                     case "v":
                     case "version":
                         String version = fraud.getDescription().getVersion();
-                        double dVersion = Double.parseDouble(version);
-                        String latest = fraud.getUpdater().getLatestVersionFormatted();
-                        double dLatest = Double.parseDouble(latest);
+                        double dVersion = up.parseVersion(version);
+                        String latest = up.getLatestVersionFormatted();
+                        double dLatest = up.parseVersion(latest);
                         sender.sendMessage(ChatColor.GRAY + "Installed Fraud version: " + (version.startsWith("v") ? version : "v" + version));
                         sender.sendMessage(ChatColor.GRAY + "Latest Fraud version available: " + (latest.startsWith("v") ? latest : "v" + latest));
-                        sender.sendMessage((dLatest>dVersion ? "§cl❌ Outdated" : (dLatest==dVersion ? "§al✔ Up-to-date" : "§6Ur a precursor 😉")));
+                        sender.sendMessage((dLatest>dVersion ? "§c§l❌ §cOutdated" : (dLatest==dVersion ? "§a§l✔ §aUp-to-date" : "§6Ur a precursor 😉")));
                         return false;
                     case "reload":
                         if(!sender.hasPermission("fraud.reload")) {
