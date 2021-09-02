@@ -67,14 +67,28 @@ public class Updater implements Runnable {
         return (String) obj.get("name");
     }
 
+    private double parseVersion(String version) {
+        String[] spl = version.split("\\.");
+        if(spl.length <= 2) {
+            return Double.parseDouble(version);
+        } else {
+            StringBuilder bld = new StringBuilder();
+            bld.append(spl[0]).append(".");
+            for (int i = 1; i < spl.length; i++) {
+                bld.append(spl[i]);
+            }
+            return Double.parseDouble(bld.toString());
+        }
+    }
+
     @Override
     public void run() {
         String version = getLatestVersionFormatted();
-        double vFormat = Double.parseDouble(version)*10;
+        double vFormat = parseVersion(version);
         String actualVersion = fraud.getDescription().getVersion();
         fraud.actualVersionBc = actualVersion;
-        double actualVFormat = Double.parseDouble(actualVersion)*10;
-        double actualVBcFormat = Double.parseDouble(fraud.actualVersionBc)*10;
+        double actualVFormat = parseVersion(actualVersion);
+        double actualVBcFormat = parseVersion(fraud.actualVersionBc);
         if(actualVFormat < vFormat || actualVBcFormat < vFormat) {
             String url = "https://www.spigotmc.org/resources/fraud.69872/";
             if(fraud.getConfiguration().autoDownloadLatest()) {
