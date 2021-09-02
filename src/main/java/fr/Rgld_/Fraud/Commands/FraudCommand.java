@@ -27,11 +27,11 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
     private final Fraud fraud;
     private Datas datas;
 
-    private Updater up;
+    private final Updater up;
     public FraudCommand(Fraud fraud) {
         this.fraud = fraud;
         this.na = new ArrayList<>();
-        this.up = fraud.getUpdater();
+        this.up = new Updater(fraud);
     }
 
     private final ArrayList<String> na;
@@ -53,9 +53,9 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
                         double dVersion = up.parseVersion(version);
                         String latest = up.getLatestVersionFormatted();
                         double dLatest = up.parseVersion(latest);
-                        sender.sendMessage(ChatColor.GRAY + "Installed Fraud version: " + (version.startsWith("v") ? version : "v" + version));
-                        sender.sendMessage(ChatColor.GRAY + "Latest Fraud version available: " + (latest.startsWith("v") ? latest : "v" + latest));
-                        sender.sendMessage((dLatest>dVersion ? "§c§l❌ §cOutdated" : (dLatest==dVersion ? "§a§l✔ §aUp-to-date" : "§6Ur a precursor 😉")));
+                        sender.sendMessage(ChatColor.GRAY + "Installed Fraud version: v" + version);
+                        sender.sendMessage(ChatColor.GRAY + "Latest Fraud version available: v" + latest);
+                        sender.sendMessage((dLatest>dVersion ? "§c§l❌ §cOutdated" + "\n&c&lYou should download the new version, check /fraud link" : (dLatest==dVersion ? "§a§l✔ §aUp-to-date" : "§6Ur a precursor 😉")));
                         return false;
                     case "reload":
                         if(!sender.hasPermission("fraud.reload")) {
