@@ -6,6 +6,7 @@ import fr.Rgld_.Fraud.Helpers.Console;
 import fr.Rgld_.Fraud.Helpers.Updater;
 import fr.Rgld_.Fraud.Storage.Configuration;
 import fr.Rgld_.Fraud.Storage.Datas;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
@@ -111,6 +112,14 @@ public class Fraud extends JavaPlugin {
             }
         } catch(Throwable t) {
             c.sm(RED + "Updated failed to launch.");
+            t.printStackTrace();
+        }
+
+        try {
+            int pluginId = 12676;
+            new Metrics(this, pluginId);
+        } catch(Throwable t) {
+            c.sm(RED + "Metrics connection failed.");
             t.printStackTrace();
         }
 
