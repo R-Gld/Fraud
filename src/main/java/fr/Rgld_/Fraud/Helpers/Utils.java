@@ -89,18 +89,19 @@ public class Utils {
             return Messages.NOW.getMessage();
         }
         LinkedList<String> words = new LinkedList<>(Lists.newArrayList(sb.toString().trim().split(" ")));
-        words.add(words.size() - 2, Messages.AND.getMessage());
+        if(words.size() >1)
+            words.add(words.size() - 2, Messages.AND.getMessage());
         return String.join(" ", words);
     }
 
 
     private static int dateDiff(int type, Calendar fromDate, Calendar toDate, boolean future) {
-        int year = 1;
+        int _1 = 1;
 
-        int fromYear = fromDate.get(year);
-        int toYear = toDate.get(year);
+        int fromYear = fromDate.get(_1);
+        int toYear = toDate.get(_1);
         if (Math.abs(fromYear - toYear) > 100000) {
-            toDate.set(year, fromYear + (future ? 100000 : -100000));
+            toDate.set(_1, fromYear + (future ? 100000 : -100000));
         }
 
         int diff = 0;
