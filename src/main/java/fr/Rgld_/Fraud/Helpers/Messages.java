@@ -34,7 +34,8 @@ public enum Messages {
     ALERT_OFF("alert.off_", true),
 
     INFO_HEADER("info.header", true),
-    INFO_ITERATION("info.player", true),
+    INFO_HEADER_IP("info.header_ip", true),
+    INFO_PLAYER("info.player", true),
     INFO_HOVER("info.hover", true),
 
     // Time Messages

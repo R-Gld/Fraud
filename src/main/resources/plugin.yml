@@ -50,10 +50,10 @@ permissions:
   # Basic Permissions
   fraud.bypass.ip:
     default: op
-    description: If a player have this permission, his ip is not registered on the data's file(can be disabled by config).
+    description: If a player have this permission, his ip will not be registered on the data's file.
   fraud.bypass.alert:
     default: op
-    description: If a player have this permission, there will never be a double-count alert about it.
+    description: If a player have this permission, he will not cause alert to staff.
   fraud.notcause.alert:
     default: op
     description: The players who has the permission "fraud.receive.alert" never receive an alert from this player if the number of his alts is below the limit defined in the config.
@@ -87,6 +87,9 @@ permissions:
   fraud.info:
     default: op
     description: Let a player execute the /fd info.
+  fraud.info.ip:
+    default: op
+    description: Let the player that execute the /fd info get the ip of the player seen.
   fraud.forgot:
     default: op
     description: Let a player delete an entry into the database.

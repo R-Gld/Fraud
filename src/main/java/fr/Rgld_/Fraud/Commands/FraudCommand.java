@@ -184,10 +184,14 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
                             return false;
                         }
                         if(datas.isFullRegistered(arg1)) {
-                            sender.sendMessage(Messages.INFO_HEADER.format(arg1));
+                            if(sender.hasPermission("fraud.info.ip")) {
+                                sender.sendMessage(Messages.INFO_HEADER.format(arg1));
+                            } else {
+                                sender.sendMessage(Messages.INFO_HEADER_IP.format(arg1));
+                            }
                             for(String alt : alts) {
                                 sender.sendMessage(
-                                        Messages.INFO_ITERATION.format(
+                                        Messages.INFO_PLAYER.format(
                                                 (Utils.isConnected(alt) ? ChatColor.GREEN + alt : ChatColor.RED + alt), // {0}
                                                 Utils.formatDate(datas.getFirstJoin(alt)), // {1}
                                                 Utils.formatDate(datas.getLastJoin(alt)) // {2}

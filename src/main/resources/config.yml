@@ -32,10 +32,12 @@ messages:
   all alts announcer: "&cHere is the list of alts of all connected players:"
   all alts asked: "  &6{0}&c:\n      {1}"
   all alts empty: "&cThere is no players connected who has alts."
-  # {0} is the name of the player | {1} is the first join | {2} is the last join
   info:
     hover: "&6Click to get more information&6."
+    # {0} is the name of the player | {1} is the ip of the player
     header: "&cHere is the information about the alts of &6{0}&c:"
+    header_ip: "&cHere is the information about the alts of &6{0}&e&o({1})&c:"
+    # {0} is the name of the player | {1} is the first join | {2} is the last join
     player: "  &c- &6{0}&c:\n     &c• First Join: &6{1}\n     &c• Last Join: &6{2}"
   # {0} is the name of the player.
   no alts: "&6{0}&c never connected double accounts."
