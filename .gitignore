@@ -1,5 +1,6 @@
 .idea
 *.iml
 target/
-/.run/export_jar.run.xml
-/.run/Fraud [clean,install].run.xml
+.run/
+.github/
+/dependency-reduced-pom.xml
