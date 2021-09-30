@@ -2,9 +2,7 @@ package fr.Rgld_.Fraud.Commands;
 
 import com.google.common.collect.Lists;
 import fr.Rgld_.Fraud.Fraud;
-import fr.Rgld_.Fraud.Helpers.Messages;
-import fr.Rgld_.Fraud.Helpers.Updater;
-import fr.Rgld_.Fraud.Helpers.Utils;
+import fr.Rgld_.Fraud.Helpers.*;
 import fr.Rgld_.Fraud.Storage.Datas;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -48,6 +46,7 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
             case 1:
                 switch(args[0].toLowerCase()) {
                     case "v":
+                    case "checkupdate":
                     case "version":
                         String version = fraud.getDescription().getVersion();
                         double dVersion = up.parseVersion(version);
@@ -77,6 +76,7 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
                         sender.sendMessage("§6 - Email: §e§l§ospigot@rgld.fr");
                         return false;
                     case "link":
+                    case "links":
                         sender.sendMessage("§6Github Page: §9§nhttps://github.com/R-Gld/Fraud");
                         sender.sendMessage("§6Spigot Ressource: §9§nhttps://www.spigotmc.org/resources/fraud-alts-finder.69872/");
                         return false;
@@ -158,7 +158,11 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
                             if(Utils.isValidIP(arg1)) {
                                 if(sender.hasPermission("fraud.check.ip")) {
                                     InetSocketAddress add = new InetSocketAddress(arg1, 0);
-                                    listAlts(datas.getList(arg1), sender, (add.isUnresolved() ? add.getHostName() : add.getAddress().toString()), false);
+                                    listAlts(
+                                            datas.getList(arg1),
+                                            sender,
+                                            (add.isUnresolved() ? add.getHostName() : add.getAddress().toString()),
+                                            false);
                                 } else {
                                     sender.sendMessage(Messages.NO_PERMISSION.getMessage());
                                 }
@@ -184,10 +188,17 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
                             return false;
                         }
                         if(datas.isFullRegistered(arg1)) {
-                            if(sender.hasPermission("fraud.info.ip")) {
-                                sender.sendMessage(Messages.INFO_HEADER.format(arg1));
+                            String ip;
+                            if(Bukkit.getPlayer(arg1) != null) {
+                                Player p = Bukkit.getPlayer(arg1);
+                                ip = p.getAddress().toString().split(":")[0].substring(1);
                             } else {
-                                sender.sendMessage(Messages.INFO_HEADER_IP.format(arg1));
+                                ip = datas.getIP(arg1);
+                            }
+                            if(sender.hasPermission("fraud.info.ip")) {
+                                sender.sendMessage(Messages.INFO_HEADER_IP.format(arg1, ip));
+                            } else {
+                                sender.sendMessage(Messages.INFO_HEADER.format(arg1));
                             }
                             for(String alt : alts) {
                                 sender.sendMessage(
@@ -197,6 +208,22 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
                                                 Utils.formatDate(datas.getLastJoin(alt)) // {2}
                                         )
                                 );
+                            }
+                            if(sender.hasPermission("fraud.info.ip")) {
+                                if(!fraud.getIpInfoManager().getIpInfoMap().containsKey(ip))
+                                    sender.sendMessage(Messages.INFO_WAIT_FOR_THE_OTHER_PART.getMessage());
+
+                                Thread th = new Thread(() -> {
+                                    IPInfo ipInfo = fraud.getIpInfoManager().getIpInfo(ip);
+                                    String other_information = ipInfo.getFrom() +
+                                                     "/" +
+                                                     ipInfo.getNetname() +
+                                                     "/" +
+                                                     getDesc(ipInfo);
+                                    sender.sendMessage(Messages.INFO_IP_INFORMATION.format(ipInfo.getIp(), ipInfo.getCountry(), other_information));
+                                    System.out.println("ipInfo = " + ipInfo);
+                                });
+                                th.start();
                             }
                         } else sender.sendMessage(Messages.NOT_IN_DATAS.format(arg1));
                         return false;
@@ -208,7 +235,7 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
     }
 
     private void listAlts(List<String> listOfAlts, CommandSender sender, String target, boolean all) {
-        if(null == listOfAlts || listOfAlts.isEmpty()) {
+        if(listOfAlts == null || listOfAlts.isEmpty()) {
             sender.sendMessage(Messages.NO_ALTS.format(target));
             return;
         }
@@ -278,18 +305,28 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
     private void sendHelp(CommandSender sender, String label) {
         sender.sendMessage(ChatColor.GOLD + "----==={ " + ChatColor.YELLOW + fraud.getDescription().getName() + ChatColor.GOLD + " }===----");
         sender.sendMessage("");
-        sender.sendMessage(Messages.HELP_COMMAND_ALERT.format(label));
-        sender.sendMessage(Messages.HELP_COMMAND_ALL.format(label));
-        sender.sendMessage(Messages.HELP_COMMAND_CHECK.format(label));
-        sender.sendMessage(Messages.HELP_COMMAND_CONTACT.format(label));
-        sender.sendMessage(Messages.HELP_COMMAND_DOWNLOAD.format(label));
-        sender.sendMessage(Messages.HELP_COMMAND_FORGOT.format(label));
-        sender.sendMessage(Messages.HELP_COMMAND_INFO.format(label));
-        sender.sendMessage(Messages.HELP_COMMAND_LINK.format(label));
-        sender.sendMessage(Messages.HELP_COMMAND_RELOAD.format(label));
-        sender.sendMessage(Messages.HELP_COMMAND_VERSION.format(label));
+        sender.sendMessage(Messages.HELP_COMMAND_ALERT.format(label));          // /fd alert
+        sender.sendMessage(Messages.HELP_COMMAND_ALL.format(label));            // /fd all
+        sender.sendMessage(Messages.HELP_COMMAND_CHECK.format(label));          // /fd check <player>
+        sender.sendMessage(Messages.HELP_COMMAND_CONTACT.format(label));        // /fd contact
+        sender.sendMessage(Messages.HELP_COMMAND_DOWNLOAD.format(label));       // /fd download
+        sender.sendMessage(Messages.HELP_COMMAND_FORGOT.format(label));         // /fd forgot <player>
+        sender.sendMessage(Messages.HELP_COMMAND_INFO.format(label));           // /fd info <player>
+        sender.sendMessage(Messages.HELP_COMMAND_LINK.format(label));           // /fd link
+        sender.sendMessage(Messages.HELP_COMMAND_RELOAD.format(label));         // /fd reload
+        sender.sendMessage(Messages.HELP_COMMAND_VERSION.format(label));        // /fd version
         sender.sendMessage("");
         sender.sendMessage("§7§oBy Rgld_");
         sender.sendMessage(ChatColor.GOLD + "----==={ " + ChatColor.YELLOW + fraud.getDescription().getName() + ChatColor.GOLD + " }===----");
+    }
+
+    private String getDesc(IPInfo ipInfo) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("|");
+        for(String str : ipInfo.getDesc()) {
+            builder.append(str);
+            builder.append("|");
+        }
+        return builder.toString();
     }
 }

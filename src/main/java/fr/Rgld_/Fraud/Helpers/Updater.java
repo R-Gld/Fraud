@@ -21,6 +21,7 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
 
 public class Updater implements Runnable {
 
@@ -44,7 +45,6 @@ public class Updater implements Runnable {
             BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
             String inputLine;
             StringBuilder response = new StringBuilder();
-
             while((inputLine = in.readLine()) != null) {
                 response.append(inputLine);
             }
@@ -52,7 +52,7 @@ public class Updater implements Runnable {
             return response.toString();
         } catch(IOException e) {
             e.printStackTrace();
-            return "ERROR";
+            return "ERROR: " + Arrays.toString(e.getStackTrace());
         }
     }
 
@@ -62,7 +62,7 @@ public class Updater implements Runnable {
             obj = (JSONObject) new JSONParser().parse(getLatestVersion());
         } catch(ParseException parseException) {
             System.err.println("An error occur while executing the updater: " + parseException.getMessage());
-            return "ERRORE";
+            return "ERROR";
         }
         return (String) obj.get("name");
     }
@@ -101,7 +101,7 @@ public class Updater implements Runnable {
                                         "§eA new Update of §6Fraud §ehas been installed !\n" +
                                         "§eYou have to restart the plugin or the server to update the plugin.\n" +
                                         "§8§nLast Version:§7 " + actualVersion + "\n" +
-                                        "§8§nActual Version just instaled:§7 " + version + "\n" +
+                                        "§8§nActual Version just installed:§7 " + version + "\n" +
                                         "\n" +
                                         "§6§m---------------------------------------");
                     }

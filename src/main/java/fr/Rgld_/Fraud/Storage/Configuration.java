@@ -57,6 +57,10 @@ public class Configuration {
         return getBoolean("update.auto download");
     }
 
+    public boolean askForReviews() {
+        return getBoolean("ask for review");
+    }
+
     public boolean alertOnJoinIsEnabled() {
         return getBoolean("onJoin alert");
     }

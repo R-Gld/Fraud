@@ -37,6 +37,8 @@ public enum Messages {
     INFO_HEADER_IP("info.header_ip", true),
     INFO_PLAYER("info.player", true),
     INFO_HOVER("info.hover", true),
+    INFO_WAIT_FOR_THE_OTHER_PART("info.wait_for_the_other_part", true),
+    INFO_IP_INFORMATION("info.ip_information", true),
 
     // Time Messages
     YEAR("time.year", true), YEARS("time.years", true),
@@ -48,9 +50,8 @@ public enum Messages {
     NOW("time.now", true),
     AND("time.and", true),
 
-    // final messages.
-    COMMAND_CLEAN_DATA_YES("§6The datas has been reset.", false), COMMAND_CLEAN_DATA_NO("§cAn error occur during the reset of datas. Please call an administrator or the developer of this plugin via /{0} contact.", false),
-    ;
+    // final messages.,
+    COMMAND_CLEAN_DATA_YES("§6The datas has been reset.", false), COMMAND_CLEAN_DATA_NO("§cAn error occur during the reset of datas. Please call an administrator or the developer of this plugin via /{0} contact.", false);
 
     private static final String defaultMessage = "§6§l§nPlease contact the developer to report this bug: /fraud contact !";
 
@@ -80,6 +81,14 @@ public enum Messages {
     }
 
     public String getMessage() {
+        return format("");
+    }
+
+    public String format(Object... values) {
+        return MessageFormat.format(message, values);
+    }
+
+    public void setMessage(String message) {
         String out;
         if (this == PREFIX
                 || String.valueOf(this).startsWith("HELP_COMMAND_")
@@ -90,14 +99,6 @@ public enum Messages {
         } else {
             out = Messages.PREFIX.getMessage() + message;
         }
-        return ChatColor.translateAlternateColorCodes('&', out);
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public String format(Object... values) {
-        return MessageFormat.format(this.getMessage(), values);
+        this.message = ChatColor.translateAlternateColorCodes('&', out);
     }
 }

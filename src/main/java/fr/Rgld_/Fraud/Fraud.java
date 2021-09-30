@@ -3,10 +3,16 @@ package fr.Rgld_.Fraud;
 import fr.Rgld_.Fraud.Commands.FraudCommand;
 import fr.Rgld_.Fraud.Events.JoinQuitEvent;
 import fr.Rgld_.Fraud.Helpers.Console;
+import fr.Rgld_.Fraud.Helpers.IPInfoManager;
+import fr.Rgld_.Fraud.Helpers.Messages;
 import fr.Rgld_.Fraud.Helpers.Updater;
 import fr.Rgld_.Fraud.Storage.Configuration;
 import fr.Rgld_.Fraud.Storage.Datas;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bstats.bukkit.Metrics;
+import org.bstats.charts.SimplePie;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
@@ -26,6 +32,7 @@ public class Fraud extends JavaPlugin {
     private Datas datas;
     private Console c;
     private FraudCommand fraudCommand;
+    private IPInfoManager ipInfoManager;
 
     public Updater getUpdater() {
         return updater;
@@ -54,6 +61,7 @@ public class Fraud extends JavaPlugin {
     @Override
     public void onEnable() {
         this.c = new Console();
+        this.ipInfoManager = new IPInfoManager();
         PluginDescriptionFile pdf = this.getDescription();
         c.sm(MessageFormat.format("{0}--- {1} ---", GOLD, pdf.getName()));
         c.sm();
@@ -117,14 +125,32 @@ public class Fraud extends JavaPlugin {
 
         try {
             int pluginId = 12676;
-            new Metrics(this, pluginId);
+            Metrics metrics = new Metrics(this, pluginId);
+            metrics.addCustomChart(new SimplePie("alts_limits", () -> String.valueOf(getConfiguration().getDoubleAccountLimit())));
         } catch(Throwable t) {
             c.sm(RED + "Metrics connection failed.");
             t.printStackTrace();
         }
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(
+                this, this::askReview,
+                0, 5 * 60 * 20);
 
         c.sm();
         c.sm(MessageFormat.format("{0}--- {1} ---", GOLD, pdf.getName()));
+    }
+
+    private void askReview() {
+        if(configuration.askForReviews()) {
+            String message = Messages.PREFIX.getMessage() + "&6&lDo not hesitate to give your opinion on the plugin directly from its spigot page! (/fraud link)";
+            TextComponent info = new TextComponent(message);
+            info.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText("This message is clickable!")));
+            info.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/fraud link"));
+
+            System.out.println(message);
+            for(Player p : Bukkit.getOnlinePlayers())
+                if(p.isOp())
+                    p.spigot().sendMessage(info);
+        }
     }
 
     @Override
@@ -141,6 +167,10 @@ public class Fraud extends JavaPlugin {
 
     private void launchUpdater() {
         new Thread(new Updater(this)).start();
+    }
+
+    public IPInfoManager getIpInfoManager() {
+        return ipInfoManager;
     }
 
     private static class EventManager {

@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <name>Fraud</name>
-    <url>https://www.spigotmc.org/resources/fraud.69872/add-version</url>
+    <url>https://www.spigotmc.org/resources/fraud.69872/</url>
 
     <groupId>fr.Rgld_</groupId>
     <artifactId>Fraud</artifactId>
@@ -33,6 +33,10 @@
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
         <repository>
+            <id>spigot</id>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/public/</url>
+        </repository>
+        <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
@@ -45,10 +49,14 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>commons-net</groupId>
+            <artifactId>commons-net</artifactId>
+            <version>3.6</version>
+        </dependency>
+        <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>2.7</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.googlecode.json-simple</groupId>
@@ -99,29 +107,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <!--<plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>3.0.0</version>
-                <executions>
-                    <execution>
-                        <phase>install</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>sftp</executable>
-                            <arguments>
-                                <argument>-i</argument>
-                                <argument>C:\Users\romig\Desktop\key\key_rgldfr</argument>
-                                <argument>Rgld_@rgld.fr:lk/117_plugins/Fraud.jar</argument>
-                                <argument>C:\Users\romig\IdeaProjects\Fraud\target\Fraud.jar</argument>
-                            </arguments>
-                            <workingDirectory>C:/Users/romig/IdeaProjects/Fraud</workingDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>-->
         </plugins>
     </build>
 </project>

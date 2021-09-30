@@ -6,6 +6,9 @@ onJoin alert: true
 # Default is 2
 alts limit: 2
 
+# Set this to false to no longer receive an alert offering you to post a review on the plugin's spigot page.
+ask for review: true
+
 update:
   # If this is true, every 5 minutes, a check will be made to see if the plugin is up to date.
   # If it is not up to date, a message will be sent to all players with the permission "fraud.update".
@@ -25,7 +28,7 @@ kick:
 # |---------------------------------------------------------------------|
 messages:
   prefix: " &6&lFraud &7» &e"
-  no permission: "&cSorry but you can't do that. You don't have the permission!"
+  no permission: "&cSorry but you can''t do that. You don''t have the permission!"
   # {0} is the name of the player/ip | {1} is the list of alts
   alts detected: "&cSome double-accounts where been detected in the account of &6{0}&c, here there are:\n&r{1}"
   alts asked: "&cHere is the list of alts of &6{0}&c:\n{1}"
@@ -34,22 +37,25 @@ messages:
   all alts empty: "&cThere is no players connected who has alts."
   info:
     hover: "&6Click to get more information&6."
+    wait_for_the_other_part: "&7&oPlease wait for the information part about the ip..."
     # {0} is the name of the player | {1} is the ip of the player
     header: "&cHere is the information about the alts of &6{0}&c:"
     header_ip: "&cHere is the information about the alts of &6{0}&e&o({1})&c:"
     # {0} is the name of the player | {1} is the first join | {2} is the last join
     player: "  &c- &6{0}&c:\n     &c• First Join: &6{1}\n     &c• Last Join: &6{2}"
+    # {0} is the ip of the player | {1} is the country of the ip | {2} is the others Informations
+    ip_information: "&cHere is the informations about the ip &6{0}&c:\n  &c• Country: &6{1}\n  &c• Others Informations: &6{2}"
   # {0} is the name of the player.
   no alts: "&6{0}&c never connected double accounts."
-  not in datas: "&6{0}&c isn't in the files."
+  not in datas: "&6{0}&c isn''t in the files."
   player forgotten: "&6{0} has been removed of the files."
   reload:
     success: "&cReload success."
     failed: "&cReload failed. &oStacktrace print in console."
   alert:
     # DO NOT REMOVE THE "_" CHAR.
-    on_: "&aYou'll now receive the connections alerts."
-    off_: "&cYou'll no longer receive the connections alerts."
+    on_: "&aYou''ll now receive the connections alerts."
+    off_: "&cYou''ll no longer receive the connections alerts."
   help:
     command:
       # {0} is the label of the command. Ex: "fraud", "fd" It can change if you use some alias of the command.
@@ -57,12 +63,12 @@ messages:
       alert: "&f&l/{0} alert &7- Disables connection alerts."
       check: "&f&l/{0} check <player> &7- Check if a player have some alts / double-accounts."
       contact: "&f&l/{0} contact &7- Contact me if you have any problem, plugin error or requests."
-      download: "&f&l/{0} download &7- Download the latest version of the plugin (must be restart after this)."
+      download: "&f&l/{0} (download|dl) &7- Download the latest version of the plugin (must be restart after this)."
       forgot: "&f&l/{0} forgot <player> &7- Remove all the datas about this player. &8&o&n(WARNING: this is not cancellable)."
       info: "&f&l/{0} info <player> &7- Give some info about the connection of a player."
-      link: "&f&l/{0} link &7- Give some links about the plugin(Source-code, Spigot, Direct Download)."
+      link: "&f&l/{0} links &7- Give some links about the plugin(Source-code, Spigot, Direct Download)."
       reload: "&f&l/{0} reload &7- Reload the configuration and data files."
-      version: "&f&l/{0} version &7- Give the version of the plugin."
+      version: "&f&l/{0} (version|checkupdate|v) &7- Give the version of the plugin."
   time:
     and: "and"
     now: "now"

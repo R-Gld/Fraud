@@ -89,7 +89,7 @@ public class Utils {
             return Messages.NOW.getMessage();
         }
         LinkedList<String> words = new LinkedList<>(Lists.newArrayList(sb.toString().trim().split(" ")));
-        if(words.size() >1)
+        if(words.size() > 2)
             words.add(words.size() - 2, Messages.AND.getMessage());
         return String.join(" ", words);
     }

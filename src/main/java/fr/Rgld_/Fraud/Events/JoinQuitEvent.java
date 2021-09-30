@@ -51,7 +51,7 @@ public class JoinQuitEvent implements Listener {
                 p.kickPlayer(config.getKick().getReason(altsNum));
             }
 
-            DoubleAccountJoinEvent event = new DoubleAccountJoinEvent(p, altsList);
+            DoubleAccountJoinEvent event = new DoubleAccountJoinEvent(p, e.getJoinMessage(), altsList);
             Bukkit.getPluginManager().callEvent(event);
             if(event.alert()) {
                 for(int i = 0; i < altsNum; i++) {
@@ -82,6 +82,7 @@ public class JoinQuitEvent implements Listener {
     @EventHandler
     public void onQuit(PlayerQuitEvent e) {
         Player p = e.getPlayer();
+        fraud.getIpInfoManager().getIpInfoMap().remove(p.getAddress().toString().split(":")[0].substring(1));
         if(list.contains(p)) {
             list.remove(p);
             e.setQuitMessage("");

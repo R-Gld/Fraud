@@ -9,19 +9,15 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.sql.*;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings("ALL")
 public class Datas {
 
-    private final Fraud fraud;
     private final File file;
     private final String TABLE_NAME_ips = "ips";
     private final String TABLE_NAME_connection = "connections";
 
-    public Datas(Fraud fraud) throws Throwable {
-        this.fraud = fraud;
+    public Datas(Fraud fraud) {
         file = new File(fraud.getDataFolder(), "data.sqlite");
         createIpsTable();
         createConnectionTable();
@@ -37,7 +33,6 @@ public class Datas {
         return DriverManager.getConnection("jdbc:sqlite:" + file.getAbsolutePath().replace("\\", File.separator));
     }
 
-
     // ALTER TABLE ips ADD last boolean DEFAULT true
     private void createIpsTable() {
         try(Connection connection = connect()) {
@@ -47,6 +42,7 @@ public class Datas {
             e.printStackTrace();
         }
     }
+
     private void createConnectionTable() {
         try(Connection connection = connect()) {
             String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME_connection + "(id integer PRIMARY KEY NOT NULL,pseudo text NOT NULL,first bigint,last bigint);";
@@ -56,9 +52,6 @@ public class Datas {
         }
     }
 
-    public File getFile() {
-        return file;
-    }
 
     public void putPlayer(Player p) {
         String name = p.getName();
@@ -102,38 +95,17 @@ public class Datas {
         }
     }
 
-    public void forgotPlayer(Player p) {
-        forgotPlayer(p.getName());
-    }
-
     public void forgotPlayer(String name) {
         try(Connection connection = connect()) {
             String sql = MessageFormat.format("DELETE FROM `{0}` WHERE pseudo = ?", TABLE_NAME_ips);
             PreparedStatement psst = connection.prepareStatement(sql);
             psst.setString(1, name);
             psst.executeUpdate();
-            String sql2 = MessageFormat.format("DELETE FROM `{0}` WHERE pseudo = ?", TABLE_NAME_connection);
-            PreparedStatement psst2 = connection.prepareStatement(sql2);
             psst.setString(1, name);
             psst.executeUpdate();
         } catch(SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
-    }
-
-    public ArrayList<String> getAllConnectionsPseudo() {
-        ArrayList<String> pseudos = Lists.newArrayList();
-        try(Connection connection = connect()) {
-            String sql = MessageFormat.format("SELECT pseudo FROM `{0}`", TABLE_NAME_connection);
-            PreparedStatement psst = connection.prepareStatement(sql);
-            ResultSet rs = psst.executeQuery();
-            while(rs.next()) {
-                pseudos.add(rs.getString("pseudo"));
-            }
-        } catch(SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        return pseudos;
     }
 
     public long getFirstJoin(String pseudo) {
@@ -166,10 +138,6 @@ public class Datas {
         return 0;
     }
 
-    public boolean isFullRegistered(Player p) {
-        return isFullRegistered(p.getName());
-    }
-
     public boolean isFullRegistered(String name) {
         return isRegisteredInIps(name) && isRegisteredInConnection(name);
     }
@@ -187,10 +155,6 @@ public class Datas {
         return false;
     }
 
-    public boolean isRegisteredInConnection(Player p) {
-        return isRegisteredInConnection(p.getName());
-    }
-
     public boolean isRegisteredInIps(String name) {
         try(Connection connection = connect()) {
             String sql = MessageFormat.format("SELECT pseudo FROM `{0}` WHERE pseudo = \"{1}\"", TABLE_NAME_ips, name);
@@ -204,8 +168,16 @@ public class Datas {
         return false;
     }
 
-    public boolean isRegisteredInIps(Player p) {
-        return isRegisteredInIps(p.getName());
+    public String getIP(String name) {
+        try(Connection connection = connect()) {
+            String sql = MessageFormat.format("SELECT ip FROM `{0}` WHERE pseudo = \"{1}\"", TABLE_NAME_ips, name);
+            PreparedStatement psst = connection.prepareStatement(sql);
+            ResultSet rs = psst.executeQuery();
+            return rs.getString("ip");
+        } catch(SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public List<String> getListByPseudo(String pseudo) {
