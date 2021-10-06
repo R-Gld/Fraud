@@ -1,25 +1,20 @@
 package fr.Rgld_.Fraud.Helpers;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
+/**
+ * Object that store the information of an ip
+ */
 public class IPInfo {
 
-    private List<String> desc = new ArrayList<>();
+    private final List<String> desc = new ArrayList<>();
     private String ip;
     private String netname;
     private String country;
     private String from;
-
-    public IPInfo(String ip, String netname, String country, String from, String... desc) {
-        this.ip = ip;
-        this.netname = netname;
-        this.country = country;
-        this.from = from;
-        this.desc = new ArrayList<>(Arrays.asList(desc));
-    }
 
     public String getIp() {
         return ip;
@@ -70,6 +65,6 @@ public class IPInfo {
     }
 
     public Collection<String> getDesc() {
-        return desc;
+        return Collections.unmodifiableCollection(desc);
     }
 }

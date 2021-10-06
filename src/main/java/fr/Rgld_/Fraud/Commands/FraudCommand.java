@@ -26,6 +26,7 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
     private Datas datas;
 
     private final Updater up;
+
     public FraudCommand(Fraud fraud) {
         this.fraud = fraud;
         this.na = new ArrayList<>();
@@ -37,14 +38,28 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
         return na;
     }
 
+    /**
+     *
+     * Function executed when a player or the console execute a command of this list:
+     * - /fraud
+     * - /fd
+     * - /alts
+     * ... (all the aliases of the /fraud command)
+     *
+     * @param sender CommandSender
+     * @param command Command
+     * @param label String
+     * @param args String[]
+     * @return false
+     */
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         this.datas = fraud.getDatas();
-        switch(args.length) {
+        switch (args.length) {
             case 0:
                 break;
             case 1:
-                switch(args[0].toLowerCase()) {
+                switch (args[0].toLowerCase()) {
                     case "v":
                     case "checkupdate":
                     case "version":
@@ -54,10 +69,10 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
                         double dLatest = up.parseVersion(latest);
                         sender.sendMessage(ChatColor.GRAY + "Installed Fraud version: v" + version);
                         sender.sendMessage(ChatColor.GRAY + "Latest Fraud version available: v" + latest);
-                        sender.sendMessage((dLatest>dVersion ? "§c§l❌ §cOutdated" + "\n&c&lYou should download the new version, check /fraud link" : (dLatest==dVersion ? "§a§l✔ §aUp-to-date" : "§6Ur a precursor 😉")));
+                        sender.sendMessage((dLatest > dVersion ? "§c§l❌ §cOutdated" + "\n&c&lYou should download the new version, check /fraud link" : (dLatest == dVersion ? "§a§l✔ §aUp-to-date" : "§6Ur a precursor 😉")));
                         return false;
                     case "reload":
-                        if(!sender.hasPermission("fraud.reload")) {
+                        if (!sender.hasPermission("fraud.reload")) {
                             sender.sendMessage(Messages.NO_PERMISSION.getMessage());
                             return false;
                         }
@@ -65,7 +80,7 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
                             fraud.setDatas(new Datas(fraud));
                             fraud.getConfiguration().loadConfig();
                             sender.sendMessage(Messages.RELOAD_SUCCESS.getMessage());
-                        } catch(Throwable t) {
+                        } catch (Throwable t) {
                             sender.sendMessage(Messages.RELOAD_FAILED.getMessage());
                             t.printStackTrace();
                         }
@@ -81,25 +96,25 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
                         sender.sendMessage("§6Spigot Ressource: §9§nhttps://www.spigotmc.org/resources/fraud-alts-finder.69872/");
                         return false;
                     case "all":
-                        if(!sender.hasPermission("fraud.check.player.all")) {
+                        if (!sender.hasPermission("fraud.check.player.all")) {
                             sender.sendMessage(Messages.NO_PERMISSION.getMessage());
                             return false;
                         }
                         List<String> everChecked = Lists.newArrayList();
                         List<Player> concernedPlayers = Lists.newArrayList();
-                        for(Player pls : Bukkit.getOnlinePlayers()) {
-                            if(everChecked.contains(pls.getName())) continue;
+                        for (Player pls : Bukkit.getOnlinePlayers()) {
+                            if (everChecked.contains(pls.getName())) continue;
                             List<String> plsAlts = datas.getList(pls);
                             everChecked.addAll(plsAlts);
-                            if(plsAlts.size() >= 2 && !Utils.canGetAnAlt(plsAlts) || (plsAlts.size() >= (fraud.getConfiguration().getDoubleAccountLimit() + 1))) {
+                            if (plsAlts.size() >= 2 && !Utils.canGetAnAlt(plsAlts) || (plsAlts.size() >= (fraud.getConfiguration().getDoubleAccountLimit() + 1))) {
                                 concernedPlayers.add(pls);
                             }
                         }
-                        if(concernedPlayers.isEmpty()) {
+                        if (concernedPlayers.isEmpty()) {
                             sender.sendMessage(Messages.ALL_EMPTY.getMessage());
                         } else {
                             sender.sendMessage(Messages.ALL_ALTS_ASKED_ANNOUNCER.getMessage());
-                            for(Player pls : concernedPlayers) {
+                            for (Player pls : concernedPlayers) {
                                 List<String> plsAlts = datas.getList(pls);
                                 listAlts(plsAlts, sender, !pls.getName().equals(pls.getDisplayName()) ? pls.getName() + "§8(" + pls.getDisplayName() + "§8)" : pls.getName(), true);
                             }
@@ -107,11 +122,11 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
                         return false;
                     case "dl":
                     case "download":
-                        if(!sender.hasPermission("fraud.download")) {
+                        if (!sender.hasPermission("fraud.download")) {
                             sender.sendMessage(Messages.NO_PERMISSION.getMessage());
                             return false;
                         }
-                        if(fraud.getUpdater().downloadAndInstall()) {
+                        if (fraud.getUpdater().downloadAndInstall()) {
                             sender.sendMessage(ChatColor.GOLD + "The download of the latest release of Fraud was a " + ChatColor.YELLOW + "success" + ChatColor.GOLD + ".");
                             sender.sendMessage(ChatColor.GOLD + "The new release of Fraud will be effective at the next restart or reload of the plugin. You can use a plugin like PlugMan to reload just one plugin.");
                         } else {
@@ -120,11 +135,11 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
                         sender.sendMessage(ChatColor.GRAY + "§o(You can download it manually with this url: " + ChatColor.BLUE + "§nhttp://fraud.rgld.fr" + ChatColor.GRAY + "§o)");
                         return false;
                     case "alert":
-                        if(!(sender.hasPermission("fraud.alert.switch"))) {
+                        if (!(sender.hasPermission("fraud.alert.switch"))) {
                             sender.sendMessage(Messages.NO_PERMISSION.getMessage());
                             return false;
                         }
-                        if(na.contains(sender.getName())){
+                        if (na.contains(sender.getName())) {
                             na.remove(sender.getName());
                             sender.sendMessage(Messages.ALERT_ON.getMessage());
                         } else {
@@ -136,27 +151,27 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
                 break;
             case 2:
                 String arg1 = args[1];
-                switch(args[0].toLowerCase()) {
+                switch (args[0].toLowerCase()) {
                     case "check":
-                        if(!sender.hasPermission("fraud.check.player.one") && !arg1.equals(sender.getName())) {
+                        if (!sender.hasPermission("fraud.check.player.one") && !arg1.equals(sender.getName())) {
                             sender.sendMessage(Messages.NO_PERMISSION.getMessage());
                             return false;
                         }
                         Player target;
                         try {
                             target = Bukkit.getPlayer(arg1);
-                        } catch(NullPointerException e) {
+                        } catch (NullPointerException e) {
                             target = null;
                         }
-                        if(target != null) {
+                        if (target != null) {
                             listAlts(
                                     datas.getList(target),
                                     sender,
                                     !target.getName().equals(target.getDisplayName()) ? target.getName() + "§8(" + target.getDisplayName() + "§8)" : target.getName(),
                                     false);
                         } else {
-                            if(Utils.isValidIP(arg1)) {
-                                if(sender.hasPermission("fraud.check.ip")) {
+                            if (Utils.isValidIP(arg1)) {
+                                if (sender.hasPermission("fraud.check.ip")) {
                                     InetSocketAddress add = new InetSocketAddress(arg1, 0);
                                     listAlts(
                                             datas.getList(arg1),
@@ -172,35 +187,35 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
                         }
                         return false;
                     case "forgot":
-                        if(!sender.hasPermission("fraud.forgot")) {
+                        if (!sender.hasPermission("fraud.forgot")) {
                             sender.sendMessage(Messages.NO_PERMISSION.getMessage());
                             return false;
                         }
-                        if(datas.isRegisteredInIps(arg1)) {
+                        if (datas.isRegisteredInIps(arg1)) {
                             datas.forgotPlayer(arg1);
                             sender.sendMessage(Messages.PLAYER_FORGOTTEN.format(arg1));
                         } else sender.sendMessage(Messages.NOT_IN_DATAS.format(arg1));
                         return false;
                     case "info":
                         List<String> alts = datas.getListByPseudo(arg1);
-                        if(!alts.contains(sender.getName()) && !sender.hasPermission("fraud.info")) {
+                        if (!alts.contains(sender.getName()) && !sender.hasPermission("fraud.info")) {
                             sender.sendMessage(Messages.NO_PERMISSION.getMessage());
                             return false;
                         }
-                        if(datas.isFullRegistered(arg1)) {
+                        if (datas.isFullRegistered(arg1)) {
                             String ip;
-                            if(Bukkit.getPlayer(arg1) != null) {
+                            if (Bukkit.getPlayer(arg1) != null) {
                                 Player p = Bukkit.getPlayer(arg1);
                                 ip = p.getAddress().toString().split(":")[0].substring(1);
                             } else {
                                 ip = datas.getIP(arg1);
                             }
-                            if(sender.hasPermission("fraud.info.ip")) {
+                            if (sender.hasPermission("fraud.info.ip")) {
                                 sender.sendMessage(Messages.INFO_HEADER_IP.format(arg1, ip));
                             } else {
                                 sender.sendMessage(Messages.INFO_HEADER.format(arg1));
                             }
-                            for(String alt : alts) {
+                            for (String alt : alts) {
                                 sender.sendMessage(
                                         Messages.INFO_PLAYER.format(
                                                 (Utils.isConnected(alt) ? ChatColor.GREEN + alt : ChatColor.RED + alt), // {0}
@@ -209,21 +224,15 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
                                         )
                                 );
                             }
-                            if(sender.hasPermission("fraud.info.ip")) {
-                                if(!fraud.getIpInfoManager().getIpInfoMap().containsKey(ip))
+                            if (sender.hasPermission("fraud.info.ip")) {
+                                if (!fraud.getIpInfoManager().getIpInfoMap().containsKey(ip)) {
+                                    // You don't have to wait if the ip info of the ip given in parameter have been already checked after the connection of a player.
                                     sender.sendMessage(Messages.INFO_WAIT_FOR_THE_OTHER_PART.getMessage());
+                                    sendIPInfo(ip, sender);
+                                } else {
+                                    new Thread(() -> sendIPInfo(ip, sender)).start();
+                                }
 
-                                Thread th = new Thread(() -> {
-                                    IPInfo ipInfo = fraud.getIpInfoManager().getIpInfo(ip);
-                                    String other_information = ipInfo.getFrom() +
-                                                     "/" +
-                                                     ipInfo.getNetname() +
-                                                     "/" +
-                                                     getDesc(ipInfo);
-                                    sender.sendMessage(Messages.INFO_IP_INFORMATION.format(ipInfo.getIp(), ipInfo.getCountry(), other_information));
-                                    System.out.println("ipInfo = " + ipInfo);
-                                });
-                                th.start();
                             }
                         } else sender.sendMessage(Messages.NOT_IN_DATAS.format(arg1));
                         return false;
@@ -234,22 +243,40 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
         return false;
     }
 
+    private void sendIPInfo(String ip, CommandSender sender) {
+        IPInfo ipInfo = fraud.getIpInfoManager().getIpInfo(ip);
+        String code = ipInfo.getCountry();
+        String countryName = fraud.getCountries().getCountriesName(code);
+        String other_information = ipInfo.getFrom() +
+                                   "/" +
+                                   ipInfo.getNetname() +
+                                   "/" +
+                                   getDesc(ipInfo);
+        sender.sendMessage(
+                Messages.INFO_IP_INFORMATION.format(
+                        ipInfo.getIp(),
+                        countryName == null ?
+                                code :
+                                countryName + "(" + code + ")",
+                        other_information));
+    }
+
     private void listAlts(List<String> listOfAlts, CommandSender sender, String target, boolean all) {
-        if(listOfAlts == null || listOfAlts.isEmpty()) {
+        if (listOfAlts == null || listOfAlts.isEmpty()) {
             sender.sendMessage(Messages.NO_ALTS.format(target));
             return;
         }
         List<String> copyOfList = Lists.newArrayList();
         copyOfList.addAll(listOfAlts);
 
-        for(int i = 0; i < listOfAlts.size(); i++) {
+        for (int i = 0; i < listOfAlts.size(); i++) {
             String p = listOfAlts.get(i);
             copyOfList.set(i, (Utils.isConnected(p) ? ChatColor.GREEN + p : ChatColor.RED + p));
         }
         String joined = Utils.joinList(copyOfList);
         sender.sendMessage(MessageFormat.format((all ? Messages.ALL_ALTS_ASKED.getMessage() : Messages.ALTS_ASKED.getMessage()), target, joined));
         String name = copyOfList.get(0).substring(2);
-        if(sender instanceof Player && datas.isFullRegistered(name)) {
+        if (sender instanceof Player && datas.isFullRegistered(name)) {
             TextComponent info = new TextComponent("   §e§l➤ (i)");
             info.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(Messages.INFO_HOVER.getMessage())));
             info.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/fraud info " + name));
@@ -260,34 +287,34 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         List<String> list = Lists.newArrayList();
-        switch(args.length) {
+        switch (args.length) {
             case 1:
                 String str = args[0].toLowerCase();
-                if(str.startsWith("a")) {
-                    if(str.startsWith("ale")) {
+                if (str.startsWith("a")) {
+                    if (str.startsWith("ale")) {
                         list = Lists.newArrayList("alert");
                         break;
                     }
                     list = Lists.newArrayList("alert", "all");
-                } else if(str.startsWith("c")) {
-                    if(str.startsWith("ch")) {
+                } else if (str.startsWith("c")) {
+                    if (str.startsWith("ch")) {
                         list = Lists.newArrayList("check");
                         break;
-                    } else if(str.startsWith("co")) {
+                    } else if (str.startsWith("co")) {
                         list = Lists.newArrayList("contact");
                         break;
                     }
                     list = Lists.newArrayList("check", "contact");
-                } else if(str.startsWith("d")) {
+                } else if (str.startsWith("d")) {
                     list = Lists.newArrayList("dl", "download");
-                } else if(str.startsWith("f")) {
+                } else if (str.startsWith("f")) {
                     list = Lists.newArrayList("forgot");
-                } else if(str.startsWith("i")) {
+                } else if (str.startsWith("i")) {
                     list = Lists.newArrayList("info");
-                } else if(str.startsWith("r")) {
+                } else if (str.startsWith("r")) {
                     list = Lists.newArrayList("reload");
-                } else if(str.startsWith("v")) {
-                    if(!str.equals("v")) {
+                } else if (str.startsWith("v")) {
+                    if (!str.equals("v")) {
                         list = Lists.newArrayList("version");
                     } else list = Lists.newArrayList("v", "version");
                 } else {
@@ -296,7 +323,7 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
                 break;
             case 2:
                 String arg = args[0].toLowerCase();
-                if(arg.equals("check") || arg.equals("forgot") || arg.equals("info")) list = null;
+                if (arg.equals("check") || arg.equals("forgot") || arg.equals("info")) list = null;
                 break;
         }
         return list;
@@ -323,7 +350,7 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
     private String getDesc(IPInfo ipInfo) {
         StringBuilder builder = new StringBuilder();
         builder.append("|");
-        for(String str : ipInfo.getDesc()) {
+        for (String str : ipInfo.getDesc()) {
             builder.append(str);
             builder.append("|");
         }

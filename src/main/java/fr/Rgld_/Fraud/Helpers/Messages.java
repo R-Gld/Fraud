@@ -4,6 +4,9 @@ import org.bukkit.ChatColor;
 
 import java.text.MessageFormat;
 
+/**
+ * Enum of the different configurable or not messages of the plugin.
+ */
 public enum Messages {
 
     // Configurable messages.
@@ -12,6 +15,7 @@ public enum Messages {
     ALL_EMPTY("all alts empty", true),
     ALTS_ASKED("alts asked", true),
     ALTS_DETECTED("alts detected", true),
+    BAD_COUNTRY_DETECTED("bad country detected", true),
     HELP_COMMAND_ALL("help.command.all", true),
     HELP_COMMAND_CHECK("help.command.check", true),
     HELP_COMMAND_CONTACT("help.command.contact", true),
@@ -51,7 +55,8 @@ public enum Messages {
     AND("time.and", true),
 
     // final messages.,
-    COMMAND_CLEAN_DATA_YES("§6The datas has been reset.", false), COMMAND_CLEAN_DATA_NO("§cAn error occur during the reset of datas. Please call an administrator or the developer of this plugin via /{0} contact.", false);
+    COMMAND_CLEAN_DATA_YES("§6The datas has been reset.", false), COMMAND_CLEAN_DATA_NO("§cAn error occur during the reset of datas. Please call an administrator or the developer of this plugin via /{0} contact.", false),
+    ;
 
     private static final String defaultMessage = "§6§l§nPlease contact the developer to report this bug: /fraud contact !";
 

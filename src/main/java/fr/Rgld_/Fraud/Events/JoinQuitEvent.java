@@ -3,6 +3,7 @@ package fr.Rgld_.Fraud.Events;
 import com.google.common.collect.Lists;
 import fr.Rgld_.Fraud.Events.Custom.DoubleAccountJoinEvent;
 import fr.Rgld_.Fraud.Fraud;
+import fr.Rgld_.Fraud.Helpers.IPInfo;
 import fr.Rgld_.Fraud.Helpers.Messages;
 import fr.Rgld_.Fraud.Helpers.Utils;
 import fr.Rgld_.Fraud.Storage.Configuration;
@@ -21,6 +22,9 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Check at every connection if a player has an alt, is from a bad country defined on the configuration...
+ */
 public class JoinQuitEvent implements Listener {
 
     private final Fraud fraud;
@@ -57,6 +61,21 @@ public class JoinQuitEvent implements Listener {
                 for(int i = 0; i < altsNum; i++) {
                     String abc = altsList.get(i);
                     altsList.set(i, (Utils.isConnected(abc) ? ChatColor.GREEN + abc : ChatColor.RED + abc));
+                }
+                IPInfo ipInfo = fraud.getIpInfoManager().getIpInfo(Utils.getAddress(p.getAddress()));
+                List<String> bad_countries = config.getCountriesAlert();
+                if(bad_countries.contains(ipInfo.getCountry())) {
+                    String code = ipInfo.getCountry();
+                    String countryName = fraud.getCountries().getCountriesName(code);
+                    String countries_format = Messages.BAD_COUNTRY_DETECTED.format(p.getName(),
+                                                                                   countryName == null ?
+                                                                                           code :
+                                                                                           countryName + "(" + code + ")");
+                    for(Player pls : Bukkit.getOnlinePlayers()) {
+                        if (pls.hasPermission("fraud.receive.alert") && !fraud.getFraudCommand().getNotAlerted().contains(pls.getName())) {
+                            pls.sendMessage(countries_format);
+                        }
+                    }
                 }
 
                 String formatted = Messages.ALTS_DETECTED.format(p.getName(), Utils.joinList(altsList));

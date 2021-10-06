@@ -7,6 +7,7 @@ import fr.Rgld_.Fraud.Helpers.IPInfoManager;
 import fr.Rgld_.Fraud.Helpers.Messages;
 import fr.Rgld_.Fraud.Helpers.Updater;
 import fr.Rgld_.Fraud.Storage.Configuration;
+import fr.Rgld_.Fraud.Storage.Countries;
 import fr.Rgld_.Fraud.Storage.Datas;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -34,6 +35,7 @@ public class Fraud extends JavaPlugin {
     private Updater updater;
     private Configuration configuration;
     private Datas datas;
+    private Countries countries;
     private Console c;
     private FraudCommand fraudCommand;
     private IPInfoManager ipInfoManager;
@@ -95,6 +97,14 @@ public class Fraud extends JavaPlugin {
         }
 
         try {
+            this.countries = new Countries(this);
+            c.sm(GREEN + "Countries Files loading / creating success.");
+        } catch(Throwable t) {
+            c.sm(RED + "Countries Files loading / creating failed: ");
+            t.printStackTrace();
+        }
+
+        try {
             this.updater = new Updater(this);
             c.sm(GREEN + "Updater launched with success.");
             if(configuration.checkForUpdate()) {
@@ -124,6 +134,9 @@ public class Fraud extends JavaPlugin {
         c.sm(MessageFormat.format("{0}--- {1} ---", GOLD, pdf.getName()));
     }
 
+    /**
+     * Ask the High-staff of the server to leave a review on <a href="https://www.spigotmc.org/resources/fraud-alts-finder.69872/" target="_blank">the spigot page</a> of the plugin.
+     */
     private void askReview() {
         if(configuration.askForReviews()) {
             String message = Messages.PREFIX.getMessage() + "&6&lDo not hesitate to give your opinion on the plugin directly from its spigot page! (/fraud link)";
@@ -183,6 +196,10 @@ public class Fraud extends JavaPlugin {
 
     public FraudCommand getFraudCommand() {
         return fraudCommand;
+    }
+
+    public Countries getCountries() {
+        return countries;
     }
 
     /**

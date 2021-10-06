@@ -1,4 +1,4 @@
-# You can enabled or disabled the alerts when a player join.
+# You can enabled or disabled the alerts when a player join with an alt or from a seen country.
 onJoin alert: true
 
 # With this limit, you can let a player to have some alts without cause any alert on player who has the "fraud.receive.alert" permission.
@@ -22,6 +22,18 @@ kick:
   # {0} is the number of accounts on the ip. | \n is used to returned to the line.
   kick reason: "§f§lThe server has detected that you have too many accounts on your ip §7§l({0} accounts)§f§l.\n§f§lYou can not log in with as much of an account as that!\n§f§lContact an administrator if you think this is an error."
 
+# A player who joins the server and who does not come from his country will cause an alert to players who have the "fraud.receive.alert.location" permissions.
+# Set '*' to disable the countries alert.
+# If the global alerts, it will not cause any alert even theses.
+countries alert:
+  - "FR"
+  - "BE"
+  - "CH"
+  - "CA"
+  - "MR"
+  - "MC"
+  - "DZ"
+  - "MA"
 
 # |---------------------------------------------------------------------|
 # | These messages accept the chat color format with the '&' character. |
@@ -29,6 +41,8 @@ kick:
 messages:
   prefix: " &6&lFraud &7» &e"
   no permission: "&cSorry but you can''t do that. You don''t have the permission!"
+  # {0} is the name of the player/ip | {1} is the country of the player
+  bad country detected: "&6{0} &ccomes from a suspicious country: &6{1}"
   # {0} is the name of the player/ip | {1} is the list of alts
   alts detected: "&cSome double-accounts where been detected in the account of &6{0}&c, here there are:\n&r{1}"
   alts asked: "&cHere is the list of alts of &6{0}&c:\n{1}"

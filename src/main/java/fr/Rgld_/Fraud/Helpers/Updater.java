@@ -23,6 +23,9 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
+/**
+ * Let the plugin check if a new version has been released <a href="https://www.spigotmc.org/resources/fraud-alts-finder.69872/" target="_blank">on the spigot page</a>.
+ */
 public class Updater implements Runnable {
 
     private final Fraud fraud;
@@ -108,6 +111,9 @@ public class Updater implements Runnable {
         }
     }
 
+    /**
+     * Send a message to the high-staff of the server if a new version of Fraud has been released on spigot.
+     */
     @Override
     public void run() {
         String version = getLatestVersionFormatted();

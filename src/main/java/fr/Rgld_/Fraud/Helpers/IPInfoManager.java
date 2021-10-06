@@ -14,6 +14,9 @@ import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.HashMap;
 
+/**
+ * Used by the /fd info to get some information about an ip
+ */
 public class IPInfoManager {
 
     private final HashMap<String, IPInfo> ipInfoHashMap;

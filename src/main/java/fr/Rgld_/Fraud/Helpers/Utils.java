@@ -4,9 +4,13 @@ import com.google.common.collect.Lists;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import java.net.InetSocketAddress;
 import java.util.*;
 import java.util.regex.Pattern;
 
+/**
+ * Contain several functions useful for the plugin.
+ */
 public class Utils {
 
     /**
@@ -131,5 +135,13 @@ public class Utils {
         diff--;
         fromDate.setTimeInMillis(savedDate);
         return diff;
+    }
+
+    /**
+     * @param address InetSocketAddress
+     * @return the address formated to be used in the plugin.
+     */
+    public static String getAddress(InetSocketAddress address) {
+        return address.toString().split(":")[0].substring(1);
     }
 }

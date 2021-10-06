@@ -3,6 +3,9 @@ package fr.Rgld_.Fraud.Helpers;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
+/**
+ * Facilitates the sending of message in console.
+ */
 public class Console {
 
     public Console() {}

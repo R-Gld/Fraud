@@ -8,7 +8,12 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.text.MessageFormat;
+import java.util.Collections;
+import java.util.List;
 
+/**
+ * Class used to configure the plugin. (cf. config.yml)
+ */
 public class Configuration {
 
     private final Fraud fraud;
@@ -44,6 +49,16 @@ public class Configuration {
     public int getDoubleAccountLimit() {
         int i = fileConfig.getInt("alts limit", 2); // private int getInt(String path) { return fileConfig.getInt(path, 2); }
         return i == -1 ? Integer.MAX_VALUE: i;
+    }
+
+    public List<String> getCountriesAlert() {
+        List<?> list = fileConfig.getList("countries alert");
+        for(Object obj : list) {
+            if(!(obj instanceof String)) {
+                throw new IllegalArgumentException("The countries given in configuration must be surrounded by \".\nExample: \"FR\"");
+            }
+        }
+        return Collections.unmodifiableList((List<String>) list);
     }
 
     public boolean checkForUpdate() {

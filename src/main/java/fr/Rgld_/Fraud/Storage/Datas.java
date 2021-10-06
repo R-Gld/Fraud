@@ -2,6 +2,7 @@ package fr.Rgld_.Fraud.Storage;
 
 import com.google.common.collect.Lists;
 import fr.Rgld_.Fraud.Fraud;
+import fr.Rgld_.Fraud.Helpers.Utils;
 import org.bukkit.entity.Player;
 
 import java.io.File;
@@ -11,6 +12,9 @@ import java.sql.*;
 import java.text.MessageFormat;
 import java.util.List;
 
+/**
+ * Class used to store datas in the database sqlite of the server.
+ */
 public class Datas {
 
     private final File file;
@@ -80,14 +84,14 @@ public class Datas {
             if(isRegisteredInIps(name)) {
                 String sql = MessageFormat.format("UPDATE {0} SET ip = ? WHERE pseudo = ?", TABLE_NAME_ips);
                 PreparedStatement psst = connection.prepareStatement(sql);
-                psst.setString(1, getAddress(address));
+                psst.setString(1, Utils.getAddress(address));
                 psst.setString(2, name);
                 psst.executeUpdate();
             } else {
                 String sql = MessageFormat.format("INSERT INTO {0}(pseudo,ip) VALUES(?,?);", TABLE_NAME_ips);
                 PreparedStatement psst = connection.prepareStatement(sql);
                 psst.setString(1, name);
-                psst.setString(2, getAddress(address));
+                psst.setString(2, Utils.getAddress(address));
                 psst.executeUpdate();
             }
         } catch(SQLException | ClassNotFoundException e) {
@@ -206,7 +210,7 @@ public class Datas {
     }
 
     public List<String> getList(InetSocketAddress address) {
-        return getList(getAddress(address));
+        return getList(Utils.getAddress(address));
     }
 
     public List<String> getList(String address) {
@@ -224,9 +228,5 @@ public class Datas {
             e.printStackTrace();
         }
         return Lists.newArrayList();
-    }
-
-    private String getAddress(InetSocketAddress address) {
-        return address.toString().split(":")[0].substring(1);
     }
 }
