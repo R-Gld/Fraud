@@ -14,6 +14,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -24,6 +25,9 @@ import java.text.MessageFormat;
 
 import static org.bukkit.ChatColor.*;
 
+/**
+ * Represent the main class of the plugin <a href="https://www.spigotmc.org/resources/fraud-alts-finder.69872/" target="_blank">Fraud</a> on spigot.
+ */
 public class Fraud extends JavaPlugin {
 
     public String actualVersionBc = "";
@@ -34,30 +38,10 @@ public class Fraud extends JavaPlugin {
     private FraudCommand fraudCommand;
     private IPInfoManager ipInfoManager;
 
-    public Updater getUpdater() {
-        return updater;
-    }
 
-    public Configuration getConfiguration() {
-        return configuration;
-    }
-
-    public Datas getDatas() {
-        return datas;
-    }
-
-    public void setDatas(Datas datas) {
-        this.datas = datas;
-    }
-
-    public Console getConsole() {
-        return c;
-    }
-
-    public FraudCommand getFraudCommand() {
-        return fraudCommand;
-    }
-
+    /**
+     * Equivalent of a <code>public static main(String[] args)</code> in a Main class. It's the function that initialise the plugin.
+     */
     @Override
     public void onEnable() {
         this.c = new Console();
@@ -127,6 +111,7 @@ public class Fraud extends JavaPlugin {
             int pluginId = 12676;
             Metrics metrics = new Metrics(this, pluginId);
             metrics.addCustomChart(new SimplePie("alts_limits", () -> String.valueOf(getConfiguration().getDoubleAccountLimit())));
+            metrics.addCustomChart(new SimplePie("kick_when_alt_detected", () -> String.valueOf(getConfiguration().isKickEnabled())));
         } catch(Throwable t) {
             c.sm(RED + "Metrics connection failed.");
             t.printStackTrace();
@@ -142,7 +127,7 @@ public class Fraud extends JavaPlugin {
     private void askReview() {
         if(configuration.askForReviews()) {
             String message = Messages.PREFIX.getMessage() + "&6&lDo not hesitate to give your opinion on the plugin directly from its spigot page! (/fraud link)";
-            TextComponent info = new TextComponent(message);
+            TextComponent info = new TextComponent(ChatColor.translateAlternateColorCodes('&', message));
             info.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText("This message is clickable!")));
             info.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/fraud link"));
 
@@ -153,6 +138,9 @@ public class Fraud extends JavaPlugin {
         }
     }
 
+    /**
+     * Last function executed before the plugin stop.
+     */
     @Override
     public void onDisable() {
         PluginDescriptionFile pdf = this.getDescription();
@@ -173,7 +161,35 @@ public class Fraud extends JavaPlugin {
         return ipInfoManager;
     }
 
+    public Updater getUpdater() {
+        return updater;
+    }
+
+    public Configuration getConfiguration() {
+        return configuration;
+    }
+
+    public Datas getDatas() {
+        return datas;
+    }
+
+    public void setDatas(Datas datas) {
+        this.datas = datas;
+    }
+
+    public Console getConsole() {
+        return c;
+    }
+
+    public FraudCommand getFraudCommand() {
+        return fraudCommand;
+    }
+
+    /**
+     * Class that manage the events on the plugin.
+     */
     private static class EventManager {
+
         final Fraud fraud;
         EventManager(Fraud fraud) {
             this.fraud = fraud;

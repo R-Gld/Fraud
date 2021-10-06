@@ -39,20 +39,17 @@ public class Configuration {
         return fileConfig.getBoolean(path);
     }
 
-    private int getInt(String path) {
-        return fileConfig.getInt(path, 2);
-    }
-
     //\\ ---------------------------------------------------------------------------- //\\
 
     public int getDoubleAccountLimit() {
-        int i = getInt("alts limit");
+        int i = fileConfig.getInt("alts limit", 2); // private int getInt(String path) { return fileConfig.getInt(path, 2); }
         return i == -1 ? Integer.MAX_VALUE: i;
     }
 
     public boolean checkForUpdate() {
         return getBoolean("update.check for update");
     }
+
     public boolean autoDownloadLatest() {
         return getBoolean("update.auto download");
     }
@@ -85,14 +82,6 @@ public class Configuration {
         return getKick().isEnabled();
     }
 
-    /**
-     * kick:
-     * # If this is set to enabled, if it is set that the player has too much double count, he will be kick.
-     * enabled: false
-     * # The number of alts to trigger the kick is adjustable on "alts limit" on line 7.
-     * # {0} is the number of accounts on the ip. | \n is used to returned to the line.
-     * kick reason: "§f§lThe server has detected that you have too many accounts on your ip §7§l({0} accounts)§f§l.\n§f§lYou can not log in with as much of an account as that!\n§f§lContact an administrator if you think this is an error."
-     */
     public static class KickSection {
         private final ConfigurationSection kick;
         private final Configuration configuration;

@@ -9,6 +9,13 @@ import java.util.regex.Pattern;
 
 public class Utils {
 
+    /**
+     *
+     * Return true or false if the player p is connected.
+     *
+     * @param p String
+     * @return Boolean
+     */
     public static boolean isConnected(String p) {
         try {
             return Bukkit.getPlayer(p).isOnline();
@@ -17,6 +24,11 @@ public class Utils {
         }
     }
 
+    /**
+     *
+     * @param altsList boolean
+     * @return true or false if a player into the altsList has the permission to get alts.
+     */
     public static boolean canGetAnAlt(List<String> altsList) {
         for(String str : altsList) {
             Player p;
@@ -33,6 +45,10 @@ public class Utils {
         return false;
     }
 
+    /**
+     * @param ipAddress boolean
+     * @return true or false if the ip given is an ipv4 address.
+     */
     public static boolean isValidIP(String ipAddress) {
         return Pattern.compile("^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])$").matcher(ipAddress).matches();
     }
@@ -59,8 +75,11 @@ public class Utils {
 
 
     /**
-     * Method taken into EssentialsX (com.earth2me.essentials.utils.DateUtil) adapted for this plugin.
+     * Method taken into EssentialsX (from com.earth2me.essentials.utils.DateUtil) adapted for this plugin.
      * Download link to essentialsX: https://www.spigotmc.org/resources/essentialsx.9089/
+     *
+     * @param time String
+     * @return date formatted.
      */
     public static String formatDate(long time) {
         boolean future = false;
@@ -96,12 +115,10 @@ public class Utils {
 
 
     private static int dateDiff(int type, Calendar fromDate, Calendar toDate, boolean future) {
-        int _1 = 1;
-
-        int fromYear = fromDate.get(_1);
-        int toYear = toDate.get(_1);
+        int fromYear = fromDate.get(Calendar.YEAR);
+        int toYear = toDate.get(Calendar.YEAR);
         if (Math.abs(fromYear - toYear) > 100000) {
-            toDate.set(_1, fromYear + (future ? 100000 : -100000));
+            toDate.set(Calendar.YEAR, fromYear + (future ? 100000 : -100000));
         }
 
         int diff = 0;

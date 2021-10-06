@@ -36,6 +36,26 @@ public class Updater implements Runnable {
      VERSIONS: https://api.spiget.org/v2/resources/69872/versions/latest
     */
 
+    /**
+     *
+     * Return a json String of the latest version of Fraud
+     *
+     * Exemple (06/10/2021):
+     * {
+     *   "uuid": "02505a1a-b652-3aab-003b-536632452b0c",
+     *   "downloads": 4,
+     *   "rating": {
+     *     "count": 0,
+     *     "average": 0
+     *   },
+     *   "name": "1.7.1",
+     *   "releaseDate": 1632246798,
+     *   "resource": 69872,
+     *   "id": 420367
+     * }
+     *
+     * @return String
+     */
     private String getLatestVersion() {
         try {
             HttpURLConnection con = (HttpURLConnection) new URL("https://api.spiget.org/v2/resources/69872/versions/latest").openConnection();
@@ -56,6 +76,13 @@ public class Updater implements Runnable {
         }
     }
 
+    /**
+     * Exemple (06/10/2021):
+     *
+     * 1.7.1
+     *
+     * @return only the version string.
+     */
     public String getLatestVersionFormatted() {
         JSONObject obj;
         try {
