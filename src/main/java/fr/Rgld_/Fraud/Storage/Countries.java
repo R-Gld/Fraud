@@ -39,7 +39,7 @@ public class Countries {
                 e.printStackTrace();
             }
         } else {
-            try (FileReader reader = new FileReader("config.yml")) {
+            try (FileReader reader = new FileReader(countryFile)) {
                 this.obj = (JSONObject) jsonParser.parse(reader);
             } catch (IOException | ParseException e) {
                 e.printStackTrace();

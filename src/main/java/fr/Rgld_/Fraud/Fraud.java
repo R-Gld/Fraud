@@ -2,10 +2,7 @@ package fr.Rgld_.Fraud;
 
 import fr.Rgld_.Fraud.Commands.FraudCommand;
 import fr.Rgld_.Fraud.Events.JoinQuitEvent;
-import fr.Rgld_.Fraud.Helpers.Console;
-import fr.Rgld_.Fraud.Helpers.IPInfoManager;
-import fr.Rgld_.Fraud.Helpers.Messages;
-import fr.Rgld_.Fraud.Helpers.Updater;
+import fr.Rgld_.Fraud.Helpers.*;
 import fr.Rgld_.Fraud.Storage.Configuration;
 import fr.Rgld_.Fraud.Storage.Countries;
 import fr.Rgld_.Fraud.Storage.Datas;
@@ -39,6 +36,7 @@ public class Fraud extends JavaPlugin {
     private Console c;
     private FraudCommand fraudCommand;
     private IPInfoManager ipInfoManager;
+    private Stats stats;
 
 
     /**
@@ -84,6 +82,15 @@ public class Fraud extends JavaPlugin {
             c.sm(RED + "Configurations File loading / creating failed: ");
             t.printStackTrace();
         }
+
+        try {
+            this.stats = new Stats(this);
+            c.sm(GREEN + "Stats are on.");
+        } catch(Throwable t) {
+            c.sm(RED + "Stats launch failed.");
+            t.printStackTrace();
+        }
+
 
         try {
             this.datas = new Datas(this);
@@ -200,6 +207,10 @@ public class Fraud extends JavaPlugin {
 
     public Countries getCountries() {
         return countries;
+    }
+
+    public Stats getStats() {
+        return stats;
     }
 
     /**

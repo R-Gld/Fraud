@@ -79,6 +79,7 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
                         try {
                             fraud.setDatas(new Datas(fraud));
                             fraud.getConfiguration().loadConfig();
+                            fraud.getCountries().loadFile();
                             sender.sendMessage(Messages.RELOAD_SUCCESS.getMessage());
                         } catch (Throwable t) {
                             sender.sendMessage(Messages.RELOAD_FAILED.getMessage());
@@ -257,7 +258,7 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
                         ipInfo.getIp(),
                         countryName == null ?
                                 code :
-                                countryName + "(" + code + ")",
+                                countryName,
                         other_information));
     }
 

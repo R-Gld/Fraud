@@ -61,18 +61,7 @@ public class Updater implements Runnable {
      */
     private String getLatestVersion() {
         try {
-            HttpURLConnection con = (HttpURLConnection) new URL("https://api.spiget.org/v2/resources/69872/versions/latest").openConnection();
-            con.setRequestMethod("GET");
-            con.setRequestProperty("User-Agent", "FraudClient");
-
-            BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-            String inputLine;
-            StringBuilder response = new StringBuilder();
-            while((inputLine = in.readLine()) != null) {
-                response.append(inputLine);
-            }
-            in.close();
-            return response.toString();
+            return Utils.getContent("https://api.spiget.org/v2/resources/69872/versions/latest");
         } catch(IOException e) {
             e.printStackTrace();
             return "ERROR: " + Arrays.toString(e.getStackTrace());

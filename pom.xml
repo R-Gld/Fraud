@@ -78,6 +78,10 @@
                                     <pattern>org.json</pattern>
                                     <shadedPattern>fr.Rgld_.lib.json</shadedPattern>
                                 </relocation>
+                                <relocation>
+                                    <pattern>com.google.code.gson</pattern>
+                                    <shadedPattern>fr.Rgld_.lib.gson</shadedPattern>
+                                </relocation>
                             </relocations>
                         </configuration>
                     </execution>
@@ -128,6 +132,12 @@
             <groupId>org.bstats</groupId>
             <artifactId>bstats-bukkit</artifactId>
             <version>2.2.1</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.8.8</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

@@ -4,7 +4,11 @@ import com.google.common.collect.Lists;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.InetSocketAddress;
+import java.net.URL;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -136,6 +140,18 @@ public class Utils {
         fromDate.setTimeInMillis(savedDate);
         return diff;
     }
+
+    public static String getContent(String url) throws IOException {
+        BufferedReader in = new BufferedReader(new InputStreamReader(new URL(url).openStream()));
+        String inputLine;
+        StringBuilder response = new StringBuilder();
+        while((inputLine = in.readLine()) != null) {
+            response.append(inputLine);
+        }
+        in.close();
+        return response.toString();
+    }
+
 
     /**
      * @param address InetSocketAddress
