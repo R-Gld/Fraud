@@ -1,17 +1,17 @@
-# You can enabled or disabled the alerts when a player join with an alt or from a seen country.
+# You can enable or disable the alerts when a player join with an alt or from a seen country.
 onJoin alert: true
 
-# With this limit, you can let a player to have some alts without cause any alert on player who has the "fraud.receive.alert" permission.
+# With this limit, you can let a player have some alts without cause any alert on player who has the "fraud.receive.alert" permission.
 # Set to -1 to untoggle this limit.
 # Default is 2
 alts limit: 2
 
 # Set this to false to no longer receive an alert offering you to post a review on the plugin's spigot page.
-ask for review: true
+ask for review: false
 
 update:
   # If this is true, every 5 minutes, a check will be made to see if the plugin is up to date.
-  # If it is not up to date, a message will be sent to all players with the permission "fraud.update".
+  # If it is not up-to-date, a message will be sent to all players with the permission "fraud.update".
   check for update: true
   auto download: false
   
