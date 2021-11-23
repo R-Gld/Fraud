@@ -7,7 +7,7 @@ onJoin alert: true
 alts limit: 2
 
 # Set this to false to no longer receive an alert offering you to post a review on the plugin's spigot page.
-ask for review: true
+ask for review: false
 
 update:
   # If this is true, every 5 minutes, a check will be made to see if the plugin is up to date.
