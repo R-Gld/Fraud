@@ -1,5 +1,6 @@
-[![ActualVersion](https://badges.spiget.org/resources/version/Version-green-69872.svg)](https://api.spiget.org/v2/resources/69872/versions/latest/download)
-[![Ratings](https://badges.spiget.org/resources/rating/Rating-blue-69872.svg)](https://www.spigotmc.org/resources/fraud.69872/)
+[![](https://badges.spiget.org/resources/version/Version-green-69872.svg)](https://api.spiget.org/v2/resources/69872/versions/latest/download)
+[![](https://badges.spiget.org/resources/rating/Rating-blue-69872.svg)](https://www.spigotmc.org/resources/fraud.69872/)
+[![](https://jitci.com/gh/R-Gld/Fraud/svg)](https://jitci.com/gh/R-Gld/Fraud)
 
 <img align="right" src="https://i.imgur.com/WjvQClG.png" height="200" width="200">
 
