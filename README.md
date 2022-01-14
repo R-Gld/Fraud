@@ -13,11 +13,15 @@
 ## Installation
 
 - Put the jar on the plugin directory of the server.
-- Restart the server or if you have a PluginManager plugin on it, load the plugin.
+- Restart the server or if you have the [PlugMan](https://www.spigotmc.org/resources/plugmanx.88135/) ([Sources](https://github.com/TheBlackEntity/PlugMan/)) plugin on it, load the plugin with the command `/plugman load Fraud`.
 - Configure the plugin in the file `config.yml`. You can translate or just change the messages in this file.
 - Restart the server or just the plugin if you can.
 
 ## Contact
+
+### Discord
+- [*`Romain | Rgld_#5344`*](https://discord.com/users/273162457256558603)
+
 ### Emails
 - [*`spigot@rgld.fr`*](mailto:spigot@rgld.fr)
 
