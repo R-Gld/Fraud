@@ -1,5 +1,7 @@
 package fr.Rgld_.Fraud.Global;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -8,6 +10,7 @@ import java.util.List;
 /**
  * Object that store the information of an ip
  */
+@SuppressWarnings("unused")
 public class IPInfo {
 
     private final List<String> desc = new ArrayList<>();
@@ -99,7 +102,7 @@ public class IPInfo {
         this.city = format(city);
     }
 
-    private String format(String text) {
+    private @NotNull String format(String text) {
         return text.substring(1, text.length()-1);
     }
 
@@ -128,7 +131,6 @@ public class IPInfo {
         return this;
     }
 
-    @SuppressWarnings("UnusedReturnValue")
     public IPInfo delLongitude() {
         this.longitude = null;
         return this;
