@@ -104,7 +104,7 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
                             ((Player) sender).spigot().sendMessage(text);
                             TextComponent text_1 = new TextComponent(discord);
                             text_1.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§7Click here to §6add me §7on §6discord§7.").create()));
-                            text_1.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://discord.com/users/273162457256558603"));
+                            text_1.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://rgld.fr/discord/add/Rgld_"));
                             ((Player) sender).spigot().sendMessage(text_1);
                         } else {
                             sender.sendMessage(discord);
@@ -117,7 +117,7 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
                         sender.sendMessage("§6§m--§r§6> §ePlugin Links");
                         sender.sendMessage("§6Source-Code: §9§nhttps://rgld.fr/fraud/source-code");
                         sender.sendMessage("§6Download Latest: §9§nhttps://rgld.fr/fraud/download");
-                        sender.sendMessage("§6Spigot Ressource: §9§nhttps://www.spigotmc.org/resources/fraud-alts-finder.69872/");
+                        sender.sendMessage("§6Spigot Ressource: §9§nhttps://rgld.fr/fraud/spigot/link");
                         sender.sendMessage("§6§m--§r§6> §eServices used");
                         sender.sendMessage("§6RIPE: §9§nhttps://www.ripe.net §7§o(Used to get informations about ISP of an ip)");
                         sender.sendMessage("§6MaxMind: §9§nhttps://www.maxmind.com/en/geoip2-services-and-databases §7§o(Used to get informations about the geolocation of an ip)");
