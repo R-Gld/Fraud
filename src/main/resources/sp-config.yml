@@ -9,8 +9,25 @@ alts limit: 2
 # Set this to false to no longer receive an alert offering you to post a review on the plugin's spigot page.
 ask for review: false
 
+
+# The GeoIp can tell with some precision the player's location in the world. If you do not want to access this information, set it to false.
+# Even if this is set to false, you will still have the information of the country of connection.
+geoip-enable: true
+
+# type = sqlite or mysql
+# Si type is set to mysql, you should add 4 more fields.
+data store:
+  type: sqlite
+  #type: mysql
+  #parameters:
+  #  ip: "localhost"
+  #  port: 3306
+  #  user: "fraud"
+  #  password: "password"
+  #  database: "Fraud"
+
 update:
-  # If this is true, every 5 minutes, a check will be made to see if the plugin is up to date.
+  # If this is true, every 5 minutes, a check will be made to see if the plugin is up-to-date.
   # If it is not up-to-date, a message will be sent to all players with the permission "fraud.update".
   check for update: true
   auto download: false
@@ -39,7 +56,6 @@ countries alert:
 # | These messages accept the chat color format with the '&' character. |
 # |---------------------------------------------------------------------|
 messages:
-  prefix: " &6&lFraud &7» &e"
   no permission: "&cSorry but you can''t do that. You don''t have the permission!"
   # {0} is the name of the player/ip | {1} is the country of the player
   bad country detected: "&6{0} &ccomes from a suspicious country: &6{1}"
@@ -57,12 +73,25 @@ messages:
     header_ip: "&cHere is the information about the alts of &6{0}&e&o({1})&c:"
     # {0} is the name of the player | {1} is the first join | {2} is the last join
     player: "  &c- &6{0}&c:\n     &c• First Join: &6{1}\n     &c• Last Join: &6{2}"
-    # {0} is the ip of the player | {1} is the country of the ip | {2} is the others Informations
-    ip_information: "&cHere is the informations about the ip &6{0}&c:\n  &c• Country: &6{1}\n  &c• Others Informations: &6{2}"
+    # {0} is the ip of the player | {1} is the country of the ip | {2} is the others information
+    ip_information: "&cHere is the informations about the ip &6{0}&c:"
+    ip_location: "&cHere is the location of this ip &6{0}&c:"
+    continent: "  &c• Continent: &6{0}"
+    # {0} is the country name | {1} is the country code
+    country: "  &c• Country: &6{0} ({1})"
+    sub-division: "  &c• Sub-Division: &6{0}"
+    postal-code: "  &c• Postal-Code: &6{0}"
+    city: "  &c• City: &6{0}"
+    # {0} is latitude | {1} is longitude.
+    coordinates: "  &c• Coordinates(lat/lon)&c: &6{0}&c/&6{1} &7&o(Click Here)"
+    coordinates_click: "&7Click here to see the location on &6Google Maps&7."
+    others: "  &c• Others Informations: &6{0}"
   # {0} is the name of the player.
   no alts: "&6{0}&c never connected double accounts."
   not in datas: "&6{0}&c isn''t in the files."
   player forgotten: "&6{0} has been removed of the files."
+  # {0} the ip
+  not valid ip: "&cThis ip is not valid."
   reload:
     success: "&cReload success."
     failed: "&cReload failed. &oStacktrace print in console."
@@ -79,6 +108,7 @@ messages:
       contact: "&f&l/{0} contact &7- Contact me if you have any problem, plugin error or requests."
       download: "&f&l/{0} (download|dl) &7- Download the latest version of the plugin (must be restart after this)."
       forgot: "&f&l/{0} forgot <player> &7- Remove all the datas about this player. &8&o&n(WARNING: this is not cancellable)."
+      geoip: "&f&l/{0} geoip <ip> &7- Locate the ip in the real world."
       info: "&f&l/{0} info <player> &7- Give some info about the connection of a player."
       link: "&f&l/{0} links &7- Give some links about the plugin(Source-code, Spigot, Direct Download)."
       reload: "&f&l/{0} reload &7- Reload the configuration and data files."

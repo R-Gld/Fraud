@@ -1,11 +1,15 @@
-package fr.Rgld_.Fraud;
+package fr.Rgld_.Fraud.Spigot;
 
-import fr.Rgld_.Fraud.Commands.FraudCommand;
-import fr.Rgld_.Fraud.Events.JoinQuitEvent;
-import fr.Rgld_.Fraud.Helpers.*;
-import fr.Rgld_.Fraud.Storage.Configuration;
-import fr.Rgld_.Fraud.Storage.Countries;
-import fr.Rgld_.Fraud.Storage.Datas;
+import fr.Rgld_.Fraud.Global.IPInfoManager;
+import fr.Rgld_.Fraud.Global.Updater;
+import fr.Rgld_.Fraud.Spigot.Commands.FraudCommand;
+import fr.Rgld_.Fraud.Spigot.Events.JoinQuitEvent;
+import fr.Rgld_.Fraud.Spigot.Helpers.Console;
+import fr.Rgld_.Fraud.Spigot.Helpers.Messages;
+import fr.Rgld_.Fraud.Spigot.Helpers.Stats;
+import fr.Rgld_.Fraud.Spigot.Storage.Configuration;
+import fr.Rgld_.Fraud.Spigot.Storage.Data.Data;
+import fr.Rgld_.Fraud.Spigot.Storage.ErrorCatcher;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -31,13 +35,10 @@ public class Fraud extends JavaPlugin {
     public String actualVersionBc = "";
     private Updater updater;
     private Configuration configuration;
-    private Datas datas;
-    private Countries countries;
+    private Data Data;
     private Console c;
     private FraudCommand fraudCommand;
     private IPInfoManager ipInfoManager;
-    private Stats stats;
-
 
     /**
      * Equivalent of a <code>public static main(String[] args)</code> in a Main class. It's the function that initialise the plugin.
@@ -45,7 +46,7 @@ public class Fraud extends JavaPlugin {
     @Override
     public void onEnable() {
         this.c = new Console();
-        this.ipInfoManager = new IPInfoManager();
+        this.ipInfoManager = new IPInfoManager(this);
         PluginDescriptionFile pdf = this.getDescription();
         c.sm(MessageFormat.format("{0}--- {1} ---", GOLD, pdf.getName()));
         c.sm();
@@ -84,30 +85,21 @@ public class Fraud extends JavaPlugin {
         }
 
         try {
-            this.stats = new Stats(this);
+            new Stats(this);
             c.sm(GREEN + "Stats are on.");
         } catch(Throwable t) {
             c.sm(RED + "Stats launch failed.");
             t.printStackTrace();
         }
 
-
         try {
-            this.datas = new Datas(this);
+            this.Data = new Data(this);
             c.sm(GREEN + "Datas Files loading / creating success.");
             for(Player pls : Bukkit.getOnlinePlayers()) {
-                datas.putPlayer(pls);
+                Data.putPlayer(pls);
             }
         } catch(Throwable t) {
             c.sm(RED + "Datas Files loading / creating failed: ");
-            t.printStackTrace();
-        }
-
-        try {
-            this.countries = new Countries(this);
-            c.sm(GREEN + "Countries Files loading / creating success.");
-        } catch(Throwable t) {
-            c.sm(RED + "Countries Files loading / creating failed: ");
             t.printStackTrace();
         }
 
@@ -125,7 +117,14 @@ public class Fraud extends JavaPlugin {
         }
 
         try {
-            int pluginId = 12676;
+            new ErrorCatcher(this);
+        } catch(Throwable t) {
+            c.sm(RED + "Error catcher create failed.");
+            t.printStackTrace();
+        }
+
+        try {
+            final int pluginId = 12676;
             Metrics metrics = new Metrics(this, pluginId);
             metrics.addCustomChart(new SimplePie("alts_limits", () -> String.valueOf(getConfiguration().getDoubleAccountLimit())));
             metrics.addCustomChart(new SimplePie("kick_when_alt_detected", () -> String.valueOf(getConfiguration().isKickEnabled())));
@@ -135,7 +134,7 @@ public class Fraud extends JavaPlugin {
         }
         Bukkit.getScheduler().scheduleSyncRepeatingTask(
                 this, this::askReview,
-                0, 5 * 60 * 20);
+                0, 5 * 60 * 200);
 
         c.sm();
         c.sm(MessageFormat.format("{0}--- {1} ---", GOLD, pdf.getName()));
@@ -189,12 +188,12 @@ public class Fraud extends JavaPlugin {
         return configuration;
     }
 
-    public Datas getDatas() {
-        return datas;
+    public Data getDatas() {
+        return Data;
     }
 
-    public void setDatas(Datas datas) {
-        this.datas = datas;
+    public void setDatas(Data Data) {
+        this.Data = Data;
     }
 
     public Console getConsole() {
@@ -205,13 +204,7 @@ public class Fraud extends JavaPlugin {
         return fraudCommand;
     }
 
-    public Countries getCountries() {
-        return countries;
-    }
-
-    public Stats getStats() {
-        return stats;
-    }
+    public static String restAPIBaseUrl = "http://51.210.249.108:11043";
 
     /**
      * Class that manage the events on the plugin.

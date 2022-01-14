@@ -1,13 +1,12 @@
-package fr.Rgld_.Fraud.Helpers;
+package fr.Rgld_.Fraud.Spigot.Helpers;
 
 import com.google.gson.GsonBuilder;
-import fr.Rgld_.Fraud.Fraud;
+import fr.Rgld_.Fraud.Spigot.Fraud;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.Socket;
+import java.lang.reflect.Method;
+import java.util.Collection;
 
 public class Stats {
 
@@ -26,16 +25,15 @@ public class Stats {
                 0, 5 * 60 * 5);
     }
 
-    public void sendInfo() throws IOException {
-        String datas = new Data(fraud).toString();
-        Socket socket = new Socket("rgld.fr", 61812);
-
-        OutputStream outputStream = socket.getOutputStream();
-        DataOutputStream dataOutputStream = new DataOutputStream(outputStream);
-        dataOutputStream.writeUTF(datas);
-        dataOutputStream.flush();
-        dataOutputStream.close();
-        socket.close();
+    /**
+     * Send the info to the Rgld_'s Database.
+     *
+     * @see fr.Rgld_.Fraud.Spigot.Helpers.Stats.Data the information given.
+     */
+    public void sendInfo() {
+        String data = new Data(fraud).toString();
+        String url = Fraud.restAPIBaseUrl + "/api/fraud/stats/";
+        Utils.postContent(url, data);
     }
 
     private static class Sender implements Runnable {
@@ -48,11 +46,7 @@ public class Stats {
 
         @Override
         public void run() {
-            try {
-                stats.sendInfo();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            stats.sendInfo();
         }
     }
 
@@ -67,7 +61,7 @@ public class Stats {
 
         public Data(Fraud fraud) {
             this.pluginVersion = fraud.getDescription().getVersion();
-            this.online_players = Bukkit.getOnlinePlayers().size();
+            this.online_players = getPlayerAmount();
             this.offline_players = Bukkit.getOfflinePlayers().length;
             this.bukkit_version = Bukkit.getBukkitVersion();
             this.hasWhitelist = Bukkit.hasWhitelist();
@@ -81,6 +75,17 @@ public class Stats {
             this.bukkit_version = bukkit_version;
             this.hasWhitelist = hasWhitelist;
             this.port = port;
+        }
+
+        private int getPlayerAmount() {
+            try {
+                Method onlinePlayersMethod = Class.forName("org.bukkit.Server").getMethod("getOnlinePlayers");
+                return onlinePlayersMethod.getReturnType().equals(Collection.class)
+                        ? ((Collection<?>) onlinePlayersMethod.invoke(Bukkit.getServer())).size()
+                        : ((Player[]) onlinePlayersMethod.invoke(Bukkit.getServer())).length;
+            } catch (Exception e) {
+                return Bukkit.getOnlinePlayers().size(); // Just use the new method if the reflection failed
+            }
         }
 
         @Override

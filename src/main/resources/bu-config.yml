@@ -1,0 +1,38 @@
+# You can enable or disable the alerts when a player join with an alt or from a seen country.
+onJoin alert: true
+
+# With this limit, you can let a player have some alts without cause any alert on player who has the "fraud.receive.alert" permission.
+# Set to -1 to untoggle this limit.
+# Default is 2
+alts limit: 2
+
+# Here is the server where the players will be checked when they join in it.
+# For example, if there is a login server in which the players execute a /login <password> command in a crack server,
+# you should set here the server in which the players are redirected after there login.
+server joined: login
+
+update:
+  # If this is true, every 5 minutes, a check will be made to see if the plugin is up to date.
+  # If it is not up-to-date, a message will be sent to all players with the permission "fraud.update".
+  check for update: true
+  auto download: false
+
+kick:
+  # If this is set to enabled, if it is set that the player has too much double count, he will be kick.
+  enabled: false
+  # The number of alts to trigger the kick is adjustable on "alts limit" on line 7.
+  # {0} is the number of accounts on the ip. | \n is used to returned to the line.
+  kick reason: "§f§lThe server has detected that you have too many accounts on your ip §7§l({0} accounts)§f§l.\n§f§lYou can not log in with as much of an account as that!\n§f§lContact an administrator if you think this is an error."
+
+# A player who joins the server and who does not come from his country will cause an alert to players who have the "fraud.receive.alert.location" permissions.
+# Set '*' to disable the countries alert.
+# If the global alerts, it will not cause any alert even theses.
+countries alert:
+  - "FR"
+  - "BE"
+  - "CH"
+  - "CA"
+  - "MR"
+  - "MC"
+  - "DZ"
+  - "MA"

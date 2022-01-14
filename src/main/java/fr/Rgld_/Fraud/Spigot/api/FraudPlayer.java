@@ -1,7 +1,11 @@
-package fr.Rgld_.Fraud.api;
+package fr.Rgld_.Fraud.Spigot.api;
+
+import fr.Rgld_.Fraud.Global.IPInfo;
+import fr.Rgld_.Fraud.Global.IPInfoManager;
 
 import java.util.List;
 
+@SuppressWarnings("unused")
 public class FraudPlayer {
 
     private final int id;
@@ -35,5 +39,8 @@ public class FraudPlayer {
     }
     public List<String> getAlts() {
         return new Data().getAlts(pseudo);
+    }
+    public IPInfo getIPInfo() {
+        return IPInfoManager.getIpInfo(getIp());
     }
 }

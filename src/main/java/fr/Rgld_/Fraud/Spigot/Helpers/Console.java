@@ -1,4 +1,4 @@
-package fr.Rgld_.Fraud.Helpers;
+package fr.Rgld_.Fraud.Spigot.Helpers;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -6,7 +6,7 @@ import org.bukkit.ChatColor;
 /**
  * Facilitates the sending of message in console.
  */
-public class Console {
+public class Console implements fr.Rgld_.Fraud.Global.Console {
 
     public Console() {}
 
@@ -22,7 +22,7 @@ public class Console {
         sendMessage();
     }
 
-    private void sendMessage() {
+    public void sendMessage() {
         sm("");
     }
 }

@@ -1,4 +1,4 @@
-package fr.Rgld_.Fraud.Helpers;
+package fr.Rgld_.Fraud.Spigot.Helpers;
 
 import org.bukkit.ChatColor;
 
@@ -22,6 +22,7 @@ public enum Messages {
     HELP_COMMAND_DOWNLOAD("help.command.download", true),
     HELP_COMMAND_LINK("help.command.link", true),
     HELP_COMMAND_FORGOT("help.command.forgot", true),
+    HELP_COMMAND_GEOIP("help.command.geoip", true),
     HELP_COMMAND_RELOAD("help.command.reload", true),
     HELP_COMMAND_VERSION("help.command.version", true),
     HELP_COMMAND_INFO("help.command.info", true),
@@ -30,7 +31,6 @@ public enum Messages {
     NO_PERMISSION("no permission", true),
     NOT_IN_DATAS("not in datas", true),
     PLAYER_FORGOTTEN("player forgotten", true),
-    PREFIX("prefix", true),
     RELOAD_SUCCESS("reload.success", true),
     RELOAD_FAILED("reload.failed", true),
 
@@ -43,8 +43,18 @@ public enum Messages {
     INFO_HOVER("info.hover", true),
     INFO_WAIT_FOR_THE_OTHER_PART("info.wait_for_the_other_part", true),
     INFO_IP_INFORMATION("info.ip_information", true),
+    INFO_IP_continent("info.continent", true),
+    INFO_IP_country("info.country", true),
+    INFO_IP_sub_division("info.sub-division", true),
+    INFO_IP_postal_code("info.postal-code", true),
+    INFO_IP_city("info.city", true),
+    INFO_IP_coordinates("info.coordinates", true),
+    INFO_IP_coordinates_click("info.coordinates_click", true),
+    INFO_IP_others("info.others", true),
 
-    // Time Messages
+    NOT_VALID_IP("not valid ip", true),
+
+    // Time Messages,
     YEAR("time.year", true), YEARS("time.years", true),
     MONTH("time.month", true), MONTHS("time.months", true),
     DAY("time.day", true), DAYS("time.days", true),
@@ -55,10 +65,12 @@ public enum Messages {
     AND("time.and", true),
 
     // final messages.,
-    COMMAND_CLEAN_DATA_YES("§6The datas has been reset.", false), COMMAND_CLEAN_DATA_NO("§cAn error occur during the reset of datas. Please call an administrator or the developer of this plugin via /{0} contact.", false),
+    PREFIX(" &6&lFraud &7» &e", false),
+    COMMAND_CLEAN_DATA_YES("§6The datas has been reset.", false),
+    COMMAND_CLEAN_DATA_NO("§cAn error occur during the reset of datas. Please call an administrator or the developer of this plugin via /{0} contact.", false),
     ;
 
-    private static final String defaultMessage = "§6§l§nPlease contact the developer to report this bug: /fraud contact !";
+    public static final String defaultMessage = "§6§l§nPlease contact the developer to report this bug: /fraud contact !";
 
     private String getNotConfigurableDefaultMessage() {
         return "not editable";
@@ -77,6 +89,9 @@ public enum Messages {
         }
     }
 
+    /**
+     * @return true if the message is editable, false otherwise.
+     */
     public boolean isEditable() {
         return !getConfig().equals(getNotConfigurableDefaultMessage());
     }

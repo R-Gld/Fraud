@@ -1,8 +1,9 @@
-package fr.Rgld_.Fraud.Storage;
+package fr.Rgld_.Fraud.Spigot.Storage.Data;
 
 import com.google.common.collect.Lists;
-import fr.Rgld_.Fraud.Fraud;
-import fr.Rgld_.Fraud.Helpers.Utils;
+import fr.Rgld_.Fraud.Spigot.Fraud;
+import fr.Rgld_.Fraud.Spigot.Helpers.Utils;
+import fr.Rgld_.Fraud.Spigot.Storage.Configuration;
 import org.bukkit.entity.Player;
 
 import java.io.File;
@@ -15,30 +16,70 @@ import java.util.List;
 /**
  * Class used to store datas in the database sqlite of the server.
  */
-public class Datas {
+public class Data {
 
-    private final File file;
     private final String TABLE_NAME_ips = "ips";
     private final String TABLE_NAME_connection = "connections";
+    private final String TABLE_NAME_history = "history";
 
-    public Datas(Fraud fraud) {
-        file = new File(fraud.getDataFolder(), "data.sqlite");
+    private final Fraud fraud;
+    private final Configuration.DatabaseSection.Type type;
+    private File file = null;
+
+    public Data(Fraud fraud) {
+        this.fraud = fraud;
+        Configuration.DatabaseSection db = fraud.getConfiguration().getDatabase();
+        this.type = db.getType();
+        switch(type) {
+            case MYSQL:
+                try {
+                    connect();
+                } catch(SQLException e) {
+                    System.err.println("There is a problem with the mysql connection." +
+                                       "\nYou should check the parameters of the connection with the database." +
+                                       "\nHere is the url used to connect to the database: " + db.generateURL() +
+                                       "\nHere is the stacktrace:" + e.getMessage());
+                    e.printStackTrace();
+                } catch(ClassNotFoundException e) {
+                    System.out.println("An error occur with the driver:");
+                    e.printStackTrace();
+                }
+                break;
+            case SQLITE:
+                file = new File(fraud.getDataFolder(), "data.sqlite");
+                break;
+            case UNKNOWN:
+            default:
+                throw new IllegalStateException("The type of storage is unknown. Please fix the config.");
+        }
+
         createIpsTable();
         createConnectionTable();
+        createHistoryTable();
     }
 
-    private Connection connect() throws SQLException, ClassNotFoundException {
-        if(!file.exists()) try {
-            file.createNewFile();
-        } catch(IOException e) {
-            e.printStackTrace();
+    public Connection connect() throws SQLException, ClassNotFoundException {
+        switch(type) {
+            case MYSQL:
+                Configuration.DatabaseSection db = fraud.getConfiguration().getDatabase();
+                Class.forName("com.mysql.cj.jdbc.Driver");
+                return DriverManager.getConnection(db.generateURL(), db.getUser(), db.getPassword());
+            case SQLITE:
+                if(!file.exists()) try {
+                    file.createNewFile();
+                } catch(IOException e) {
+                    e.printStackTrace();
+                }
+                Class.forName("org.sqlite.JDBC");
+                return DriverManager.getConnection("jdbc:sqlite:" + file.getAbsolutePath().replace("\\", File.separator));
+            case UNKNOWN:
+            default:
+                throw new IllegalStateException("The type of storage is unknown. Please fix the config.");
         }
-        Class.forName("org.sqlite.JDBC");
-        return DriverManager.getConnection("jdbc:sqlite:" + file.getAbsolutePath().replace("\\", File.separator));
     }
 
     // ALTER TABLE ips ADD last boolean DEFAULT true
-    private void createIpsTable() {
+    public void createIpsTable() {
         try(Connection connection = connect()) {
             String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME_ips + "(id integer PRIMARY KEY,pseudo text NOT NULL,ip text NOT NULL);";
             connection.createStatement().execute(sql);
@@ -47,7 +88,16 @@ public class Datas {
         }
     }
 
-    private void createConnectionTable() {
+    public void createHistoryTable() {
+        try(Connection connection = connect()) {
+            String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME_history + "(id integer PRIMARY KEY,pseudo text NOT NULL,ip text NOT NULL);";
+            connection.createStatement().execute(sql);
+        } catch(SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void createConnectionTable() {
         try(Connection connection = connect()) {
             String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME_connection + "(id integer PRIMARY KEY NOT NULL,pseudo text NOT NULL,first bigint,last bigint);";
             connection.createStatement().execute(sql);
@@ -55,7 +105,6 @@ public class Datas {
             e.printStackTrace();
         }
     }
-
 
     public void putPlayer(Player p) {
         String name = p.getName();

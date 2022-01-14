@@ -1,9 +1,9 @@
-name: Fraud
+name: ${project.artifactId}
 author: Rgld_
-version: 1.8.1 # Only chars accepted for the version: "0123456789."
-description: Detects if a player is fraudding the server.
+version: ${project.version}
+description: ${project.description}
 website: https://www.spigotmc.org/resources/fraud-alts-finder.69872/
-main: fr.Rgld_.Fraud.Fraud
+main: fr.Rgld_.Fraud.Spigot.Fraud
 
 commands:
   fraud:
@@ -96,3 +96,6 @@ permissions:
   fraud.forgot:
     default: op
     description: Let a player delete an entry into the database.
+  fraud.kick.evade:
+    default: op
+    description: Let the players that have the permission evade kick when they join with an alt.

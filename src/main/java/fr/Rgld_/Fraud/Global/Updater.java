@@ -1,6 +1,7 @@
-package fr.Rgld_.Fraud.Helpers;
+package fr.Rgld_.Fraud.Global;
 
-import fr.Rgld_.Fraud.Fraud;
+import fr.Rgld_.Fraud.Spigot.Fraud;
+import fr.Rgld_.Fraud.Spigot.Helpers.Utils;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -11,39 +12,40 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Arrays;
 
 /**
  * Let the plugin check if a new version has been released <a href="https://www.spigotmc.org/resources/fraud-alts-finder.69872/" target="_blank">on the spigot page</a>.
  */
 public class Updater implements Runnable {
 
-    private final Fraud fraud;
+    private final fr.Rgld_.Fraud.Spigot.Fraud fraud_sp;
 
-    public Updater(Fraud fraud) {
-        this.fraud = fraud;
+    /**
+     *
+     * We're using the spiget api to obtain the information about the uploads in spigotmc about this plugin.
+     *
+     * <a href="http://api.spiget.org/v2/resources/69872/download?version=latest" target="_blank">Download last version link</a>.
+     * <a href="https://api.spiget.org/v2/resources/69872/versions/latest" target="_blank">Last version informations link</a>.
+     *
+     * @param fraud the main class ({@link Fraud}).
+     */
+    public Updater(fr.Rgld_.Fraud.Spigot.Fraud fraud) {
+        this.fraud_sp = fraud;
     }
 
-    /*
-     DOWNLOAD: http://api.spiget.org/v2/resources/69872/download?version=latest
-     VERSIONS: https://api.spiget.org/v2/resources/69872/versions/latest
-    */
 
     /**
      *
      * Return a json String of the latest version of Fraud
      *
-     * Exemple (06/10/2021):
+     * Example of json data returns by the url: <a href="https://api.spiget.org/v2/resources/69872/versions/latest" target="_blank">https://api.spiget.org/v2/resources/69872/versions/latest</a> (06/10/2021):
      * {
      *   "uuid": "02505a1a-b652-3aab-003b-536632452b0c",
      *   "downloads": 4,
@@ -57,15 +59,10 @@ public class Updater implements Runnable {
      *   "id": 420367
      * }
      *
-     * @return String
+     * @return a {@link String}, the informations about the last version uploaded on spigotmc as json.
      */
-    private String getLatestVersion() {
-        try {
-            return Utils.getContent("https://api.spiget.org/v2/resources/69872/versions/latest");
-        } catch(IOException e) {
-            e.printStackTrace();
-            return "ERROR: " + Arrays.toString(e.getStackTrace());
-        }
+    private String getLatestVersionJson() {
+        return Utils.getContent("https://api.spiget.org/v2/resources/69872/versions/latest");
     }
 
     /**
@@ -78,7 +75,7 @@ public class Updater implements Runnable {
     public String getLatestVersionFormatted() {
         JSONObject obj;
         try {
-            obj = (JSONObject) new JSONParser().parse(getLatestVersion());
+            obj = (JSONObject) new JSONParser().parse(getLatestVersionJson());
         } catch(ParseException parseException) {
             System.err.println("An error occur while executing the updater: " + parseException.getMessage());
             return "ERROR";
@@ -86,6 +83,13 @@ public class Updater implements Runnable {
         return (String) obj.get("name");
     }
 
+    /**
+     * Format the version given in parameters so it can be compared to another version.
+     * Example: <code>parseVersion("1.5.9")</code> will return <code>1.59</code>.
+     *
+     * @param version the version of the plugin.
+     * @return the version as a double. Example: 1.5.9 will be returned as 1.59, so it can be compared to another version and check if the version is up-to-date.
+     */
     public double parseVersion(String version) {
         String[] spl = version.split("\\.");
         if(spl.length <= 2) {
@@ -107,13 +111,17 @@ public class Updater implements Runnable {
     public void run() {
         String version = getLatestVersionFormatted();
         double vFormat = parseVersion(version);
-        String actualVersion = fraud.getDescription().getVersion();
-        fraud.actualVersionBc = actualVersion;
+        Console c;
+        String actualVersion;
+        double actualVBcFormat;
+        c = fraud_sp.getConsole();
+        actualVersion = fraud_sp.getDescription().getVersion();
+        fraud_sp.actualVersionBc = actualVersion;
+        actualVBcFormat = parseVersion(fraud_sp.actualVersionBc);
         double actualVFormat = parseVersion(actualVersion);
-        double actualVBcFormat = parseVersion(fraud.actualVersionBc);
         if(actualVFormat < vFormat || actualVBcFormat < vFormat) {
             String url = "https://www.spigotmc.org/resources/fraud.69872/";
-            if(fraud.getConfiguration().autoDownloadLatest()) {
+            if(fraud_sp.getConfiguration().autoDownloadLatest()) {
                 downloadAndInstall();
                 for(Player p : Bukkit.getOnlinePlayers()) {
                     if(p.hasPermission("fraud.update")) {
@@ -128,7 +136,7 @@ public class Updater implements Runnable {
                                         "§6§m---------------------------------------");
                     }
                 }
-                fraud.getConsole().sm(
+                c.sm(
                         "§6§m---------------------------------------\n" +
                                 "\n" +
                                 "§eA new Update of §6Fraud §ehas been installed !\n" +
@@ -156,7 +164,7 @@ public class Updater implements Runnable {
                                         "§6§m---------------------------------------");
                     }
                 }
-                fraud.getConsole().sm(
+                c.sm(
                         "§6§m---------------------------------------\n" +
                                 "\n" +
                                 "§eA new Update of §6Fraud §eis now available !\n" +
@@ -166,10 +174,15 @@ public class Updater implements Runnable {
                                 "\n" +
                                 "§6§m---------------------------------------");
             }
-            fraud.actualVersionBc = version;
+            fraud_sp.actualVersionBc = version;
         }
     }
 
+    /**
+     * Download and Install the last version.
+     *
+     * @return true if the download and install is successful.
+     */
     public boolean downloadAndInstall() {
         try {
             final String name = URLDecoder.decode(String.valueOf(Fraud.class.getProtectionDomain().getCodeSource().getLocation().toURI()).replaceFirst("file:", "") + "_new", "UTF-8");
