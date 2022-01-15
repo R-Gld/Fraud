@@ -88,13 +88,21 @@
                                     <pattern>mozilla</pattern>
                                     <shadedPattern>fr.Rgld_.lib.mozilla</shadedPattern>
                                 </relocation>
+                                <relocation>
+                                    <pattern>org.intellij.lang.annotations</pattern>
+                                    <shadedPattern>fr.Rgld_.lib.annotations</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.jetbrains.annotations</pattern>
+                                    <shadedPattern>fr.Rgld_.lib.annotations</shadedPattern>
+                                </relocation>
                             </relocations>
                             <filters>
                                 <filter>
                                     <artifact>*:*</artifact>
                                     <excludes>
                                         <exclude>module-info.class</exclude>
-                                        <exclude>META-INF/*.*</exclude>
+                                        <exclude>META-INF/*</exclude>
                                         <exclude>*.txt</exclude>
                                     </excludes>
                                 </filter>
@@ -266,7 +274,7 @@
             <artifactId>annotations</artifactId>
             <version>16.0.1</version>
             <scope>compile</scope>
-        </dependency>
+        </dependency><!-- mvn dependency:tree -Ddetail=true -->
     </dependencies>
 
 </project>
