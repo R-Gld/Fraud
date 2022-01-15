@@ -43,8 +43,9 @@ public class Example {
     public void getLatitudeAndLongitudeOfPlayer(String pseudo) {
         Data data = new Data();
         IPInfo ipInfoOfRgld_ = data.getIPInfo(Utils.getAddress(Bukkit.getPlayer(pseudo).getAddress()));
-        System.out.println(pseudo + " is located at these coordinates(lat/lon): "
-                + ipInfoOfRgld_.getLatitude() + "/" + ipInfoOfRgld_.getLongitude());
+        System.out.println(pseudo + " is located at these coordinates(lat/lon): " +
+                ipInfoOfRgld_.getLatitude() + "/" + ipInfoOfRgld_.getLongitude()
+        );
     }
 }
 
