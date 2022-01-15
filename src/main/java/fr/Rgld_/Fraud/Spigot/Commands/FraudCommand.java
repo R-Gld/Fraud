@@ -2,6 +2,7 @@ package fr.Rgld_.Fraud.Spigot.Commands;
 
 import com.google.common.collect.Lists;
 import fr.Rgld_.Fraud.Global.IPInfo;
+import fr.Rgld_.Fraud.Global.IPInfoManager;
 import fr.Rgld_.Fraud.Global.Updater;
 import fr.Rgld_.Fraud.Spigot.Fraud;
 import fr.Rgld_.Fraud.Spigot.Helpers.Messages;
@@ -232,6 +233,7 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
                             sender.sendMessage(Messages.NOT_VALID_IP.getMessage());
                             return false;
                         }
+                        sendIPInfo(arg1, sender, false);
                         return false;
                     case "info":
                         List<String> alts = Data.getListByPseudo(arg1);
@@ -280,17 +282,32 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
     }
 
     /**
-     * Build and send the information about the ip given in parameters to the {@link CommandSender}.
      *
      * @param ip the ip seen
      * @param sender the sender who receive the information
      */
     private void sendIPInfo(String ip, CommandSender sender) {
+        sendIPInfo(ip, sender, true);
+    }
+
+    /**
+     * Build and send the information about the ip given in parameters to the {@link CommandSender}.
+     *
+     * @param ip the ip seen
+     * @param sender the sender who receive the information
+     * @param conformConfig is the informations send to the sender has to be conform to the configuration (geolocation part) ?
+     */
+    private void sendIPInfo(String ip, CommandSender sender, boolean conformConfig) {
         boolean isGeoIPApiActivated = fraud.getConfiguration().isGeoIPAPIActivated();
-        IPInfo ii = fraud.getIpInfoManager().getIPInfoConformConfig(ip);
+        IPInfo ii;
+        if(conformConfig) {
+            ii = fraud.getIpInfoManager().getIPInfoConformConfig(ip);
+        } else {
+            ii = IPInfoManager.getIpInfo(ip);
+        }
         sender.sendMessage(Messages.INFO_IP_INFORMATION.format(ip));
 
-        if(ii.getContinent() != null && isGeoIPApiActivated) {
+        if(ii.getContinent() != null && (isGeoIPApiActivated || conformConfig)) {
             String continent = ii.getContinent();
             sender.sendMessage(Messages.INFO_IP_continent.format(continent));
         }
@@ -301,22 +318,22 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
             sender.sendMessage(Messages.INFO_IP_country.format(countryName, countryCode));
         }
 
-        if(ii.getSubDivision() != null && isGeoIPApiActivated) {
+        if(ii.getSubDivision() != null && (isGeoIPApiActivated || conformConfig)) {
             String subDiv = ii.getSubDivision();
             sender.sendMessage(Messages.INFO_IP_sub_division.format(subDiv));
         }
 
-        if(ii.getCity() != null && isGeoIPApiActivated) {
+        if(ii.getCity() != null && (isGeoIPApiActivated || conformConfig)) {
             String city = ii.getCity();
             sender.sendMessage(Messages.INFO_IP_city.format(city));
         }
 
-        if(ii.getPostalCode() != null && isGeoIPApiActivated) {
+        if(ii.getPostalCode() != null && (isGeoIPApiActivated || conformConfig)) {
             String postalCode = ii.getPostalCode();
             sender.sendMessage(Messages.INFO_IP_postal_code.format(postalCode));
         }
 
-        if(ii.getLatitude() != null && ii.getLongitude() != null && isGeoIPApiActivated) {
+        if(ii.getLatitude() != null && ii.getLongitude() != null && (isGeoIPApiActivated || conformConfig)) {
             String lat = ii.getLatitude();
             String lon = ii.getLongitude();
             if(sender instanceof Player) {
