@@ -35,6 +35,7 @@ public class Configuration {
      * @throws InvalidConfigurationException if the configuration is not valid.
      */
     public void loadConfig() throws IOException, InvalidConfigurationException {
+        fraud.getDataFolder().mkdirs();
         if(!file.exists()) {
             String spCfg = "sp-config.yml";
             File spConfig = new File(fraud.getDataFolder(), spCfg);
