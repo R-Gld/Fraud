@@ -20,7 +20,7 @@
 ## API
 
 - Examples ([file](https://github.com/R-Gld/Fraud/blob/master/src/tests/Example.java)):
-
+ 
 ```java
 import fr.Rgld_.Fraud.Global.IPInfo;
 import fr.Rgld_.Fraud.Spigot.Helpers.Utils;
