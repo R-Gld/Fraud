@@ -17,6 +17,38 @@
 - Configure the plugin in the file `config.yml`. You can translate or just change the messages in this file.
 - Restart the server or just the plugin if you can.
 
+## API
+
+- Examples ([file](https://github.com/R-Gld/Fraud/blob/master/src/tests/Example.java)):
+
+```java
+import fr.Rgld_.Fraud.Global.IPInfo;
+import fr.Rgld_.Fraud.Spigot.Helpers.Utils;
+import fr.Rgld_.Fraud.Spigot.api.Data;
+import org.bukkit.Bukkit;
+
+import java.util.List;
+
+public class Example {
+
+    public void printAltsOf(String pseudo) {
+        Data data = new Data();
+        List<String> altsOfRgld_ = data.getAlts(pseudo);
+        System.out.println("Alts of " + pseudo + ":");
+        for(String alt : altsOfRgld_) {
+            System.out.println("\t- " + alt);
+        }
+    }
+
+    public void getLatitudeAndLongitudeOfPlayer(String pseudo) {
+        Data data = new Data();
+        IPInfo ipInfoOfRgld_ = data.getIPInfo(Utils.getAddress(Bukkit.getPlayer(pseudo).getAddress()));
+        System.out.println(pseudo + " is located at these coordinates(lat/lon): " + ipInfoOfRgld_.getLatitude() + "/" + ipInfoOfRgld_.getLongitude());
+    }
+}
+
+```
+
 ## Contact
 
 ### Discord

@@ -39,6 +39,11 @@ public class Data {
         return Data.getListByPseudo(pseudo);
     }
 
+    /**
+     * Give some information about the ip given in argument.
+     * @param ip (a {@link String}) the ip of the player that is looked up.
+     * @return a {@link IPInfo} that contains all the information of the ip given in arguments (like the city: {@link IPInfo#getCity()}, or the latitude and the longitude: {@link IPInfo#getLatitude()}/{@link IPInfo#getLongitude()}).
+     */
     public IPInfo getIPInfo(String ip) {
         return fraud.getIpInfoManager().getIPInfoConformConfig(ip);
     }
