@@ -22,7 +22,7 @@ public class Stats {
                     Thread th = new Thread(new Sender(this));
                     th.start();
                 },
-                0, 5 * 60 * 5);
+                0, 20*60*30);
     }
 
     /**
