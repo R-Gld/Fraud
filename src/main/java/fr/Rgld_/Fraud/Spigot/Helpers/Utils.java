@@ -79,7 +79,7 @@ public class Utils {
             if(buf.length() > 0) {
                 buf.append(separator);
             }
-            if((each instanceof Collection)) {
+            if(each instanceof Collection) {
                 //noinspection rawtypes
                 buf.append(joinList(separator, ((Collection) each).toArray()));
             } else {

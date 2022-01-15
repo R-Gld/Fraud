@@ -232,7 +232,6 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
                             sender.sendMessage(Messages.NOT_VALID_IP.getMessage());
                             return false;
                         }
-
                         return false;
                     case "info":
                         List<String> alts = Data.getListByPseudo(arg1);
@@ -270,7 +269,6 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
                                 } else {
                                     new Thread(() -> sendIPInfo(ip, sender)).start();
                                 }
-
                             }
                         } else sender.sendMessage(Messages.NOT_IN_DATAS.format(arg1));
                         return false;
