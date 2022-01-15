@@ -40,7 +40,7 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
     private final ArrayList<String> na;
 
     /**
-     * @return an {@link ArrayList} of {@link String} in which there is all the players that don't wan't to receive the alerts.
+     * @return an {@link ArrayList} of {@link String} in which there is all the players that don't want to receive the alerts.
      */
     public ArrayList<String> getNotAlerted() {
         return na;
@@ -54,9 +54,9 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
      * ... (all the aliases of the /fraud command)
      *
      * @param sender {@link CommandSender} the sender of the command.
-     * @param command {@link Command} the command, it include the name, the aliases, ...
+     * @param command {@link Command} the command, it includes the name, the aliases, ...
      * @param label a {@link String} that is the command used by the {@link CommandSender} like fraud, fd, alts, ...
-     * @param args an array of {@link String} the contain every args given by the {@link CommandSender}.
+     * @param args an array of {@link String} that contain every args given by the {@link CommandSender}.
      * @return false (the result of this function is not really used here).
      */
     @Override
@@ -117,10 +117,10 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
                         sender.sendMessage("§6§m--§r§6> §ePlugin Links");
                         sender.sendMessage("\t§6Source-Code: §9§nhttps://rgld.fr/fraud/source-code");
                         sender.sendMessage("\t§6Download Latest: §9§nhttps://rgld.fr/fraud/download");
-                        sender.sendMessage("\t§6Spigot Ressource: §9§nhttps://rgld.fr/fraud/spigot/link");
+                        sender.sendMessage("\t§6Spigot Resource: §9§nhttps://rgld.fr/fraud/spigot/link");
                         sender.sendMessage("§6§m--§r§6> §eServices used");
-                        sender.sendMessage("\t§6RIPE: §9§nhttps://www.ripe.net§r \n\t§7§o(Used to get informations about ISP of an ip)");
-                        sender.sendMessage("\t§6MaxMind: §9§nhttps://www.maxmind.com/en/geoip2-services-and-databases§r \n\t§7§o(Used to get informations about the geolocation of an ip)");
+                        sender.sendMessage("\t§6RIPE: §9§nhttps://www.ripe.net§r \n\t§7§o(Used to get information about ISP of an ip)");
+                        sender.sendMessage("\t§6MaxMind: §9§nhttps://www.maxmind.com/en/geoip2-services-and-databases§r \n\t§7§o(Used to get information about the geolocation of an ip)");
                         return false;
                     case "all":
                         if (!sender.hasPermission("fraud.check.player.all")) {
@@ -455,7 +455,7 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
 
     /**
      * @param ipInfo IPInfo object
-     * @return a {@link String} that contain every info about the ip of the player separed by a "|".
+     * @return a {@link String} that contain every info about the ip of the player separated by a "|".
      */
     private String buildDesc(IPInfo ipInfo) {
         StringBuilder builder = new StringBuilder();
