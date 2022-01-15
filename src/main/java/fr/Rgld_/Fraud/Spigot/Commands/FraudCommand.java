@@ -115,12 +115,12 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
                     case "link":
                     case "links":
                         sender.sendMessage("§6§m--§r§6> §ePlugin Links");
-                        sender.sendMessage("§6Source-Code: §9§nhttps://rgld.fr/fraud/source-code");
-                        sender.sendMessage("§6Download Latest: §9§nhttps://rgld.fr/fraud/download");
-                        sender.sendMessage("§6Spigot Ressource: §9§nhttps://rgld.fr/fraud/spigot/link");
+                        sender.sendMessage("\t§6Source-Code: §9§nhttps://rgld.fr/fraud/source-code");
+                        sender.sendMessage("\t§6Download Latest: §9§nhttps://rgld.fr/fraud/download");
+                        sender.sendMessage("\t§6Spigot Ressource: §9§nhttps://rgld.fr/fraud/spigot/link");
                         sender.sendMessage("§6§m--§r§6> §eServices used");
-                        sender.sendMessage("§6RIPE: §9§nhttps://www.ripe.net §7§o(Used to get informations about ISP of an ip)");
-                        sender.sendMessage("§6MaxMind: §9§nhttps://www.maxmind.com/en/geoip2-services-and-databases §7§o(Used to get informations about the geolocation of an ip)");
+                        sender.sendMessage("\t§6RIPE: §9§nhttps://www.ripe.net§r \n\t§7§o(Used to get informations about ISP of an ip)");
+                        sender.sendMessage("\t§6MaxMind: §9§nhttps://www.maxmind.com/en/geoip2-services-and-databases§r \n\t§7§o(Used to get informations about the geolocation of an ip)");
                         return false;
                     case "all":
                         if (!sender.hasPermission("fraud.check.player.all")) {
