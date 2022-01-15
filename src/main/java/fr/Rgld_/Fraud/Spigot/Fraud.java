@@ -59,7 +59,6 @@ public class Fraud extends JavaPlugin {
             e.printStackTrace();
         }
 
-        c.sm();
 
         try {
             PluginCommand fraudPluginCommand = getCommand("fraud");
@@ -72,9 +71,7 @@ public class Fraud extends JavaPlugin {
             e.printStackTrace();
         }
 
-        c.sm();
 
-        getDataFolder().mkdirs();
 
         try {
             this.configuration = new Configuration(this);
