@@ -300,6 +300,7 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
     private void sendIPInfo(String ip, CommandSender sender, boolean conformConfig) {
         boolean isGeoIPApiActivated = fraud.getConfiguration().isGeoIPAPIActivated();
         IPInfo ii;
+        boolean somethingSend = false;
         if(conformConfig) {
             ii = fraud.getIpInfoManager().getIPInfoConformConfig(ip);
         } else {
@@ -307,33 +308,38 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
         }
         sender.sendMessage(Messages.INFO_IP_INFORMATION.format(ip));
 
-        if(ii.getContinent() != null && (isGeoIPApiActivated || conformConfig)) {
+        if(!isObjNull(ii.getContinent()) && (isGeoIPApiActivated || conformConfig)) {
             String continent = ii.getContinent();
             sender.sendMessage(Messages.INFO_IP_continent.format(continent));
+            somethingSend = true;
         }
 
-        if(ii.getCountryCode() != null && ii.getCountryName() != null) {
+        if(!isObjNull(ii.getCountryCode()) && ii.getCountryName() != null) {
             String countryName = ii.getCountryName();
             String countryCode = ii.getCountryCode();
             sender.sendMessage(Messages.INFO_IP_country.format(countryName, countryCode));
+            somethingSend = true;
         }
 
-        if(ii.getSubDivision() != null && (isGeoIPApiActivated || conformConfig)) {
+        if(!isObjNull(ii.getSubDivision()) && (isGeoIPApiActivated || conformConfig)) {
             String subDiv = ii.getSubDivision();
             sender.sendMessage(Messages.INFO_IP_sub_division.format(subDiv));
+            somethingSend = true;
         }
 
-        if(ii.getCity() != null && (isGeoIPApiActivated || conformConfig)) {
+        if(!isObjNull(ii.getCity()) && (isGeoIPApiActivated || conformConfig)) {
             String city = ii.getCity();
             sender.sendMessage(Messages.INFO_IP_city.format(city));
+            somethingSend = true;
         }
 
-        if(ii.getPostalCode() != null && (isGeoIPApiActivated || conformConfig)) {
+        if(!isObjNull(ii.getPostalCode()) && (isGeoIPApiActivated || conformConfig)) {
             String postalCode = ii.getPostalCode();
             sender.sendMessage(Messages.INFO_IP_postal_code.format(postalCode));
+            somethingSend = true;
         }
 
-        if(ii.getLatitude() != null && ii.getLongitude() != null && (isGeoIPApiActivated || conformConfig)) {
+        if(!isObjNull(ii.getLatitude()) && !isObjNull(ii.getLongitude()) && (isGeoIPApiActivated || conformConfig)) {
             String lat = ii.getLatitude();
             String lon = ii.getLongitude();
             if(sender instanceof Player) {
@@ -344,17 +350,28 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
             } else {
                 sender.sendMessage(Messages.INFO_IP_coordinates.format(lat, lon));
             }
+            somethingSend = true;
         }
 
         String netname = ii.getNetname();
         String desc = buildDesc(ii);
-        if(netname != null || desc != null) {
+        if(!(isObjNull(netname) && isObjNull(desc))) {
             String other_information =
-                    (netname != null && !netname.equals("") ? netname + "/" : "") +
+                    (!isObjNull(netname) ? netname + "/" : "") +
                     desc;
-            if(!other_information.trim().equals(""))
+            if(!isObjNull(other_information.replace("/", ""))) {
                 sender.sendMessage(Messages.INFO_IP_others.format(other_information));
+                somethingSend = true;
+            }
         }
+
+        if(!somethingSend) {
+            sender.sendMessage(Messages.INFO_IP_no_information.getMessage());
+        }
+    }
+
+    private boolean isObjNull(Object obj) {
+        return obj == null || (obj instanceof String && (obj.equals("null") || obj.equals("")));
     }
 
     /**
