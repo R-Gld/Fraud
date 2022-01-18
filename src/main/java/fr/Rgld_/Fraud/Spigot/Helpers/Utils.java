@@ -215,8 +215,8 @@ public class Utils {
      * @param content the content of the post request.
      * @return the html code of the request or -1 if the request as an error
      */
-    public static int postContent(final String url, final String content) {
-        return postContent(url, content, "application/json; utf-8", "application/json");
+    public static int postContent(final String url, final String content, final String auth) {
+        return postContent(url, content, "application/json; utf-8", "application/json", auth);
     }
 
     /**
@@ -227,9 +227,8 @@ public class Utils {
      * @param accept Example: "application/json"
      * @return the html code of the request or -1 if the request as an error
      */
-    public static int postContent(final String url, final String content, final String dataType, final String accept) {
+    public static int postContent(final String url, final String content, final String dataType, final String accept, final String auth) {
         HttpClient httpClient = HttpClientBuilder.create().build();
-        String auth = "edGfJSQqavVTWmzQ";
         String userAgent = "FraudClient";
         try {
             HttpPost request = new HttpPost(url);
