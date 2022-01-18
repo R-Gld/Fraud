@@ -2,7 +2,7 @@
 onJoin alert: true
 
 # With this limit, you can let a player have some alts without cause any alert on player who has the "fraud.receive.alert" permission.
-# Set to -1 to untoggle this limit.
+# Set to -1 to disable this limit.
 # Default is 2
 alts limit: 2
 
@@ -58,7 +58,7 @@ countries alert:
 messages:
   no permission: "&cSorry but you can''t do that. You don''t have the permission!"
   # {0} is the name of the player/ip | {1} is the country of the player
-  bad country detected: "&6{0} &ccomes from a suspicious country: &6{1}"
+  bad country detected: "&6{0}&c comes from a suspicious country: &6{1}"
   # {0} is the name of the player/ip | {1} is the list of alts
   alts detected: "&cSome double-accounts where been detected in the account of &6{0}&c, here there are:\n&r{1}"
   alts asked: "&cHere is the list of alts of &6{0}&c:\n{1}"
@@ -74,7 +74,7 @@ messages:
     # {0} is the name of the player | {1} is the first join | {2} is the last join
     player: "  &c- &6{0}&c:\n     &c• First Join: &6{1}\n     &c• Last Join: &6{2}"
     # {0} is the ip of the player | {1} is the country of the ip | {2} is the others information
-    ip_information: "&cHere is the informations about the ip &6{0}&c:"
+    ip_information: "&cHere is the information about the ip &6{0}&c:"
     ip_location: "&cHere is the location of this ip &6{0}&c:"
     continent: "  &c• Continent: &6{0}"
     # {0} is the country name | {1} is the country code
@@ -85,7 +85,8 @@ messages:
     # {0} is latitude | {1} is longitude.
     coordinates: "  &c• Coordinates(lat/lon)&c: &6{0}&c/&6{1} &7&o(Click Here)"
     coordinates_click: "&7Click here to see the location on &6Google Maps&7."
-    others: "  &c• Others Informations: &6{0}"
+    others: "  &c• Others Information: &6{0}"
+    no information: "  &c• Sorry, we couldn't find any information about this IP address."
   # {0} is the name of the player.
   no alts: "&6{0}&c never connected double accounts."
   not in datas: "&6{0}&c isn''t in the files."
@@ -107,7 +108,7 @@ messages:
       check: "&f&l/{0} check <player> &7- Check if a player have some alts / double-accounts."
       contact: "&f&l/{0} contact &7- Contact me if you have any problem, plugin error or requests."
       download: "&f&l/{0} (download|dl) &7- Download the latest version of the plugin (must be restart after this)."
-      forgot: "&f&l/{0} forgot <player> &7- Remove all the datas about this player. &8&o&n(WARNING: this is not cancellable)."
+      forgot: "&f&l/{0} forgot <player> &7- Remove all the data about this player. &8&o&n(WARNING: this is not cancellable)."
       geoip: "&f&l/{0} geoip <ip> &7- Locate the ip in the real world."
       info: "&f&l/{0} info <player> &7- Give some info about the connection of a player."
       link: "&f&l/{0} links &7- Give some links about the plugin(Source-code, Spigot, Direct Download)."
