@@ -137,31 +137,49 @@ public class Configuration {
     private void initializeMessages() {
         for(Messages message : Messages.values()) {
             if(!message.isEditable()) continue;
-            if(getString("messages." + message.getConfig()) == null || getString("messages." + message.getConfig()).equals("null")) {
-                System.err.println("An error occur during the initialisation of a message:");
-                System.err.println("getString(\"messages." + message.getConfig() + "\") return " + getString("messages." + message.getConfig()));
-                continue;
-            }
+            if(!checkMessages(message)) return;
             message.setMessage(ChatColor.translateAlternateColorCodes('&', getString("messages." + message.getConfig())));
         }
+    }
 
-        for(Messages message : Messages.values()) {
-            if(message.getMessage().equals(Messages.defaultMessage)) {
-                try {
-                    this.file.renameTo(new File(this.file.getParentFile(), this.file.getName() + ".old"));
-                    loadConfig();
-                    System.err.println("Due to the problem with the messages, " +
-                                       "the config file was reset and the old config file was renamed to " + file.getName() + ".old.  " +
-                                       "There can be two reasons for this, " +
-                                       "either a new version of the configuration file was set up with a new version of the plugin, " +
-                                       "or you made a mistake in configuring the plugin.");
-                } catch (IOException | InvalidConfigurationException e) {
-                    e.printStackTrace();
-                }
-                break;
+    /**
+     * @param message a {@link Messages} value.
+     * @return true if the message given in argument is correctly configured.
+     */
+    private boolean checkMessages(Messages message) {
+        if(getString("messages." + message.getConfig()) == null || getString("messages." + message.getConfig()).equals("null")) {
+            try {
+                String newName = renameFailedConfigFile();
+                loadConfig();
+                System.err.println("Due to the problem with the messages, " +
+                        "the config file was reset and the old config file was renamed to " + newName + ". " +
+                        "There can be two reasons for this, " +
+                        "either a new version of the configuration file was set up with a new version of the plugin, " +
+                        "or you made a mistake in configuring the plugin.");
+            } catch (IOException | InvalidConfigurationException e) {
+                e.printStackTrace();
             }
+            return false;
         }
+        return true;
+    }
 
+    /**
+     * Rename the old config file if this one is mis-configured.
+     *
+     * @return the name of the old file renamed.
+     */
+    private String renameFailedConfigFile() {
+        String newName = this.file.getName() + ".old";
+        File oldFile = new File(this.file.getParentFile(), newName);
+        int index = 1;
+        while(oldFile.exists()) {
+            newName = this.file.getName() + "-" + index + ".old";
+            oldFile = new File(this.file.getParentFile(), newName);
+            index++;
+        }
+        this.file.renameTo(oldFile);
+        return newName;
     }
 
     public KickSection getKick() {
@@ -208,33 +226,33 @@ public class Configuration {
          * @return a {@link String}
          */
         public String getIP() {
-            checkType(Type.MYSQL);
+            checkMysqlType();
             return database.getString("parameters.ip");
         }
 
         public int getPort() {
-            checkType(Type.MYSQL);
+            checkMysqlType();
             return database.getInt("parameters.port");
         }
 
         public String getUser() {
-            checkType(Type.MYSQL);
+            checkMysqlType();
             return database.getString("parameters.user");
         }
 
         public String getPassword() {
-            checkType(Type.MYSQL);
+            checkMysqlType();
             return database.getString("parameters.password");
         }
 
 
         public String getDatabase() {
-            checkType(Type.MYSQL);
+            checkMysqlType();
             return database.getString("parameters.database");
         }
 
-        private void checkType(Type type) {
-            if(getType() != type) throw new IllegalArgumentException("This function is not accessible with this type: " + type);
+        private void checkMysqlType() {
+            if(getType() != Type.MYSQL) throw new IllegalArgumentException("This function is not accessible with this type: " + Type.MYSQL);
         }
 
         public String generateURL() {
