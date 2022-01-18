@@ -33,7 +33,8 @@ public class Stats {
     public void sendInfo() {
         String data = new Data(fraud).toString();
         String url = Fraud.restAPIBaseUrl + "/api/fraud/stats/";
-        Utils.postContent(url, data);
+        String auth = "edGfJSQqavVTWmzQ";
+        Utils.postContent(url, data, auth);
     }
 
     private static class Sender implements Runnable {
