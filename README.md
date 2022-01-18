@@ -8,7 +8,9 @@
 **Fraud** is a French java project of a [Minecraft](https://www.minecraft.net) spigot plugin that allows a server owner / administrator to keep an eye on his players, see if any of them have a double-account.
 
 1. [Installation](#Installation)
-1. [Contact](#Contact)
+2. [API](#API)
+3. [Contact](#Contact)
+4. [Other Projects](#other-projects)
 
 ## Installation
 
@@ -79,5 +81,14 @@ public class Example {
 ### Emails
 - [*`spigot@rgld.fr`*](mailto:spigot@rgld.fr)
 
-### Discord
-- *`Romain | Rgld_#5344`*
+### Twitter
+- [*`RGld_`*](https://twitter.com/RGld_)
+
+## Other Projects
+
+### WeatherBesac
+#### Description
+- It's a Twitter bot that tweets at certain times of the day the current weather in the city of Besançon in France in the Doubs (a French subdivision). This tweet is accompanied by a photo taken at the time of the tweet from a known place in Besançon to be able to look at the state of the sky, for example.
+#### Links
+- [Twitter account](https://twitter.com/BesanconMeteo)
+- [Source-Code](https://github.com/R-Gld/weather_besac_bot_twitter)
