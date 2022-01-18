@@ -51,6 +51,7 @@ public enum Messages {
     INFO_IP_coordinates("info.coordinates", true),
     INFO_IP_coordinates_click("info.coordinates_click", true),
     INFO_IP_others("info.others", true),
+    INFO_IP_no_information("info.no information", true),
 
     NOT_VALID_IP("not valid ip", true),
 
