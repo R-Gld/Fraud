@@ -2,10 +2,7 @@ package fr.Rgld_.Fraud.Global;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * Object that store the information of an ip
@@ -103,7 +100,7 @@ public class IPInfo {
     }
 
     private @NotNull String format(String text) {
-        return text.substring(1, text.length()-1);
+        return !Objects.equals(text, "null") ? text.substring(1, text.length()-1) : text;
     }
 
     public IPInfo delContinent() {
