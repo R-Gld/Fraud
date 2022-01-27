@@ -10,7 +10,7 @@
 
     <groupId>fr.Rgld_</groupId>
     <artifactId>Fraud</artifactId>
-    <version>1.8.4</version>
+    <version>1.8.5</version>
 
     <developers>
         <developer>
@@ -103,7 +103,6 @@
                                     <excludes>
                                         <exclude>module-info.class</exclude>
                                         <exclude>META-INF/*</exclude>
-                                        <exclude>*.txt</exclude>
                                     </excludes>
                                 </filter>
                             </filters>
@@ -216,6 +215,7 @@
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
             <version>4.5.13</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.google.common</groupId>
@@ -274,7 +274,7 @@
             <artifactId>annotations</artifactId>
             <version>16.0.1</version>
             <scope>compile</scope>
-        </dependency><!-- mvn dependency:tree -Ddetail=true -->
+        </dependency>
     </dependencies>
 
 </project>
