@@ -198,7 +198,7 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
                                     !target.getName().equals(target.getDisplayName()) ? target.getName() + "§8(" + target.getDisplayName() + "§8)" : target.getName(),
                                     false);
                         } else {
-                            if (Utils.isValidIP(arg1)) {
+                            if (Utils.isIPv4Address(arg1)) {
                                 if (sender.hasPermission("fraud.check.ip")) {
                                     InetSocketAddress add = new InetSocketAddress(arg1, 0);
                                     listAlts(
@@ -229,7 +229,7 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
                             sender.sendMessage(Messages.NO_PERMISSION.getMessage());
                             return false;
                         }
-                        if (!Utils.isValidIP(arg1)) {
+                        if (!Utils.isIPv4Address(arg1)) {
                             sender.sendMessage(Messages.NOT_VALID_IP.getMessage());
                             return false;
                         }
@@ -299,47 +299,50 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
      */
     private void sendIPInfo(String ip, CommandSender sender, boolean conformConfig) {
         boolean isGeoIPApiActivated = fraud.getConfiguration().isGeoIPAPIActivated();
-        IPInfo ii;
         boolean somethingSend = false;
+        boolean geoIPOrCC = isGeoIPApiActivated || conformConfig;
+        IPInfo ii;
+
         if(conformConfig) {
             ii = fraud.getIpInfoManager().getIPInfoConformConfig(ip);
         } else {
-            ii = IPInfoManager.getIpInfo(ip);
+            ii = IPInfoManager.getIpInfo(ip, isGeoIPApiActivated);
         }
+
         sender.sendMessage(Messages.INFO_IP_INFORMATION.format(ip));
 
-        if(!isObjNull(ii.getContinent()) && (isGeoIPApiActivated || conformConfig)) {
+        if(!isObjNull(ii.getContinent()) && geoIPOrCC) {
             String continent = ii.getContinent();
             sender.sendMessage(Messages.INFO_IP_continent.format(continent));
             somethingSend = true;
         }
 
-        if(!isObjNull(ii.getCountryCode()) && ii.getCountryName() != null) {
+        if(!isObjNull(ii.getCountryCode()) && !isObjNull(ii.getCountryName())) {
             String countryName = ii.getCountryName();
             String countryCode = ii.getCountryCode();
             sender.sendMessage(Messages.INFO_IP_country.format(countryName, countryCode));
             somethingSend = true;
         }
 
-        if(!isObjNull(ii.getSubDivision()) && (isGeoIPApiActivated || conformConfig)) {
+        if(!isObjNull(ii.getSubDivision()) && geoIPOrCC) {
             String subDiv = ii.getSubDivision();
             sender.sendMessage(Messages.INFO_IP_sub_division.format(subDiv));
             somethingSend = true;
         }
 
-        if(!isObjNull(ii.getCity()) && (isGeoIPApiActivated || conformConfig)) {
+        if(!isObjNull(ii.getCity()) && geoIPOrCC) {
             String city = ii.getCity();
             sender.sendMessage(Messages.INFO_IP_city.format(city));
             somethingSend = true;
         }
 
-        if(!isObjNull(ii.getPostalCode()) && (isGeoIPApiActivated || conformConfig)) {
+        if(!isObjNull(ii.getPostalCode()) && geoIPOrCC) {
             String postalCode = ii.getPostalCode();
             sender.sendMessage(Messages.INFO_IP_postal_code.format(postalCode));
             somethingSend = true;
         }
 
-        if(!isObjNull(ii.getLatitude()) && !isObjNull(ii.getLongitude()) && (isGeoIPApiActivated || conformConfig)) {
+        if(!isObjNull(ii.getLatitude()) && !isObjNull(ii.getLongitude()) && geoIPOrCC) {
             String lat = ii.getLatitude();
             String lon = ii.getLongitude();
             if(sender instanceof Player) {
