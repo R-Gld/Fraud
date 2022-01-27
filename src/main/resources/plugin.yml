@@ -27,6 +27,7 @@ permissions:
       fraud.update: true
       fraud.download: true
       fraud.forgot: true
+      fraud.geoip: true
   fraud.bypass.*:
     description: Give all the bypass available
     default: op
@@ -98,4 +99,7 @@ permissions:
     description: Let a player delete an entry into the database.
   fraud.kick.evade:
     default: op
-    description: Let the players that have the permission evade kick when they join with an alt.
+    description: Let a player evade kick when they join with an alt.
+  fraud.geoip:
+    default: op
+    description: Let a player get the geolocation of an ip.
