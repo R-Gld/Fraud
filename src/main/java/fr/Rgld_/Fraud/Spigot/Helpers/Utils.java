@@ -1,8 +1,11 @@
 package fr.Rgld_.Fraud.Spigot.Helpers;
 
 import com.google.common.collect.Lists;
+import org.apache.http.auth.AUTH;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.util.InetAddressUtils;
+import org.apache.http.conn.util.PublicSuffixMatcher;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -10,6 +13,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ConnectException;
@@ -18,7 +22,6 @@ import java.net.InetSocketAddress;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.regex.Pattern;
 
 /**
  * Contain several functions useful for the plugin.
@@ -64,14 +67,24 @@ public class Utils {
      * @param ipAddress the ip address.
      * @return True if the ip given is an ipv4 address. False otherwise.
      */
-    public static boolean isValidIP(final String ipAddress) {
-        return Pattern.compile("^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])$").matcher(ipAddress).matches();
+    public static boolean isIPv4Address(final String ipAddress) {
+        return InetAddressUtils.isIPv4Address(ipAddress);
     }
 
     public static String joinList(Object... list) {
         return joinList("§r, ", list);
     }
 
+    /**
+     * Create a string and join every object in list:
+     * Exemple:
+     * joinList(", ", 'a', 'b', 'c') = "a, b, c"
+     * @see Utils#joinList(Object...)
+     *
+     * @param separator the separator between these serializations.
+     * @param list list of the object serialized
+     * @return a string with every serialization of the objects in the list, between theses, there is a separator given in parameters.
+     */
     private static String joinList(String separator, Object... list) {
         Arrays.sort(list);
         StringBuilder buf = new StringBuilder();
@@ -131,7 +144,7 @@ public class Utils {
 
 
     /**
-     * Method used by {@link Utils#formatDate(long)}.
+     * @see Utils#formatDate(long)
      */
     private static int dateDiff(int type, Calendar fromDate, Calendar toDate, boolean future) {
         int fromYear = fromDate.get(Calendar.YEAR);
@@ -158,24 +171,8 @@ public class Utils {
      * @param url an http url.
      * @return the content of this url.
      */
-    public static String getContent(final String url) {
-        try {
-            HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
-            con.setRequestMethod("GET");
-            con.setRequestProperty("User-Agent", "FraudClient");
-
-            BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-            String inputLine;
-            StringBuilder response = new StringBuilder();
-            while((inputLine = in.readLine()) != null) {
-                response.append(inputLine);
-            }
-            in.close();
-            return response.toString();
-        } catch(IOException e) {
-            e.printStackTrace();
-            return "ERROR: " + Arrays.toString(e.getStackTrace());
-        }
+    public static String[] getContent(final String url) {
+        return getContent(url, null);
     }
 
     /**
@@ -190,29 +187,30 @@ public class Utils {
             HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
             con.setRequestMethod("GET");
             con.setRequestProperty("User-Agent", "FraudClient");
-            con.setRequestProperty("Authorization", auth);
-
+            if(auth != null){
+                con.setRequestProperty(AUTH.WWW_AUTH_RESP, auth);
+            }
             BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
             String inputLine;
             StringBuilder response = new StringBuilder();
             while((inputLine = in.readLine()) != null) {
                 response.append(inputLine);
             }
-            String respCode = String.valueOf(con.getResponseCode());
             in.close();
             con.disconnect();
-            return new String[] {response.toString(), respCode};
+            return new String[] { response.toString(), String.valueOf(con.getResponseCode()) };
         } catch(ConnectException e) {
-            return new String[] {"ERROR: " + Arrays.toString(e.getStackTrace()), "-1"};
+            return new String[] { "ERROR: " + Arrays.toString(e.getStackTrace()), "-1" };
         } catch(IOException e) {
             e.printStackTrace();
-            return new String[] {"ERROR: " + Arrays.toString(e.getStackTrace()), "-1"};
+            return new String[] { "ERROR: " + Arrays.toString(e.getStackTrace()), "-1" };
         }
     }
 
     /**
      * @param url the url where the request is sent.
      * @param content the content of the post request.
+     * @param auth auth token
      * @return the html code of the request or -1 if the request as an error
      */
     public static int postContent(final String url, final String content, final String auth) {
@@ -224,22 +222,25 @@ public class Utils {
      * @param url the url where the request is sent.
      * @param content the content of the post request.
      * @param dataType the datatype (Example: "application/json")
-     * @param accept Example: "application/json"
+     * @param accept Example : "application/json"
+     * @param auth auth token
      * @return the html code of the request or -1 if the request as an error
      */
     public static int postContent(final String url, final String content, final String dataType, final String accept, final String auth) {
-        HttpClient httpClient = HttpClientBuilder.create().build();
         String userAgent = "FraudClient";
         try {
+            HttpClient httpClient = HttpClientBuilder.create()
+                    .setPublicSuffixMatcher(new PublicSuffixMatcher(Collections.emptyList(), Collections.emptyList()))
+                    .build();
             HttpPost request = new HttpPost(url);
             request.addHeader("Content-Type", dataType);
             request.addHeader("Accept", accept);
             request.addHeader("User-Agent", userAgent);
-            request.addHeader("Authorization", auth);
+            request.addHeader(AUTH.WWW_AUTH_RESP, auth);
             StringEntity params = new StringEntity(content, ContentType.APPLICATION_JSON.getMimeType(), StandardCharsets.UTF_8.toString());
             request.setEntity(params);
             return httpClient.execute(request).getStatusLine().getStatusCode();
-        } catch (IOException e) {
+        } catch(FileNotFoundException | ConnectException ignored) {} catch (IOException e) {
             e.printStackTrace();
         }
         return -1;
