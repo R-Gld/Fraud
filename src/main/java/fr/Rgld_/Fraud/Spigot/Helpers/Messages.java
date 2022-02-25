@@ -9,7 +9,7 @@ import java.text.MessageFormat;
  */
 public enum Messages {
 
-    // Configurable messages.
+    // Configurables messages.
     ALL_ALTS_ASKED("all alts asked", true),
     ALL_ALTS_ASKED_ANNOUNCER("all alts announcer", true),
     ALL_EMPTY("all alts empty", true),

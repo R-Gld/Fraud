@@ -295,7 +295,7 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
      *
      * @param ip the ip seen
      * @param sender the sender who receive the information
-     * @param conformConfig is the informations send to the sender has to be conform to the configuration (geolocation part) ?
+     * @param conformConfig is the information send to the sender has to be conformed to the configuration (geolocation part) ?
      */
     private void sendIPInfo(String ip, CommandSender sender, boolean conformConfig) {
         boolean isGeoIPApiActivated = fraud.getConfiguration().isGeoIPAPIActivated();

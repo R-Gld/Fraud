@@ -25,7 +25,7 @@ import java.nio.file.Paths;
  */
 public class Updater implements Runnable {
 
-    private final fr.Rgld_.Fraud.Spigot.Fraud fraud_sp;
+    private final fr.Rgld_.Fraud.Spigot.Fraud fraud;
 
     /**
      *
@@ -37,7 +37,7 @@ public class Updater implements Runnable {
      * @param fraud the main class ({@link Fraud}).
      */
     public Updater(fr.Rgld_.Fraud.Spigot.Fraud fraud) {
-        this.fraud_sp = fraud;
+        this.fraud = fraud;
     }
 
 
@@ -59,14 +59,14 @@ public class Updater implements Runnable {
      *   "id": 420367
      * }
      *
-     * @return a {@link String}, the informations about the last version uploaded on spigotmc as json.
+     * @return a {@link String}, the information about the last version uploaded on spigotmc as json.
      */
     private String getLatestVersionJson() {
-        return Utils.getContent("https://api.spiget.org/v2/resources/69872/versions/latest");
+        return Utils.getContent("https://api.spiget.org/v2/resources/69872/versions/latest")[0];
     }
 
     /**
-     * Exemple (06/10/2021):
+     * Exemple (06/10/2021) :
      *
      * 1.7.1
      *
@@ -84,7 +84,7 @@ public class Updater implements Runnable {
     }
 
     /**
-     * Format the version given in parameters so it can be compared to another version.
+     * Format the version given in parameters, so it can be compared to another version.
      * Example: <code>parseVersion("1.5.9")</code> will return <code>1.59</code>.
      *
      * @param version the version of the plugin.
@@ -114,21 +114,21 @@ public class Updater implements Runnable {
         Console c;
         String actualVersion;
         double actualVBcFormat;
-        c = fraud_sp.getConsole();
-        actualVersion = fraud_sp.getDescription().getVersion();
-        fraud_sp.actualVersionBc = actualVersion;
-        actualVBcFormat = parseVersion(fraud_sp.actualVersionBc);
+        c = fraud.getConsole();
+        actualVersion = fraud.getDescription().getVersion();
+        fraud.actualVersionBc = actualVersion;
+        actualVBcFormat = parseVersion(fraud.actualVersionBc);
         double actualVFormat = parseVersion(actualVersion);
         if(actualVFormat < vFormat || actualVBcFormat < vFormat) {
             String url = "https://www.spigotmc.org/resources/fraud.69872/";
-            if(fraud_sp.getConfiguration().autoDownloadLatest()) {
+            if(fraud.getConfiguration().autoDownloadLatest()) {
                 downloadAndInstall();
                 for(Player p : Bukkit.getOnlinePlayers()) {
                     if(p.hasPermission("fraud.update")) {
                         p.sendMessage(
-                                "§6§m---------------------------------------\n" +
+                                        "§6§m---------------------------------------\n" +
                                         "\n" +
-                                        "§eA new Update of §6Fraud §ehas been installed !\n" +
+                                        "§eA new Update of §6Fraud§e has been installed !\n" +
                                         "§eYou have to restart the plugin or the server to update the plugin.\n" +
                                         "§8§nLast Version:§7 " + actualVersion + "\n" +
                                         "§8§nActual Version just installed:§7 " + version + "\n" +
@@ -139,7 +139,7 @@ public class Updater implements Runnable {
                 c.sm(
                         "§6§m---------------------------------------\n" +
                                 "\n" +
-                                "§eA new Update of §6Fraud §ehas been installed !\n" +
+                                "§eA new Update of §6Fraud§e has been installed !\n" +
                                 "§eYou have to restart the plugin or the server to update the plugin.\n" +
                                 "§8§nLast Version:§7 " + actualVersion + "\n" +
                                 "§8§nActual Version just installed:§7 " + version + "\n" +
@@ -174,7 +174,7 @@ public class Updater implements Runnable {
                                 "\n" +
                                 "§6§m---------------------------------------");
             }
-            fraud_sp.actualVersionBc = version;
+            fraud.actualVersionBc = version;
         }
     }
 

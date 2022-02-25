@@ -8,11 +8,11 @@ alts limit: 2
 
 # Here is the server where the players will be checked when they join in it.
 # For example, if there is a login server in which the players execute a /login <password> command in a crack server,
-# you should set here the server in which the players are redirected after there login.
+# you should set here the server in which the players are redirected after their login.
 server joined: login
 
 update:
-  # If this is true, every 5 minutes, a check will be made to see if the plugin is up to date.
+  # If this is true, every 5 minutes, a check will be made to see if the plugin is up-to-date.
   # If it is not up-to-date, a message will be sent to all players with the permission "fraud.update".
   check for update: true
   auto download: false
