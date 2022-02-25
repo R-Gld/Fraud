@@ -40,7 +40,14 @@ public class IPInfo {
         return Collections.unmodifiableCollection(desc);
     }
     public void addDesc(String substring) {
-        desc.add(format(substring));
+        addDesc(substring, true);
+    }
+    public void addDesc(String substring, boolean format) {
+        if(format) {
+            desc.add(format(substring));
+        } else {
+            desc.add(substring);
+        }
     }
 
     public String getCountryName() {
@@ -131,5 +138,14 @@ public class IPInfo {
     public IPInfo delLongitude() {
         this.longitude = null;
         return this;
+    }
+
+    public void delGeoIp() {
+        this.continent = null;
+        this.subDivision = null;
+        this.city = null;
+        this.postalCode = null;
+        this.latitude = null;
+        this.longitude = null;
     }
 }
