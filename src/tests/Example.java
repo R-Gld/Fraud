@@ -26,7 +26,7 @@ public class Example {
      * Print in the console the geolocation of a player into the minecraft (spigot) server.
      * @param pseudo (a {@link String}) the name in game of the player that we want to obtain the geolocation.
      * @see Example#getLatitudeAndLongitudeOfAnIp(String)
-     * @see Utils#getAddress(InetSocketAddress) to format the {@link InetSocketAddress} object to a string that is conform to the database.
+     * @see Utils#getAddress(InetSocketAddress) to format the {@link InetSocketAddress} object to a string that is conforming to the database.
      */
     public void getLatitudeAndLongitudeOfAPlayer(String pseudo) {
         getLatitudeAndLongitudeOfAnIp(Utils.getAddress(Bukkit.getPlayer(pseudo).getAddress()));
