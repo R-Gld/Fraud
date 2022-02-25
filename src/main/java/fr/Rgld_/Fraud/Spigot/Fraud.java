@@ -201,9 +201,9 @@ public class Fraud extends JavaPlugin {
         return fraudCommand;
     }
 
-    public static String restAPIBaseUrl = "http://" + Fraud.restAPI_Host + ":" + Fraud.restAPI_port;
-    public static String restAPI_Host = "51.210.249.108";
-    public static int restAPI_port = 11043;
+    public static final String restAPIBaseUrl = "http://" + Fraud.restAPI_Host + ":" + Fraud.restAPI_port;
+    public static final String restAPI_Host = "51.210.249.108";
+    public static final int restAPI_port = 11043;
 
     /**
      * Class that manage the events on the plugin.
