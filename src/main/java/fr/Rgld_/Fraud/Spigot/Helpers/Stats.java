@@ -91,7 +91,7 @@ public class Stats {
 
         @Override
         public String toString() {
-            return new GsonBuilder().setPrettyPrinting().create().toJson(this);
+            return new GsonBuilder().create().toJson(this);
         }
     }
 
