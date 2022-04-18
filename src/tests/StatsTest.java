@@ -1,14 +1,16 @@
 import com.google.gson.GsonBuilder;
-import fr.Rgld_.Fraud.Spigot.Helpers.Utils;
+import fr.Rgld_.Fraud.Spigot.Helpers.ExtAPI;
+import fr.Rgld_.Fraud.Spigot.Helpers.Stats;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class StatsTest {
 
     public static void main(String[] args) {
-        System.out.println("Utils.getContent(\"51.210.249.108:11043/api/geoip\", \"edGfJSQqavVTWmzQ\") = " + Arrays.toString(Utils.getContent("http://51.210.249.108:11043/api/geoip", "edGfJSQqavVTWmzQ")));
+        ExtAPI extAPI = new ExtAPI(null);
+        System.out.println(extAPI.sendFraudStats(new Stats.Data("1.8.5", 1, 8954621, "1.8", false, 25565)));
+        System.out.println("extAPI.getOwnIP() = " + extAPI.getOwnIP());
     }
 
 
