@@ -20,12 +20,12 @@ import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 /**
  * Contain several functions useful for the plugin.
  */
+@SuppressWarnings("JavadocLinkAsPlainText")
 public class Utils {
 
     /**
@@ -165,14 +165,18 @@ public class Utils {
         return diff;
     }
 
+    public static String[] getContent(final String url) {
+        return getContent(url, null, null);
+    }
+
     /**
      * Gives the content of the web page associated with the url given in parameter.
      *
      * @param url an http url.
      * @return the content of this url.
      */
-    public static String[] getContent(final String url) {
-        return getContent(url, null);
+    public static String[] getContent(final String url, UUID uuid) {
+        return getContent(url, null, uuid);
     }
 
     /**
@@ -182,14 +186,13 @@ public class Utils {
      * @param auth the auth token.
      * @return the content of this url.
      */
-    public static String[] getContent(final String url, final String auth) {
+    public static String[] getContent(final String url, final String auth, UUID uuid) {
         try {
             HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
             con.setRequestMethod("GET");
             con.setRequestProperty("User-Agent", "FraudClient");
-            if(auth != null){
-                con.setRequestProperty(AUTH.WWW_AUTH_RESP, auth);
-            }
+            if(uuid != null) con.setRequestProperty("serverUUID", uuid.toString());
+            if(auth != null) con.setRequestProperty(AUTH.WWW_AUTH_RESP, auth);
             BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
             String inputLine;
             StringBuilder response = new StringBuilder();
@@ -213,8 +216,8 @@ public class Utils {
      * @param auth auth token
      * @return the html code of the request or -1 if the request as an error
      */
-    public static int postContent(final String url, final String content, final String auth) {
-        return postContent(url, content, "application/json; utf-8", "application/json", auth);
+    public static int postContent(final String url, final String content, final String auth, UUID uuid) {
+        return postContent(url, content, "application/json; utf-8", "application/json", auth, uuid);
     }
 
     /**
@@ -226,8 +229,7 @@ public class Utils {
      * @param auth auth token
      * @return the html code of the request or -1 if the request as an error
      */
-    public static int postContent(final String url, final String content, final String dataType, final String accept, final String auth) {
-        String userAgent = "FraudClient";
+    public static int postContent(final String url, final String content, final String dataType, final String accept, final String auth, final UUID uuid) {
         try {
             HttpClient httpClient = HttpClientBuilder.create()
                     .setPublicSuffixMatcher(new PublicSuffixMatcher(Collections.emptyList(), Collections.emptyList()))
@@ -235,9 +237,10 @@ public class Utils {
             HttpPost request = new HttpPost(url);
             request.addHeader("Content-Type", dataType);
             request.addHeader("Accept", accept);
-            request.addHeader("User-Agent", userAgent);
+            request.addHeader("User-Agent", "FraudClient");
+            request.addHeader("serverUUID", uuid.toString());
             request.addHeader(AUTH.WWW_AUTH_RESP, auth);
-            StringEntity params = new StringEntity(content, ContentType.APPLICATION_JSON.getMimeType(), StandardCharsets.UTF_8.toString());
+            StringEntity params = new StringEntity(content, ContentType.APPLICATION_JSON);
             request.setEntity(params);
             return httpClient.execute(request).getStatusLine().getStatusCode();
         } catch(FileNotFoundException | ConnectException ignored) {} catch (IOException e) {

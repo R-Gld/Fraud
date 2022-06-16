@@ -2,9 +2,9 @@ package fr.Rgld_.Fraud.Spigot.Commands;
 
 import com.google.common.collect.Lists;
 import fr.Rgld_.Fraud.Global.IPInfo;
-import fr.Rgld_.Fraud.Global.IPInfoManager;
 import fr.Rgld_.Fraud.Global.Updater;
 import fr.Rgld_.Fraud.Spigot.Fraud;
+import fr.Rgld_.Fraud.Spigot.Helpers.ExtAPI;
 import fr.Rgld_.Fraud.Spigot.Helpers.Messages;
 import fr.Rgld_.Fraud.Spigot.Helpers.Utils;
 import fr.Rgld_.Fraud.Spigot.Storage.Data.Data;
@@ -31,6 +31,7 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
     private Data Data;
 
     private final Updater up;
+    private boolean downloading = false;
 
     public FraudCommand(Fraud fraud) {
         this.fraud = fraud;
@@ -96,8 +97,8 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
                         return false;
                     case "contact":
                         sender.sendMessage("§6§lYou can contact the developer of this plugin via:");
-                        String discord = "§6 - Discord: §e§l§oRomain | Rgld_#5344";
-                        String email = "§6 - Email: §e§l§ospigot@rgld.fr";
+                        String discord = "§6 ⟶ Discord: §e§l§oRomain | Rgld_#5344";
+                        String email = "§6 ⟶ Email: §e§l§ospigot@rgld.fr";
                         if(sender instanceof Player) {
                             TextComponent text = new TextComponent(email);
                             text.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§7Click here to send an §6email§7.").create()));
@@ -111,15 +112,15 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
                             sender.sendMessage(discord);
                             sender.sendMessage(email);
                         }
-                        sender.sendMessage("§6 - Twitter: §e§l§ohttps://twitter.com/RGld_");
+                        sender.sendMessage("§6 ⟶ Twitter: §e§l§ohttps://twitter.com/RGld_");
                         return false;
                     case "link":
                     case "links":
-                        sender.sendMessage("§6§m--§r§6> §ePlugin Links");
+                        sender.sendMessage("§6 ⟶ §ePlugin Links");
                         sender.sendMessage("\t§6Source-Code: §9§nhttps://rgld.fr/fraud/source-code");
                         sender.sendMessage("\t§6Download Latest: §9§nhttps://rgld.fr/fraud/download");
                         sender.sendMessage("\t§6Spigot Resource: §9§nhttps://rgld.fr/fraud/spigot/link");
-                        sender.sendMessage("§6§m--§r§6> §eServices used");
+                        sender.sendMessage("§6 ⟶ §eServices used");
                         sender.sendMessage("\t§6RIPE: §9§nhttps://www.ripe.net§r \n\t§7§o(Used to get information about ISP of an ip)");
                         sender.sendMessage("\t§6MaxMind: §9§nhttps://www.maxmind.com/en/geoip2-services-and-databases§r \n\t§7§o(Used to get information about the geolocation of an ip)");
                         return false;
@@ -154,13 +155,29 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
                             sender.sendMessage(Messages.NO_PERMISSION.getMessage());
                             return false;
                         }
-                        if (fraud.getUpdater().downloadAndInstall()) {
-                            sender.sendMessage(ChatColor.GOLD + "The download of the latest release of Fraud was a " + ChatColor.YELLOW + "success" + ChatColor.GOLD + ".");
-                            sender.sendMessage(ChatColor.GOLD + "The new release of Fraud will be effective at the next restart or reload of the plugin. You can use a plugin like PlugMan to reload just one plugin.");
+
+                        if(downloading) {
+                            sender.sendMessage(ChatColor.RED + "The new version is already downloading.");
                         } else {
-                            sender.sendMessage(ChatColor.GOLD + "The download of the latest release of Fraud was a " + ChatColor.YELLOW + "failure" + ChatColor.GOLD + ".");
+                            if (fraud.getUpdater().downloadAndInstall()) {
+                                sender.sendMessage(ChatColor.GOLD + "The download of the latest release of Fraud was a " + ChatColor.YELLOW + "success" + ChatColor.GOLD + ".");
+                                sender.sendMessage(ChatColor.GOLD + "The new release of Fraud will be effective at the next restart or reload of the plugin. You can use a plugin like PlugMan to reload just one plugin.");
+                            } else {
+                                sender.sendMessage(ChatColor.GOLD + "The download of the latest release of Fraud was a " + ChatColor.YELLOW + "failure" + ChatColor.GOLD + ".");
+                                sender.sendMessage(ChatColor.GRAY + "§o(You can download it manually with this url: " + ChatColor.BLUE + "§nhttps://fraud.rgld.fr/download" + ChatColor.GRAY + "§o)");
+                            }
                         }
-                        sender.sendMessage(ChatColor.GRAY + "§o(You can download it manually with this url: " + ChatColor.BLUE + "§nhttp://fraud.rgld.fr" + ChatColor.GRAY + "§o)");
+                        return false;
+                    case "reach-geoapi":
+                        sender.sendMessage(ChatColor.RED + "Try to contact the rest api...");
+                        ExtAPI extAPI = new ExtAPI(fraud);
+
+                        if(extAPI.isAPIReachable()) {
+                            sender.sendMessage(ChatColor.GREEN + " ⟶ Reachable ! ✅");
+                        } else {
+                            sender.sendMessage(ChatColor.RED + " ⟶ Not reachable. ❌");
+                            sender.sendMessage(ChatColor.RED + " ⟶ Please contact the developer to fix this problem. (" + ChatColor.GOLD + "/fd contact" + ChatColor.RED + ") !");
+                        }
                         return false;
                     case "alert":
                         if (!(sender.hasPermission("fraud.alert.switch"))) {
@@ -306,7 +323,7 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
         if(conformConfig) {
             ii = fraud.getIpInfoManager().getIPInfoConformConfig(ip);
         } else {
-            ii = IPInfoManager.getIpInfo(ip, isGeoIPApiActivated);
+            ii = fraud.getIpInfoManager().getIpInfo(ip, isGeoIPApiActivated);
         }
 
         sender.sendMessage(Messages.INFO_IP_INFORMATION.format(ip));
@@ -447,13 +464,22 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
                 } else if (str.startsWith("i")) {
                     list = Lists.newArrayList("info");
                 } else if (str.startsWith("r")) {
-                    list = Lists.newArrayList("reload");
+                    if(str.startsWith("rel")) {
+                        list = Lists.newArrayList("reload");
+                        break;
+                    } else if(str.startsWith("rea")) {
+                        list = Lists.newArrayList("reach-geoapi");
+                        break;
+                    }
+                    list = Lists.newArrayList("reach-geoapi", "reload");
                 } else if (str.startsWith("v")) {
-                    if (!str.equals("v")) {
+                    if (str.startsWith("ve")) {
                         list = Lists.newArrayList("version");
-                    } else list = Lists.newArrayList("v", "version");
+                        break;
+                    }
+                    list = Lists.newArrayList("v", "version");
                 } else {
-                    list = Lists.newArrayList("all", "check", "contact", "dl", "download", "forgot", "info", "reload", "v", "version");
+                    list = Lists.newArrayList("alert", "all", "check", "contact", "dl", "download", "forgot", "geoip", "info", "reach-geoapi", "reload", "v", "version");
                 }
                 break;
             case 2:
@@ -499,5 +525,9 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
             builder.append("/");
         }
         return builder.toString();
+    }
+
+    public void setDownloading(boolean downloading) {
+        this.downloading = downloading;
     }
 }

@@ -30,6 +30,7 @@ import static org.bukkit.ChatColor.*;
 /**
  * Represent the main class of the plugin <a href="https://www.spigotmc.org/resources/fraud-alts-finder.69872/" target="_blank">Fraud</a> on spigot.
  */
+@SuppressWarnings("ALL")
 public class Fraud extends JavaPlugin {
 
     public String actualVersionBc = "";
@@ -200,10 +201,6 @@ public class Fraud extends JavaPlugin {
     public FraudCommand getFraudCommand() {
         return fraudCommand;
     }
-
-    public static final String restAPIBaseUrl = "http://" + Fraud.restAPI_Host + ":" + Fraud.restAPI_port;
-    public static final String restAPI_Host = "51.210.249.108";
-    public static final int restAPI_port = 11043;
 
     /**
      * Class that manage the events on the plugin.

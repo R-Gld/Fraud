@@ -31,16 +31,12 @@ public class Stats {
      * @see fr.Rgld_.Fraud.Spigot.Helpers.Stats.Data the information given.
      */
     public void sendInfo() {
-        String data = new Data(fraud).toString();
-        String url = Fraud.restAPIBaseUrl + "/api/fraud/stats/";
-        String auth = "edGfJSQqavVTWmzQ";
-        Utils.postContent(url, data, auth);
+        new ExtAPI(fraud).sendFraudStats();
     }
 
     private static class Sender implements Runnable {
 
         private final Stats stats;
-
         private Sender(Stats stats) {
             this.stats = stats;
         }
@@ -51,7 +47,6 @@ public class Stats {
         }
     }
 
-    @SuppressWarnings("FieldCanBeLocal")
     public static class Data {
         private final boolean hasWhitelist;
         private final int port;

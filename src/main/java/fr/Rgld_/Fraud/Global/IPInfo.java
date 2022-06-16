@@ -7,8 +7,7 @@ import java.util.*;
 /**
  * Object that store the information of an ip
  */
-@SuppressWarnings("unused")
-public class IPInfo {
+public final class IPInfo {
 
     private final List<String> desc = new ArrayList<>();
     private String ip = null;

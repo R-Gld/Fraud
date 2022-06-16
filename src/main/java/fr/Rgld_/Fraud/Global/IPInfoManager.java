@@ -3,6 +3,7 @@ package fr.Rgld_.Fraud.Global;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import fr.Rgld_.Fraud.Spigot.Fraud;
+import fr.Rgld_.Fraud.Spigot.Helpers.ExtAPI;
 import fr.Rgld_.Fraud.Spigot.Helpers.Utils;
 
 import java.text.MessageFormat;
@@ -15,9 +16,11 @@ public class IPInfoManager {
 
     private final HashMap<String, IPInfo> ipInfoHashMap;
     private final Fraud fraud;
+    private final ExtAPI extAPI;
 
     public IPInfoManager(Fraud fraud) {
         this.fraud = fraud;
+        this.extAPI = new ExtAPI(fraud);
         this.ipInfoHashMap = new HashMap<>();
     }
 
@@ -26,7 +29,7 @@ public class IPInfoManager {
     }
 
 
-    public static IPInfo getIpInfo(String ip, boolean geoip) {
+    public IPInfo getIpInfo(String ip, boolean geoip) {
         IPInfo ipInfo = new IPInfo();
         ipInfo.setIP(ip);
 
@@ -54,7 +57,7 @@ public class IPInfoManager {
     public IPInfo getIPInfoConformConfig(String ip) {
         if(ipInfoHashMap.containsKey(ip)) return ipInfoHashMap.get(ip);
         boolean geoip = fraud.getConfiguration().isGeoIPAPIActivated();
-        IPInfo ipi = IPInfoManager.getIpInfo(ip, geoip);
+        IPInfo ipi = getIpInfo(ip, geoip);
 
         if(!fraud.getConfiguration().isGeoIPAPIActivated()) {
             ipi.delGeoIp(); // This is by security but by default, there is no geo ip information returned by IPInfoManager#getIpInfo(String, boolean)
@@ -63,9 +66,9 @@ public class IPInfoManager {
         return ipi;
     }
 
-    private static String[] getJsonGeoIPInfo(String ip, boolean geoip) {
-        String base_url = Fraud.restAPIBaseUrl + "/api/ip/{0}?geoip=" + geoip;
+    private String[] getJsonGeoIPInfo(String ip, boolean geoip) {
+        String base_url = extAPI.restAPIBaseUrl + "/api/ip/{0}?geoip=" + geoip;
         String url = MessageFormat.format(base_url, ip.replace(":", "%3"));
-        return Utils.getContent(url, "edGfJSQqavVTWmzQ");
+        return Utils.getContent(url, extAPI.restAPIkey, extAPI.getServerUUID());
     }
 }

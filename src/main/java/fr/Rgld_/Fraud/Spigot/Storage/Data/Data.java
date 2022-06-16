@@ -20,7 +20,6 @@ public class Data {
 
     private final String TABLE_NAME_ips = "ips";
     private final String TABLE_NAME_connection = "connections";
-    private final String TABLE_NAME_history = "history";
 
     private final Fraud fraud;
     private final Configuration.DatabaseSection.Type type;
@@ -47,6 +46,17 @@ public class Data {
                 break;
             case SQLITE:
                 file = new File(fraud.getDataFolder(), "data.sqlite");
+                try {
+                    connect();
+                } catch(SQLException e) {
+                    System.err.println("There is a problem with the sqlite connection." +
+                                       "\nPlease send the following stacktrace to the developer of this plugin." +
+                                       "\nHere is the stacktrace: " + e.getMessage());
+                    e.printStackTrace();
+                } catch (ClassNotFoundException e) {
+                    System.out.println("An error occur with the driver:");
+                    e.printStackTrace();
+                }
                 break;
             case UNKNOWN:
             default:
@@ -90,6 +100,7 @@ public class Data {
 
     public void createHistoryTable() {
         try(Connection connection = connect()) {
+            String TABLE_NAME_history = "history";
             String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME_history + "(id integer PRIMARY KEY,pseudo text NOT NULL,ip text NOT NULL);";
             connection.createStatement().execute(sql);
         } catch(SQLException | ClassNotFoundException e) {
@@ -196,21 +207,16 @@ public class Data {
     }
 
     public boolean isRegisteredInConnection(String name) {
-        try(Connection connection = connect()) {
-            String sql = MessageFormat.format("SELECT pseudo FROM `{0}` WHERE pseudo = \"{1}\"", TABLE_NAME_connection, name);
-            PreparedStatement psst = connection.prepareStatement(sql);
-            ResultSet rs = psst.executeQuery();
-            if(!rs.next()) return false;
-            return rs.getString("pseudo").equals(name);
-        } catch(SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        return false;
+        return isRegistered(name, TABLE_NAME_connection);
     }
 
     public boolean isRegisteredInIps(String name) {
+        return isRegistered(name, TABLE_NAME_ips);
+    }
+
+    private boolean isRegistered(String name, String table_name) {
         try(Connection connection = connect()) {
-            String sql = MessageFormat.format("SELECT pseudo FROM `{0}` WHERE pseudo = \"{1}\"", TABLE_NAME_ips, name);
+            String sql = MessageFormat.format("SELECT pseudo FROM `{0}` WHERE pseudo = \"{1}\"", table_name, name);
             PreparedStatement psst = connection.prepareStatement(sql);
             ResultSet rs = psst.executeQuery();
             if(!rs.next()) return false;

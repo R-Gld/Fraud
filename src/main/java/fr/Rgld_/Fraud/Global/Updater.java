@@ -18,11 +18,13 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
  * Let the plugin check if a new version has been released <a href="https://www.spigotmc.org/resources/fraud-alts-finder.69872/" target="_blank">on the spigot page</a>.
  */
+@SuppressWarnings("ALL")
 public class Updater implements Runnable {
 
     private final fr.Rgld_.Fraud.Spigot.Fraud fraud;
@@ -46,7 +48,7 @@ public class Updater implements Runnable {
      * Return a json String of the latest version of Fraud
      *
      * Example of json data returns by the url: <a href="https://api.spiget.org/v2/resources/69872/versions/latest" target="_blank">https://api.spiget.org/v2/resources/69872/versions/latest</a> (06/10/2021):
-     * {
+     * <code>{
      *   "uuid": "02505a1a-b652-3aab-003b-536632452b0c",
      *   "downloads": 4,
      *   "rating": {
@@ -57,7 +59,7 @@ public class Updater implements Runnable {
      *   "releaseDate": 1632246798,
      *   "resource": 69872,
      *   "id": 420367
-     * }
+     * }</code>
      *
      * @return a {@link String}, the information about the last version uploaded on spigotmc as json.
      */
@@ -109,15 +111,11 @@ public class Updater implements Runnable {
      */
     @Override
     public void run() {
+        Console c = fraud.getConsole();
         String version = getLatestVersionFormatted();
         double vFormat = parseVersion(version);
-        Console c;
-        String actualVersion;
-        double actualVBcFormat;
-        c = fraud.getConsole();
-        actualVersion = fraud.getDescription().getVersion();
-        fraud.actualVersionBc = actualVersion;
-        actualVBcFormat = parseVersion(fraud.actualVersionBc);
+        String actualVersion = fraud.getDescription().getVersion();
+        double actualVBcFormat = parseVersion(fraud.actualVersionBc);
         double actualVFormat = parseVersion(actualVersion);
         if(actualVFormat < vFormat || actualVBcFormat < vFormat) {
             String url = "https://www.spigotmc.org/resources/fraud.69872/";
@@ -185,11 +183,14 @@ public class Updater implements Runnable {
      */
     public boolean downloadAndInstall() {
         try {
+            fraud.getFraudCommand().setDownloading(true);
             final String name = URLDecoder.decode(String.valueOf(Fraud.class.getProtectionDomain().getCodeSource().getLocation().toURI()).replaceFirst("file:", "") + "_new", "UTF-8");
             final String original = name.substring(0, name.length() - 4);
-            FileUtils.copyURLToFile(new URL("https://cdn.spiget.org/file/spiget-resources/69872.jar"), new File(name));
-            Files.delete(Paths.get(original));
-            Files.move(Paths.get(name), Paths.get(original));
+            FileUtils.copyURLToFile(new URL("https://rgld.fr/fraud/latest.jar"), new File(name));
+            Path origin = Paths.get(original);
+            Files.delete(origin);
+            Files.move(Paths.get(name), origin);
+            fraud.getFraudCommand().setDownloading(false);
             return true;
         } catch(IOException | URISyntaxException e) {
             e.printStackTrace();

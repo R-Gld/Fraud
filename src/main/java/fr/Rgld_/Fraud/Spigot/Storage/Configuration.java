@@ -14,8 +14,9 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Class used to configure the plugin. (@see <a href="https://github.com/R-Gld/Fraud/blob/master/src/main/resources/config.yml" target="_blank">sp-config.yml</a>)
+ * Class used to configure the plugin. (See <a href="https://github.com/R-Gld/Fraud/blob/master/src/main/resources/config.yml" target="_blank">sp-config.yml</a>)
  */
+@SuppressWarnings("ALL")
 public class Configuration {
 
     private final Fraud fraud;

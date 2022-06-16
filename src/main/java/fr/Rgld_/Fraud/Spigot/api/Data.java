@@ -16,7 +16,7 @@ public class Data {
         this.fraud = (Fraud) Bukkit.getPluginManager().getPlugin("fraud");
         if(this.fraud == null) {
             this.Data = null;
-            System.out.println(ChatColor.RED + "ERROR: Fraud isn't loaded. You can download the latest version at: http://fraud.rgld.fr");
+            System.out.println(ChatColor.RED + "ERROR: Fraud isn't loaded. You can download the latest version at: https://rgld.fr/fraud/download");
         } else this.Data = fraud.getDatas();
     }
 
