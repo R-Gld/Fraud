@@ -49,7 +49,7 @@ public class IPInfoManager {
             ipInfo.addDesc(gip.get("description").toString());
             ipInfo.setNetname(gip.get("netname").toString());
         } else {
-            ipInfo.addDesc("An error occur when trying to get the geolocation this ip. Please contact the developer: /fd contact", false);
+            ipInfo.addDesc("An error occur when trying to get the geolocation this ip. Please contact the developer: /fd contact\nYou can also execute /fd reach-geoapi ", false);
         }
         return ipInfo;
     }
@@ -67,7 +67,7 @@ public class IPInfoManager {
     }
 
     private String[] getJsonGeoIPInfo(String ip, boolean geoip) {
-        String base_url = extAPI.restAPIBaseUrl + "/api/ip/{0}?geoip=" + geoip;
+        String base_url = extAPI.restAPIBaseUrl + "/ip/{0}?geoip=" + geoip;
         String url = MessageFormat.format(base_url, ip.replace(":", "%3"));
         return Utils.getContent(url, extAPI.restAPIkey, extAPI.getServerUUID());
     }

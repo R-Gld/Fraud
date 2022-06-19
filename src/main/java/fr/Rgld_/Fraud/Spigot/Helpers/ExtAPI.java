@@ -9,9 +9,7 @@ import java.io.File;
 import java.util.UUID;
 
 public class ExtAPI {
-    public final String restAPI_Host = "51.210.249.108";
-    public static final int restAPI_port = 11043;
-    public final String restAPIBaseUrl = "http://" + restAPI_Host + ":" + restAPI_port + "/api/";
+    public final String restAPIBaseUrl = "https://api.rgld.fr/";
     public final String restAPIkey = "edGfJSQqavVTWm";
 
     private final Fraud fraud;

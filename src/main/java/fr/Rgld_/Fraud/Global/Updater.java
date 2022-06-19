@@ -1,16 +1,12 @@
 package fr.Rgld_.Fraud.Global;
 
 import fr.Rgld_.Fraud.Spigot.Fraud;
-import fr.Rgld_.Fraud.Spigot.Helpers.Utils;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,6 +24,7 @@ import java.nio.file.Paths;
 public class Updater implements Runnable {
 
     private final fr.Rgld_.Fraud.Spigot.Fraud fraud;
+    private Plugin spigotFraud;
 
     /**
      *
@@ -40,31 +37,11 @@ public class Updater implements Runnable {
      */
     public Updater(fr.Rgld_.Fraud.Spigot.Fraud fraud) {
         this.fraud = fraud;
+        this.spigotFraud = Plugin.getFraud();
     }
 
-
-    /**
-     *
-     * Return a json String of the latest version of Fraud
-     *
-     * Example of json data returns by the url: <a href="https://api.spiget.org/v2/resources/69872/versions/latest" target="_blank">https://api.spiget.org/v2/resources/69872/versions/latest</a> (06/10/2021):
-     * <code>{
-     *   "uuid": "02505a1a-b652-3aab-003b-536632452b0c",
-     *   "downloads": 4,
-     *   "rating": {
-     *     "count": 0,
-     *     "average": 0
-     *   },
-     *   "name": "1.7.1",
-     *   "releaseDate": 1632246798,
-     *   "resource": 69872,
-     *   "id": 420367
-     * }</code>
-     *
-     * @return a {@link String}, the information about the last version uploaded on spigotmc as json.
-     */
-    private String getLatestVersionJson() {
-        return Utils.getContent("https://api.spiget.org/v2/resources/69872/versions/latest")[0];
+    private void refreshFraud() {
+        this.spigotFraud = Plugin.getFraud();
     }
 
     /**
@@ -74,15 +51,13 @@ public class Updater implements Runnable {
      *
      * @return only the version string.
      */
-    public String getLatestVersionFormatted() {
-        JSONObject obj;
+    public String getLatestOnlineVersion() {
+        refreshFraud();
         try {
-            obj = (JSONObject) new JSONParser().parse(getLatestVersionJson());
-        } catch(ParseException parseException) {
-            System.err.println("An error occur while executing the updater: " + parseException.getMessage());
-            return "ERROR";
+            return spigotFraud.getVersion().getData().getName();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-        return (String) obj.get("name");
     }
 
     /**
@@ -112,7 +87,7 @@ public class Updater implements Runnable {
     @Override
     public void run() {
         Console c = fraud.getConsole();
-        String version = getLatestVersionFormatted();
+        String version = getLatestOnlineVersion();
         double vFormat = parseVersion(version);
         String actualVersion = fraud.getDescription().getVersion();
         double actualVBcFormat = parseVersion(fraud.actualVersionBc);
@@ -179,14 +154,14 @@ public class Updater implements Runnable {
     /**
      * Download and Install the last version.
      *
-     * @return true if the download and install is successful.
+     * @return true if the download and install is successful, false otherwise.
      */
     public boolean downloadAndInstall() {
         try {
             fraud.getFraudCommand().setDownloading(true);
             final String name = URLDecoder.decode(String.valueOf(Fraud.class.getProtectionDomain().getCodeSource().getLocation().toURI()).replaceFirst("file:", "") + "_new", "UTF-8");
             final String original = name.substring(0, name.length() - 4);
-            FileUtils.copyURLToFile(new URL("https://rgld.fr/fraud/latest.jar"), new File(name));
+            FileUtils.copyURLToFile(new URL(Plugin.getFraud().getFile().getExternalUrl()), new File(name));
             Path origin = Paths.get(original);
             Files.delete(origin);
             Files.move(Paths.get(name), origin);

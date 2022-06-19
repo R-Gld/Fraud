@@ -46,6 +46,7 @@ public class Configuration {
         }
         this.fileConfig = new YamlConfiguration();
         this.fileConfig.load(this.file);
+        checkConfiguration();
         initializeMessages();
     }
 
@@ -81,7 +82,15 @@ public class Configuration {
      */
     public int getDoubleAccountLimit() {
         int i = fileConfig.getInt("alts limit", 2);
-        return i == -1 ? Integer.MAX_VALUE: i;
+        return i <= -1 ? Integer.MAX_VALUE: i;
+    }
+
+    private void checkConfiguration() {
+        if(getDoubleAccountLimit() == 0 || getDoubleAccountLimit() == 1)
+            System.err.println("You shouldn't set the alt limit to " + getDoubleAccountLimit() + ", no one will can join except the players with the permission \"fraud.bypass.ip\".\n If you want to disable the limit, set it to -1.");
+        if(!checkForUpdate())
+            System.err.println("You shouldn't disable the check for update, you'll no be longer notified if a new version is released.");
+
     }
 
     /**
@@ -198,7 +207,7 @@ public class Configuration {
     public static class DatabaseSection {
         private final ConfigurationSection database;
 
-        DatabaseSection(ConfigurationSection database) {
+         DatabaseSection(ConfigurationSection database) {
             this.database = database;
         }
 
@@ -252,26 +261,23 @@ public class Configuration {
             return database.getString("parameters.database");
         }
 
-        private void checkMysqlType() {
-            if(getType() != Type.MYSQL) throw new IllegalArgumentException("This function is not accessible with this type: " + Type.MYSQL);
-        }
-
         public String generateURL() {
+            checkMysqlType();
             return "jdbc:mysql://" + getIP() + ":" + getPort() + "/" + getDatabase();
         }
 
-        public enum Type {
-            SQLITE,
-            MYSQL,
-            UNKNOWN
+        private void checkMysqlType() {
+            if(getType() != Type.MYSQL) throw new IllegalArgumentException("This function is not accessible with this database type: " + Type.MYSQL);
         }
+
+        public enum Type { SQLITE, MYSQL, UNKNOWN }
     }
 
     public static class KickSection {
         private final ConfigurationSection kick;
         private final Configuration configuration;
 
-        KickSection(ConfigurationSection kick, Configuration configuration) {
+        private KickSection(ConfigurationSection kick, Configuration configuration) {
             this.kick = kick;
             this.configuration = configuration;
         }

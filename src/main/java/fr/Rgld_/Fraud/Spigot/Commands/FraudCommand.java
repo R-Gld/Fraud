@@ -74,7 +74,7 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
                     case "version":
                         String version = fraud.getDescription().getVersion();
                         double dVersion = up.parseVersion(version);
-                        String latest = up.getLatestVersionFormatted();
+                        String latest = up.getLatestOnlineVersion();
                         double dLatest = up.parseVersion(latest);
                         sender.sendMessage(ChatColor.GRAY + "Installed Fraud version: v" + version);
                         sender.sendMessage(ChatColor.GRAY + "Latest Fraud version available: v" + latest);
