@@ -1,18 +1,41 @@
 import com.google.gson.GsonBuilder;
-import fr.Rgld_.Fraud.Spigot.Helpers.ExtAPI;
-import fr.Rgld_.Fraud.Spigot.Helpers.Stats;
+import fr.Rgld_.Fraud.Spigot.Helpers.Links;
+import fr.Rgld_.Fraud.Spigot.Helpers.Utils;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class StatsTest {
 
-    public static void main(String[] args) {
-        ExtAPI extAPI = new ExtAPI(null);
-        System.out.println(extAPI.sendFraudStats(new Stats.Data("1.8.5", 1, 8954621, "1.8", false, 25565)));
-        System.out.println("extAPI.getOwnIP() = " + extAPI.getOwnIP());
+    public static void main(String[] args) throws IOException {
+        System.out.println(getDownloadLink());
     }
 
+
+    public static String getDownloadLink() throws IOException {
+        String url = Links.SPIGET_API_V2_BASE + "resources/69872";
+        String[] infos = Utils.getContent(url);
+        if (Integer.parseInt(infos[1]) != 200) {
+            throw new IOException("An error occur during getting the download link of Fraud.");
+        }
+
+        String content = infos[0];
+        JSONObject obj;
+        try {
+            obj = (JSONObject) new JSONParser().parse(content);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+
+        JSONObject file = (JSONObject) obj.get("file");
+        if(file.get("type").equals("external"))
+            return (String) file.get("externalUrl");
+        else return "error";
+    }
 
     public static class CommonClassForTests {
         final String name;

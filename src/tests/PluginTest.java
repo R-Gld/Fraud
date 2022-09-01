@@ -1,4 +1,4 @@
-import fr.Rgld_.Fraud.Global.Plugin;
+import fr.Rgld_.Fraud.Spigot.api.Plugin;
 
 public class PluginTest {
 
