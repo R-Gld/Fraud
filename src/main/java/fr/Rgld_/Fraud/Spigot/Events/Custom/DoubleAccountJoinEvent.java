@@ -11,6 +11,7 @@ import java.util.List;
  */
 public class DoubleAccountJoinEvent extends PlayerJoinEvent {
 
+
     private final List<String> altsList;
     private boolean alert = true;
 

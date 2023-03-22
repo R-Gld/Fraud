@@ -2,6 +2,7 @@ package fr.Rgld_.Fraud.Spigot.api;
 
 import fr.Rgld_.Fraud.Global.IPInfo;
 import fr.Rgld_.Fraud.Spigot.Fraud;
+import fr.Rgld_.Fraud.Spigot.Helpers.Links;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
@@ -12,12 +13,22 @@ public class Data {
     private final Fraud fraud;
     private final fr.Rgld_.Fraud.Spigot.Storage.Data.Data Data;
 
+    /**
+     * Constructor.
+     * @param fraud the plugin instance
+     */
+    public Data(Fraud fraud) {
+        this.fraud = fraud;
+        this.Data = fraud.getData();
+    }
+
+    /** Constructor. */
     public Data() {
         this.fraud = (Fraud) Bukkit.getPluginManager().getPlugin("fraud");
         if(this.fraud == null) {
             this.Data = null;
-            System.out.println(ChatColor.RED + "ERROR: Fraud isn't loaded. You can download the latest version at: https://rgld.fr/fraud/download");
-        } else this.Data = fraud.getDatas();
+            System.out.println(ChatColor.RED + "ERROR: Fraud isn't loaded. You can download the latest version at: " + Links.FRAUD_DOWNLOAD);
+        } else this.Data = fraud.getData();
     }
 
 

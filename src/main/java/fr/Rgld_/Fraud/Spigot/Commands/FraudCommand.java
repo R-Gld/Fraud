@@ -5,6 +5,7 @@ import fr.Rgld_.Fraud.Global.IPInfo;
 import fr.Rgld_.Fraud.Global.Updater;
 import fr.Rgld_.Fraud.Spigot.Fraud;
 import fr.Rgld_.Fraud.Spigot.Helpers.ExtAPI;
+import fr.Rgld_.Fraud.Spigot.Helpers.Links;
 import fr.Rgld_.Fraud.Spigot.Helpers.Messages;
 import fr.Rgld_.Fraud.Spigot.Helpers.Utils;
 import fr.Rgld_.Fraud.Spigot.Storage.Data.Data;
@@ -63,12 +64,22 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
      */
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        this.Data = fraud.getDatas();
+        this.Data = fraud.getData();
+        ExtAPI extAPI = new ExtAPI(fraud);
+        if(args.length > 1 && (args[0].equalsIgnoreCase("askhelp") || args[0].equalsIgnoreCase("ask-help"))) {
+            String sentence = buildSentence(args);
+            extAPI.askHelp(sentence);
+            return false;
+        }
         switch (args.length) {
             case 0:
                 break;
             case 1:
                 switch (args[0].toLowerCase()) {
+                    case "askhelp":
+                    case "ask-help":
+                        sender.sendMessage(ChatColor.RED + "You should add a sentence to this command. Example: /fd " + args[0] + " I can't detect alts.");
+                        return false;
                     case "v":
                     case "checkupdate":
                     case "version":
@@ -106,20 +117,21 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
                             ((Player) sender).spigot().sendMessage(text);
                             TextComponent text_1 = new TextComponent(discord);
                             text_1.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§7Click here to §6add me §7on §6discord§7.").create()));
-                            text_1.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://rgld.fr/discord/add/Rgld_"));
+                            text_1.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, Links.ADD_DISCORD.getLink()));
+                            ((Player) sender).spigot().sendMessage(text_1);
                             ((Player) sender).spigot().sendMessage(text_1);
                         } else {
                             sender.sendMessage(discord);
                             sender.sendMessage(email);
                         }
-                        sender.sendMessage("§6 ⟶ Twitter: §e§l§ohttps://twitter.com/RGld_");
+                        sender.sendMessage("§6 ⟶ Twitter: §e§l§o" + Links.PERSONNAL_TWITTER);
                         return false;
                     case "link":
                     case "links":
                         sender.sendMessage("§6 ⟶ §ePlugin Links");
-                        sender.sendMessage("\t§6Source-Code: §9§nhttps://rgld.fr/fraud/source-code");
-                        sender.sendMessage("\t§6Download Latest: §9§nhttps://rgld.fr/fraud/download");
-                        sender.sendMessage("\t§6Spigot Resource: §9§nhttps://rgld.fr/fraud/spigot/link");
+                        sender.sendMessage("\t§6Spigot Resource: §9§n" + Links.FRAUD_SPIGOT);
+                        sender.sendMessage("\t§6Source-Code: §9§n" + Links.FRAUD_SOURCECODE);
+                        sender.sendMessage("\t§6Download Latest: §9§n" + Links.FRAUD_DOWNLOAD);
                         sender.sendMessage("§6 ⟶ §eServices used");
                         sender.sendMessage("\t§6RIPE: §9§nhttps://www.ripe.net§r \n\t§7§o(Used to get information about ISP of an ip)");
                         sender.sendMessage("\t§6MaxMind: §9§nhttps://www.maxmind.com/en/geoip2-services-and-databases§r \n\t§7§o(Used to get information about the geolocation of an ip)");
@@ -164,13 +176,12 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
                                 sender.sendMessage(ChatColor.GOLD + "The new release of Fraud will be effective at the next restart or reload of the plugin. You can use a plugin like PlugMan to reload just one plugin.");
                             } else {
                                 sender.sendMessage(ChatColor.GOLD + "The download of the latest release of Fraud was a " + ChatColor.YELLOW + "failure" + ChatColor.GOLD + ".");
-                                sender.sendMessage(ChatColor.GRAY + "§o(You can download it manually with this url: " + ChatColor.BLUE + "§nhttps://fraud.rgld.fr/download" + ChatColor.GRAY + "§o)");
+                                sender.sendMessage(ChatColor.GRAY + "§o(You can download it manually with this url: " + ChatColor.BLUE + "§nhttps://url.rgld.fr/fraud-dl" + ChatColor.GRAY + "§o)");
                             }
                         }
                         return false;
                     case "reach-geoapi":
                         sender.sendMessage(ChatColor.RED + "Try to contact the rest api...");
-                        ExtAPI extAPI = new ExtAPI(fraud);
 
                         if(extAPI.isAPIReachable()) {
                             sender.sendMessage(ChatColor.GREEN + " ⟶ Reachable ! ✅");
@@ -298,6 +309,14 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
         return false;
     }
 
+    private String buildSentence(String[] args) {
+        StringBuilder builder = new StringBuilder();
+        for (int i = 1; i < args.length; i++) {
+            builder.append(args[i]);
+        }
+        return builder.toString();
+    }
+
     /**
      *
      * @param ip the ip seen
@@ -389,6 +408,7 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
             sender.sendMessage(Messages.INFO_IP_no_information.getMessage());
         }
     }
+
 
     private boolean isObjNull(Object obj) {
         return obj == null || (obj instanceof String && (obj.equals("null") || obj.equals("")));
@@ -504,10 +524,11 @@ public class FraudCommand implements CommandExecutor, TabCompleter {
         sender.sendMessage(Messages.HELP_COMMAND_CONTACT.format(label));        // /fd contact
         sender.sendMessage(Messages.HELP_COMMAND_DOWNLOAD.format(label));       // /fd download
         sender.sendMessage(Messages.HELP_COMMAND_FORGOT.format(label));         // /fd forgot <player>
-        sender.sendMessage(Messages.HELP_COMMAND_GEOIP.format(label));         // /fd forgot <player>
+        sender.sendMessage(Messages.HELP_COMMAND_GEOIP.format(label));          // /fd info <player>
         sender.sendMessage(Messages.HELP_COMMAND_INFO.format(label));           // /fd info <player>
         sender.sendMessage(Messages.HELP_COMMAND_LINK.format(label));           // /fd link
         sender.sendMessage(Messages.HELP_COMMAND_RELOAD.format(label));         // /fd reload
+        sender.sendMessage(Messages.HELP_COMMAND_STATS.format(label));          // /fd stats
         sender.sendMessage(Messages.HELP_COMMAND_VERSION.format(label));        // /fd version
         sender.sendMessage("");
         sender.sendMessage("§7§oBy Rgld_");

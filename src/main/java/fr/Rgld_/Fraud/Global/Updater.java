@@ -1,6 +1,8 @@
 package fr.Rgld_.Fraud.Global;
 
 import fr.Rgld_.Fraud.Spigot.Fraud;
+import fr.Rgld_.Fraud.Spigot.Helpers.Links;
+import fr.Rgld_.Fraud.Spigot.api.Plugin;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -90,10 +92,10 @@ public class Updater implements Runnable {
         String version = getLatestOnlineVersion();
         double vFormat = parseVersion(version);
         String actualVersion = fraud.getDescription().getVersion();
-        double actualVBcFormat = parseVersion(fraud.actualVersionBc);
+        double actualVBcFormat = (fraud.actualVersionBc.equals("") ? parseVersion(actualVersion) : parseVersion(fraud.actualVersionBc));
         double actualVFormat = parseVersion(actualVersion);
         if(actualVFormat < vFormat || actualVBcFormat < vFormat) {
-            String url = "https://www.spigotmc.org/resources/fraud.69872/";
+
             if(fraud.getConfiguration().autoDownloadLatest()) {
                 downloadAndInstall();
                 for(Player p : Bukkit.getOnlinePlayers()) {
@@ -143,7 +145,7 @@ public class Updater implements Runnable {
                                 "§eA new Update of §6Fraud §eis now available !\n" +
                                 "§8§nActual Version:§7 " + actualVersion + "\n" +
                                 "§8§nNext Version:§7   " + version + "\n" +
-                                "§6Go to the Spigot Page: " + url + "\n" +
+                                "§6Go to the Spigot Page: " + Links.FRAUD_SPIGOT.getLink() + "\n" +
                                 "\n" +
                                 "§6§m---------------------------------------");
             }

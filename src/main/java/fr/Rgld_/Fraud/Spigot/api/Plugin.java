@@ -1,11 +1,10 @@
-package fr.Rgld_.Fraud.Global;
+package fr.Rgld_.Fraud.Spigot.api;
 
 import com.google.gson.GsonBuilder;
 import fr.Rgld_.Fraud.Spigot.Helpers.Utils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import sun.misc.BASE64Decoder;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -16,6 +15,8 @@ import java.util.Base64;
 import java.util.Map;
 
 public class Plugin {
+
+    private static final String SPIGOTMC_ORG = "https://www.spigotmc.org/";
 
     private final boolean external;
     private final File file;
@@ -159,7 +160,7 @@ public class Plugin {
             this.size = size;
             this.sizeUnit = sizeUnit;
             if (!url.startsWith("https://") && !url.startsWith("http://")) {
-                url = "https://www.spigotmc.org/" + url;
+                url = SPIGOTMC_ORG + url;
             }
             this.url = url;
             this.externalUrl = externalUrl;
@@ -221,7 +222,7 @@ public class Plugin {
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-            return new Data((Integer) obj.get("downloads"), Rating.parseRating((JSONObject) obj.get("rating")), (String) obj.get("name"), (Long) obj.get("releaseDate"));
+            return new Data((long) obj.get("downloads"), Rating.parseRating((JSONObject) obj.get("rating")), (String) obj.get("name"), (long) obj.get("releaseDate"));
         }
         
         public static Version parseVersion(JSONObject obj, int pluginId) {
@@ -255,14 +256,12 @@ public class Plugin {
                 return releaseDate;
             }
 
-
             @Override
             public String toString() {
                 return new GsonBuilder().setPrettyPrinting().create().toJson(this);
             }
 
         }
-
 
         @Override
         public String toString() {
@@ -272,6 +271,7 @@ public class Plugin {
     }
 
     public static class Rating {
+
         private final long count;
         private final double average;
 
@@ -300,6 +300,7 @@ public class Plugin {
     }
 
     public static class Icon {
+
         private final String url;
         private final String data;
         private transient final BufferedImage dataImage;
@@ -307,14 +308,16 @@ public class Plugin {
         private final String hash;
 
         private Icon(String url, String data, String info, String hash) {
-            this.url = "https://www.spigotmc.org/" + url;
+            if (!url.startsWith("https://") && !url.startsWith("http://")) {
+                url = SPIGOTMC_ORG + url;
+            }
+            this.url = url;
             this.data = data;
 
             BufferedImage dataImg = null;
             byte[] imageByte;
             try {
-                BASE64Decoder decoder = new BASE64Decoder();
-                imageByte = decoder.decodeBuffer(data);
+                imageByte = Base64.getDecoder().decode(data);
                 ByteArrayInputStream bis = new ByteArrayInputStream(imageByte);
                 dataImg = ImageIO.read(bis);
                 bis.close();
@@ -393,7 +396,6 @@ public class Plugin {
             }
             return parseAuthor(obj);
         }
-
 
     }
 
@@ -497,7 +499,7 @@ public class Plugin {
             Map.Entry<String, String> entry = (Map.Entry<String, String>) o;
             String url = entry.getValue();
             if (!url.startsWith("https://") && !url.startsWith("http://")) {
-                url = "https://www.spigotmc.org/" + url;
+                url = SPIGOTMC_ORG + url;
             }
             links.add(url);
         }

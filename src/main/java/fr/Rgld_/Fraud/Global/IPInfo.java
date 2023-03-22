@@ -4,9 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-/**
- * Object that store the information of an ip
- */
+
 public final class IPInfo {
 
     private final List<String> desc = new ArrayList<>();
@@ -38,9 +36,11 @@ public final class IPInfo {
     public Collection<String> getDesc() {
         return Collections.unmodifiableCollection(desc);
     }
+
     public void addDesc(String substring) {
         addDesc(substring, true);
     }
+
     public void addDesc(String substring, boolean format) {
         if(format) {
             desc.add(format(substring));

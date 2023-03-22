@@ -1,9 +1,9 @@
 package fr.Rgld_.Fraud.Spigot.Events;
 
 import com.google.common.collect.Lists;
+import fr.Rgld_.Fraud.Global.IPInfo;
 import fr.Rgld_.Fraud.Spigot.Events.Custom.DoubleAccountJoinEvent;
 import fr.Rgld_.Fraud.Spigot.Fraud;
-import fr.Rgld_.Fraud.Global.IPInfo;
 import fr.Rgld_.Fraud.Spigot.Helpers.Messages;
 import fr.Rgld_.Fraud.Spigot.Helpers.Utils;
 import fr.Rgld_.Fraud.Spigot.Storage.Configuration;
@@ -30,21 +30,22 @@ public class JoinQuitEvent implements Listener {
     private final Fraud fraud;
     private final ArrayList<Player> list;
 
+    /**
+     * Constructor of the class.
+     * @param fraud The plugin instance.
+     */
     public JoinQuitEvent(Fraud fraud) {
         this.fraud = fraud;
         this.list = Lists.newArrayList();
     }
 
-    /**
-     * @param e the {@link PlayerJoinEvent} triggered when a player join the server.
-     */
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
         Configuration config = fraud.getConfiguration();
 
         Player p = e.getPlayer();
         if(p.hasPermission("fraud.bypass.ip")) return;
-        Data data = fraud.getDatas();
+        Data data = fraud.getData();
         data.putPlayer(p);
         if(!config.alertOnJoinIsEnabled()) return;
         List<String> altsList = Lists.newArrayList();
@@ -87,12 +88,11 @@ public class JoinQuitEvent implements Listener {
                 TextComponent info = new TextComponent("   §e§l➤ (i)");
                 info.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(Messages.INFO_HOVER.getMessage())));
                 info.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/fraud info " + altsList.get(0).substring(2)));
-                for(Player pls : Bukkit.getOnlinePlayers()) {
-                    if(pls.hasPermission("fraud.receive.alert") && !fraud.getFraudCommand().getNotAlerted().contains(pls.getName())) {
+                for(Player pls : Bukkit.getOnlinePlayers())
+                    if (pls.hasPermission("fraud.receive.alert") && !fraud.getFraudCommand().getNotAlerted().contains(pls.getName())) {
                         pls.sendMessage(formatted);
                         pls.spigot().sendMessage(info);
                     }
-                }
             }
         }
         if(altsNum >= config.getKick().getMaxAccounts() && config.isKickEnabled()) {

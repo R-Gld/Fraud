@@ -6,11 +6,11 @@ onJoin alert: true
 # Default is 2
 alts limit: 2
 
-# Set this to false to no longer receive an alert offering you to post a review on the plugin's spigot page.
+# Set this to false to no longer receive an alert offering you to post a review on the plugin’s spigot page.
 ask for review: false
 
 
-# The GeoIp can tell with some precision the player's location in the world. If you do not want to access this information, set it to false.
+# The GeoIp can tell with some precision the player’s location in the world. If you do not want to access this information, set it to false.
 # Even if this is set to false, you will still have the information of the country of connection.
 geoip-enable: true
 
@@ -35,7 +35,7 @@ update:
 kick:
   # If this is set to enabled, if it is set that the player has too much double count, he will be kick.
   enabled: false
-  # The number of alts to trigger the kick is adjustable on "alts limit" on line 7.
+  # The number of alts to trigger the kick is adjustable on “alts limit” on line 7.
   # {0} is the number of accounts on the ip. | \n is used to returned to the line.
   kick reason: "§f§lThe server has detected that you have too many accounts on your ip §7§l({0} accounts)§f§l.\n§f§lYou can not log in with as much of an account as that!\n§f§lContact an administrator if you think this is an error."
 
@@ -113,6 +113,7 @@ messages:
       info: "&f&l/{0} info <player> &7- Give some info about the connection of a player."
       link: "&f&l/{0} links &7- Give some links about the plugin(Source-code, Spigot, Direct Download)."
       reload: "&f&l/{0} reload &7- Reload the configuration and data files."
+      stats: "&f&l/{0} (statistics|stats) &7 - Give you statistics about players."
       version: "&f&l/{0} (version|checkupdate|v) &7- Give the version of the plugin."
   time:
     and: "and"
@@ -129,3 +130,9 @@ messages:
     minutes: "minutes"
     second: "second"
     seconds: "seconds"
+
+
+# Possible values:
+# - "domain" => Api calls secured by ssl (https)
+# - "ip" =>
+rest_api_base_url: "domain"

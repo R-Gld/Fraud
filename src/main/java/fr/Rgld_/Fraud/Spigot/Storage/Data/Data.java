@@ -68,6 +68,12 @@ public class Data {
         createHistoryTable();
     }
 
+    /**
+     * Connect to the database.
+     *
+     * @throws SQLException if an error occur with the connection.
+     * @throws ClassNotFoundException if the driver is not found.
+     */
     public Connection connect() throws SQLException, ClassNotFoundException {
         switch(type) {
             case MYSQL:
@@ -88,7 +94,9 @@ public class Data {
         }
     }
 
-    // ALTER TABLE ips ADD last boolean DEFAULT true
+    /**
+     * Create the table ips if it doesn't exist.
+     */
     public void createIpsTable() {
         try(Connection connection = connect()) {
             String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME_ips + "(id integer PRIMARY KEY,pseudo text NOT NULL,ip text NOT NULL);";
@@ -98,6 +106,9 @@ public class Data {
         }
     }
 
+    /**
+     * Create the table history if it doesn't exist.
+     */
     public void createHistoryTable() {
         try(Connection connection = connect()) {
             String TABLE_NAME_history = "history";
@@ -108,6 +119,7 @@ public class Data {
         }
     }
 
+    /** Create the table connection if it doesn't exist. */
     public void createConnectionTable() {
         try(Connection connection = connect()) {
             String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME_connection + "(id integer PRIMARY KEY NOT NULL,pseudo text NOT NULL,first bigint,last bigint);";
@@ -117,6 +129,11 @@ public class Data {
         }
     }
 
+    /**
+     * Insert or update a player in the database.
+     *
+     * @param p the player who has the ip.
+     */
     public void putPlayer(Player p) {
         String name = p.getName();
         InetSocketAddress address = p.getAddress();
@@ -158,6 +175,7 @@ public class Data {
             e.printStackTrace();
         }
     }
+
 
     public void forgotPlayer(String name) {
         try(Connection connection = connect()) {
@@ -202,18 +220,42 @@ public class Data {
         return 0;
     }
 
+    /**
+     * Check if a player is registered in the database.
+     *
+     * @param name the name of the player.
+     * @return true if the player is registered, false otherwise.
+     */
     public boolean isFullRegistered(String name) {
         return isRegisteredInIps(name) && isRegisteredInConnection(name);
     }
 
+    /**
+     * Check if a player is registered in the database.
+     *
+     * @param name the name of the player.
+     * @return true if the player is registered, false otherwise.
+     */
     public boolean isRegisteredInConnection(String name) {
         return isRegistered(name, TABLE_NAME_connection);
     }
 
+    /**
+     * Check if a player is registered in the database.
+     *
+     * @param name the name of the player.
+     * @return true if the player is registered, false otherwise.
+     */
     public boolean isRegisteredInIps(String name) {
         return isRegistered(name, TABLE_NAME_ips);
     }
 
+    /**
+     * Check if a player is registered in the database.
+     *
+     * @param name the name of the player.
+     * @return true if the player is registered, false otherwise.
+     */
     private boolean isRegistered(String name, String table_name) {
         try(Connection connection = connect()) {
             String sql = MessageFormat.format("SELECT pseudo FROM `{0}` WHERE pseudo = \"{1}\"", table_name, name);
@@ -227,6 +269,12 @@ public class Data {
         return false;
     }
 
+    /**
+     * Get the ip of a player.
+     *
+     * @param name the name of the player.
+     * @return the ip of the player.
+     */
     public String getIP(String name) {
         try(Connection connection = connect()) {
             String sql = MessageFormat.format("SELECT ip FROM `{0}` WHERE pseudo = \"{1}\"", TABLE_NAME_ips, name);
@@ -238,6 +286,8 @@ public class Data {
         }
         return null;
     }
+
+
 
     public List<String> getListByPseudo(String pseudo) {
         String ipFromPseudo = null;
@@ -260,14 +310,32 @@ public class Data {
         return Lists.newArrayList();
     }
 
+    /**
+     * Get the list of players from an ip.
+     *
+     * @param player the player.
+     * @return the list of players.
+     */
     public List<String> getList(Player player) {
         return getList(player.getAddress());
     }
 
+    /**
+     * Get the list of players from an ip.
+     *
+     * @param address the ip of the players.
+     * @return the list of players.
+     */
     public List<String> getList(InetSocketAddress address) {
         return getList(Utils.getAddress(address));
     }
 
+    /**
+     * Get the list of players from an ip.
+     *
+     * @param address the ip of the players.
+     * @return the list of players.
+     */
     public List<String> getList(String address) {
         try(Connection connection = connect()) {
             String sql = MessageFormat.format("SELECT pseudo FROM `{0}` WHERE ip = ?", TABLE_NAME_ips);

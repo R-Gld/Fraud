@@ -24,6 +24,7 @@ public enum Messages {
     HELP_COMMAND_FORGOT("help.command.forgot", true),
     HELP_COMMAND_GEOIP("help.command.geoip", true),
     HELP_COMMAND_RELOAD("help.command.reload", true),
+    HELP_COMMAND_STATS("help.command.stats", true),
     HELP_COMMAND_VERSION("help.command.version", true),
     HELP_COMMAND_INFO("help.command.info", true),
     HELP_COMMAND_ALERT("help.command.alert", true),
@@ -80,6 +81,12 @@ public enum Messages {
 
     private final String config;
 
+    /**
+     * Constructor of the enum.
+     *
+     * @param value the message to display
+     * @param isConfigurable true if the message is configurable, false otherwise
+     */
     Messages(String value, boolean isConfigurable) {
         if(isConfigurable) {
             this.message = defaultMessage + ChatColor.GRAY + ChatColor.ITALIC + "(" + this + ")";

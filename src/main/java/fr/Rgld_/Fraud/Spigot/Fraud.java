@@ -5,6 +5,7 @@ import fr.Rgld_.Fraud.Global.Updater;
 import fr.Rgld_.Fraud.Spigot.Commands.FraudCommand;
 import fr.Rgld_.Fraud.Spigot.Events.JoinQuitEvent;
 import fr.Rgld_.Fraud.Spigot.Helpers.Console;
+import fr.Rgld_.Fraud.Spigot.Helpers.ExtAPI;
 import fr.Rgld_.Fraud.Spigot.Helpers.Messages;
 import fr.Rgld_.Fraud.Spigot.Helpers.Stats;
 import fr.Rgld_.Fraud.Spigot.Storage.Configuration;
@@ -47,7 +48,16 @@ public class Fraud extends JavaPlugin {
     @Override
     public void onEnable() {
         this.c = new Console();
-        this.ipInfoManager = new IPInfoManager(this);
+
+        try {
+            this.configuration = new Configuration(this);
+            c.sm(GREEN + "Configurations File loading / creating success.");
+        } catch(Throwable t) {
+            c.sm(RED + "Configurations File loading / creating failed: ");
+            t.printStackTrace();
+        }
+
+        this.ipInfoManager = new IPInfoManager(this, new ExtAPI(this));
         PluginDescriptionFile pdf = this.getDescription();
         c.sm(MessageFormat.format("{0}--- {1} ---", GOLD, pdf.getName()));
         c.sm();
@@ -70,16 +80,6 @@ public class Fraud extends JavaPlugin {
         } catch(Exception e) {
             c.sm(RED + "Commands register failed: ");
             e.printStackTrace();
-        }
-
-
-
-        try {
-            this.configuration = new Configuration(this);
-            c.sm(GREEN + "Configurations File loading / creating success.");
-        } catch(Throwable t) {
-            c.sm(RED + "Configurations File loading / creating failed: ");
-            t.printStackTrace();
         }
 
         try {
@@ -186,7 +186,7 @@ public class Fraud extends JavaPlugin {
         return configuration;
     }
 
-    public Data getDatas() {
+    public Data getData() {
         return Data;
     }
 

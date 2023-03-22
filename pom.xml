@@ -10,7 +10,7 @@
 
     <groupId>fr.Rgld_</groupId>
     <artifactId>Fraud</artifactId>
-    <version>1.8.6</version>
+    <version>1.8.6.2</version>
 
     <developers>
         <developer>
@@ -118,25 +118,6 @@
                     <show>public</show>
                 </configuration>
             </plugin>
-<!--
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>generate-sources</phase>
-                        <configuration>
-                            <tasks>
-                                <exec executable="/mnt/20 - Développement/10 - Projects/40 - Fraud/test.sh"/>
-                            </tasks>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>-->
-
         </plugins>
     </build>
 
@@ -209,7 +190,7 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.28</version>
+            <version>8.0.32</version>
             <scope>compile</scope>
             <exclusions>
                 <exclusion>
@@ -221,7 +202,7 @@
         <dependency>
             <groupId>commons-net</groupId>
             <artifactId>commons-net</artifactId>
-            <version>3.8.0</version>
+            <version>3.9.0</version>
             <scope>compile</scope>
             <exclusions>
                 <exclusion>
@@ -233,7 +214,7 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <version>4.5.13</version>
+            <version>4.5.14</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -273,13 +254,13 @@
         <dependency>
             <groupId>org.bstats</groupId>
             <artifactId>bstats-bukkit</artifactId>
-            <version>3.0.0</version>
+            <version>3.0.1</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>2.9.0</version>
+            <version>2.10.1</version>
             <scope>compile</scope>
             <exclusions>
                 <exclusion>
@@ -291,8 +272,28 @@
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
-            <version>23.0.0</version>
+            <version>24.0.1</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>31.1-android</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.15</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-codec</artifactId>
+            <version>4.1.90.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>2.0</version>
         </dependency>
     </dependencies>
 

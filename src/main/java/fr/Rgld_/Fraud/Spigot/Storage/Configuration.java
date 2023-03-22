@@ -1,5 +1,6 @@
 package fr.Rgld_.Fraud.Spigot.Storage;
 
+import fr.Rgld_.Fraud.Exceptions.IllegalConfigurationException;
 import fr.Rgld_.Fraud.Spigot.Fraud;
 import fr.Rgld_.Fraud.Spigot.Helpers.Messages;
 import org.bukkit.ChatColor;
@@ -192,6 +193,11 @@ public class Configuration {
         return newName;
     }
 
+    public String getRestApiChoice() {
+        RestApiChoice rac = RestApiChoice.valueOf(getString("rest_api_base_url").toUpperCase());
+        return rac == null ? null : rac.toString();
+    }
+
     public KickSection getKick() {
         return new KickSection(fileConfig.getConfigurationSection("kick"), this);
     }
@@ -222,52 +228,52 @@ public class Configuration {
             }
         }
 
+
         /**
-         * data store:
-         *   type: sqlite
-         *   #type: mysql
-         *   #parameters:
-         *   #  ip: "localhost"
-         *   #  port: 3306
-         *   #  user: "fraud"
-         *   #  password: "password"
-         *   #  database: "Fraud"
-         *
-         * @return a {@link String}
+         * @return the {@link String} associated to the key "host".
          */
         public String getIP() {
             checkMysqlType();
             return database.getString("parameters.ip");
         }
 
+        /**
+         * @return the {@link String} associated to the key "port".
+         */
         public int getPort() {
             checkMysqlType();
             return database.getInt("parameters.port");
         }
 
+        /**
+         * @return the {@link String} associated to the key "user".
+         */
         public String getUser() {
             checkMysqlType();
             return database.getString("parameters.user");
         }
 
+        /** @return the {@link String} associated to the key "password". */
         public String getPassword() {
             checkMysqlType();
             return database.getString("parameters.password");
         }
 
-
+        /** @return the {@link String} associated to the key "database". */
         public String getDatabase() {
             checkMysqlType();
             return database.getString("parameters.database");
         }
 
+        private void checkMysqlType() {
+            if(getType() != Type.MYSQL)
+                throw new IllegalConfigurationException("The database type is not mysql, you can't use the mysql parameters.");
+        }
+
+
         public String generateURL() {
             checkMysqlType();
             return "jdbc:mysql://" + getIP() + ":" + getPort() + "/" + getDatabase();
-        }
-
-        private void checkMysqlType() {
-            if(getType() != Type.MYSQL) throw new IllegalArgumentException("This function is not accessible with this database type: " + Type.MYSQL);
         }
 
         public enum Type { SQLITE, MYSQL, UNKNOWN }
@@ -292,6 +298,31 @@ public class Configuration {
 
         public int getMaxAccounts() {
             return configuration.getDoubleAccountLimit();
+        }
+    }
+
+    private enum RestApiChoice {
+
+        DOMAIN("https://api.rgld.fr/"),
+        IP("http://51.210.249.108:11043/");
+
+        private String url;
+
+        RestApiChoice(String url) {
+            this.url = url;
+        }
+
+        public String getUrl() {
+            return url;
+        }
+
+        @Override
+        public String toString() {
+            return getUrl();
+        }
+
+        public static RestApiChoice getChoice(String choice) {
+            return RestApiChoice.valueOf(choice);
         }
     }
 }

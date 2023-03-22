@@ -18,9 +18,9 @@ public class IPInfoManager {
     private final Fraud fraud;
     private final ExtAPI extAPI;
 
-    public IPInfoManager(Fraud fraud) {
+    public IPInfoManager(Fraud fraud, ExtAPI extAPI) {
         this.fraud = fraud;
-        this.extAPI = new ExtAPI(fraud);
+        this.extAPI = extAPI;
         this.ipInfoHashMap = new HashMap<>();
     }
 
@@ -67,7 +67,7 @@ public class IPInfoManager {
     }
 
     private String[] getJsonGeoIPInfo(String ip, boolean geoip) {
-        String base_url = extAPI.restAPIBaseUrl + "/ip/{0}?geoip=" + geoip;
+        String base_url = extAPI.restAPIBaseUrl + "ip/{0}?geoip=" + geoip;
         String url = MessageFormat.format(base_url, ip.replace(":", "%3"));
         return Utils.getContent(url, extAPI.restAPIkey, extAPI.getServerUUID());
     }
