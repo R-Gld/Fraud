@@ -17,14 +17,13 @@ import java.util.List;
 /**
  * Class used to configure the plugin. (See <a href="https://github.com/R-Gld/Fraud/blob/master/src/main/resources/config.yml" target="_blank">sp-config.yml</a>)
  */
-@SuppressWarnings("ALL")
 public class Configuration {
 
     private final Fraud fraud;
     private final File file;
     private YamlConfiguration fileConfig;
 
-    public Configuration(Fraud fraud) throws Throwable {
+    public Configuration(Fraud fraud) throws IOException, InvalidConfigurationException {
         this.fraud = fraud;
         this.file = new File(fraud.getDataFolder(), "config.yml");
         loadConfig();
@@ -67,14 +66,6 @@ public class Configuration {
         return fileConfig.getBoolean(path);
     }
 
-    /**
-     * @param path yaml path on the config (@see <a href="https://github.com/R-Gld/Fraud/blob/master/src/main/resources/config.yml" target="_blank">sp-config.yml</a>)
-     * @param def Default value.
-     * @return the {@link Boolean} associated to the key given in parameter.
-     */
-    private Boolean getBoolean(String path, boolean def) {
-        return fileConfig.getBoolean(path, def);
-    }
 
     //\\ ---------------------------------------------------------------------------- //\\
 
@@ -108,10 +99,10 @@ public class Configuration {
     }
 
     /**
-     * @return true if the geo-api is activated, false otherwise.
+     * @return true if the Geoip is enable, false, otherwise
      */
     public boolean isGeoIPAPIActivated() {
-        return getBoolean("geoip-enable", true);
+        return fileConfig.getBoolean("geoip-enable", true);
     }
 
     /**
@@ -191,11 +182,6 @@ public class Configuration {
         }
         this.file.renameTo(oldFile);
         return newName;
-    }
-
-    public String getRestApiChoice() {
-        RestApiChoice rac = RestApiChoice.valueOf(getString("rest_api_base_url").toUpperCase());
-        return rac == null ? null : rac.toString();
     }
 
     public KickSection getKick() {
@@ -298,31 +284,6 @@ public class Configuration {
 
         public int getMaxAccounts() {
             return configuration.getDoubleAccountLimit();
-        }
-    }
-
-    private enum RestApiChoice {
-
-        DOMAIN("https://api.rgld.fr/"),
-        IP("http://51.210.249.108:11043/");
-
-        private String url;
-
-        RestApiChoice(String url) {
-            this.url = url;
-        }
-
-        public String getUrl() {
-            return url;
-        }
-
-        @Override
-        public String toString() {
-            return getUrl();
-        }
-
-        public static RestApiChoice getChoice(String choice) {
-            return RestApiChoice.valueOf(choice);
         }
     }
 }

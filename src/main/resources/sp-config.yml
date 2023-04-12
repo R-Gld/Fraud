@@ -131,8 +131,3 @@ messages:
     second: "second"
     seconds: "seconds"
 
-
-# Possible values:
-# - "domain" => Api calls secured by ssl (https)
-# - "ip" =>
-rest_api_base_url: "domain"
