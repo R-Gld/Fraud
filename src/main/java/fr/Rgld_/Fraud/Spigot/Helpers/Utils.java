@@ -25,7 +25,6 @@ import java.util.*;
 /**
  * Contain several functions useful for the plugin.
  */
-@SuppressWarnings("JavadocLinkAsPlainText")
 public class Utils {
 
     /**
@@ -107,15 +106,14 @@ public class Utils {
      * Method taken into EssentialsX (from com.earth2me.essentials.utils.DateUtil) adapted for this plugin.
      * Download link to essentialsX: https://www.spigotmc.org/resources/essentialsx.9089/
      *
-     * @param time String
+     * @param time long
      * @return date formatted.
      */
     public static String formatDate(long time) {
-        boolean future = false;
         Calendar c = new GregorianCalendar(); /* -> */ c.setTimeInMillis(time);
         Calendar now = new GregorianCalendar();
         if(c.equals(now)) return Messages.NOW.getMessage();
-        if(c.after(now)) future = true;
+        boolean future = c.after(now);
         StringBuilder sb = new StringBuilder();
         int[] types = { 1, 2, 5, 11, 12, 13 };
         String[] names =
@@ -186,7 +184,7 @@ public class Utils {
      * @param auth the auth token.
      * @return the content of this url.
      */
-    public static String[] getContent(final String url, final String auth, UUID uuid) {
+    public static String[] getContent(String url, final String auth, UUID uuid) {
         try {
             HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
             con.setRequestMethod("GET");
@@ -201,12 +199,14 @@ public class Utils {
             }
             in.close();
             con.disconnect();
-            return new String[] { response.toString(), String.valueOf(con.getResponseCode()) };
+            return new String[]{response.toString(), String.valueOf(con.getResponseCode())};
+        } catch(FileNotFoundException e) {
+            return new String[] { "Error 404", "404"};
         } catch(ConnectException e) {
             return new String[] { "ERROR: " + Arrays.toString(e.getStackTrace()), "-1" };
         } catch(IOException e) {
             e.printStackTrace();
-            return new String[] { "ERROR: " + Arrays.toString(e.getStackTrace()), "-1" };
+            return new String[] { "ERROR: " + Arrays.toString(e.getStackTrace()), "-2" };
         }
     }
 
