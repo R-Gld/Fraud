@@ -1,6 +1,7 @@
 package fr.Rgld_.Fraud.Spigot.api;
 
 import com.google.gson.GsonBuilder;
+import fr.Rgld_.Fraud.Spigot.Helpers.Links;
 import fr.Rgld_.Fraud.Spigot.Helpers.Utils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -212,7 +213,7 @@ public class Plugin {
         }
 
         public Data getData() throws IOException {
-            String[] datas = Utils.getContent("https://api.spiget.org/v2/resources/" + pluginId + "/versions/" + id);
+            String[] datas = Utils.getContent(Links.SPIGET_VERSIONS.format(pluginId, id));
             checkHTMLCode(Integer.parseInt(datas[1]), pluginId);
             String content = datas[0];
 
@@ -288,7 +289,7 @@ public class Plugin {
         }
 
         public static Rating parseRating(JSONObject obj) {
-            return new Rating((Long) obj.get("count"), Double.parseDouble("" + obj.get("average")));
+            return new Rating((Long) obj.get("count"), Double.parseDouble(String.valueOf(obj.get("average"))));
         }
 
 
@@ -385,7 +386,7 @@ public class Plugin {
         }
 
         public static Author getAuthor(long id) {
-            String[] datas = Utils.getContent("https://api.spiget.org/v2/authors/" + id);
+            String[] datas = Utils.getContent(Links.SPIGET_AUTHORS.format(id));
             Plugin.checkHTMLCode(Integer.parseInt(datas[1]));
             String content = datas[0];
             JSONObject obj;
@@ -466,7 +467,7 @@ public class Plugin {
     public static Plugin getFraud() { return getPlugin(FRAUD_SPIGOT_PLUGIN_ID); }
 
     public static Plugin getPlugin(int pluginId) {
-        String[] datas = Utils.getContent("https://api.spiget.org/v2/resources/" + pluginId);
+        String[] datas = Utils.getContent(Links.SPIGET_RESOURCE.format(pluginId));
         checkHTMLCode(Integer.parseInt(datas[1]), pluginId);
         String content = datas[0];
 
@@ -519,7 +520,7 @@ public class Plugin {
 
 
         /* Reviews part */
-        String[] reviewsDatas = Utils.getContent("https://api.spiget.org/v2/resources/" + pluginId + "/reviews");
+        String[] reviewsDatas = Utils.getContent(Links.SPIGET_REVIEWS.format(pluginId));
         checkHTMLCode(Integer.parseInt(reviewsDatas[1]), pluginId);
         String reviewsContent = reviewsDatas[0];
 
@@ -549,7 +550,7 @@ public class Plugin {
 
     private static void checkHTMLCode(int htmlCode, long pluginId) {
         if(htmlCode != 200) {
-            throw new RuntimeException("Error occuring during getting informations about the plugin with id: " + pluginId);
+            throw new RuntimeException("Error occuring during getting informations about the plugin (HTML ERROR CODE/PLUGIN ID): (" + htmlCode + "/" + pluginId + ")");
         }
     }
 

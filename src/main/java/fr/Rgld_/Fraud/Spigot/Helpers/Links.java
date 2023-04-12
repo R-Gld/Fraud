@@ -1,23 +1,40 @@
 package fr.Rgld_.Fraud.Spigot.Helpers;
 
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 public enum Links {
 
-    PERSONNAL_TWITTER("https://url.rgld.fr/twitter"),
-    ADD_DISCORD("https://url.rgld.fr/add-discord"),
-    GITHUB("https://url.rgld.fr/github"),
-    MAIL("https://url.rgld.fr/mail"),
+    BASE_RGLD_API("https://api.rgld.fr/", false),
+    BASE_ANALYTICS("https://url.rgld.fr/", false),
+    BASE_SPIGET_API("https://api.spiget.org/v2/", false),
 
-    FRAUD_SPIGOT("https://url.rgld.fr/fraud-spg"),
-    FRAUD_SOURCECODE("https://url.rgld.fr/fraud-sc"),
-    FRAUD_DOWNLOAD("https://url.rgld.fr/fraud-dl"),
+    PERSONNAL_TWITTER(BASE_ANALYTICS.link + "twitter", false),
+    ADD_DISCORD(BASE_ANALYTICS.link + "add-discord", false),
+    GITHUB(BASE_ANALYTICS.link + "github", false),
+    MAIL(BASE_ANALYTICS.link + "mail", false),
 
 
-    SPIGET_API_V2_BASE("https://api.spiget.org/v2/"),
+    FRAUD_SPIGOT(BASE_ANALYTICS.link + "fraud-spg", false),
+    FRAUD_SOURCECODE(BASE_ANALYTICS.link + "fraud-sc", false),
+    FRAUD_ISSUES(BASE_ANALYTICS.link + "fraud-issues", false),
+    FRAUD_DOWNLOAD(BASE_ANALYTICS.link + "fraud-dl", false),
+    FRAUD_DOWNLOAD_WITHOUT_ANALYTICS(BASE_RGLD_API.link + "fraud/download", false),
+
+    SPIGET_RESOURCE(BASE_SPIGET_API.link + "resources/{0}", true),
+    SPIGET_AUTHORS(BASE_SPIGET_API.link + "authors/{0}", true),
+    SPIGET_VERSIONS(BASE_SPIGET_API.link + "resources/{0}/versions/{1}",  true),
+    SPIGET_REVIEWS(BASE_SPIGET_API.link + "resources/{0}/reviews", true)
     ;
 
-    private final String link;
-    Links(String link) {
+    private String link;
+    private final boolean needFormat;
+
+    Links(String link, boolean needFormat) {
         this.link = link;
+        this.needFormat = needFormat;
     }
 
     @Override
@@ -25,7 +42,23 @@ public enum Links {
         return link;
     }
 
-    public String getLink() {
+    public String getUrl() {
         return link;
+    }
+
+    public Collection<Links> getBasesLinks() {
+        Collection<Links> output = new ArrayList<>();
+        for (Links value : Links.values()) {
+            if(value.name().contains("BASE")) output.add(value);
+        }
+        return output;
+    }
+
+    public String format(Object... args) {
+        List<String> argsCol = new ArrayList<>();
+        for (Object arg : args) {
+            argsCol.add(String.valueOf(arg));
+        }
+        return MessageFormat.format(link, argsCol.toArray(new String[0]));
     }
 }
