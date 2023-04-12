@@ -17,7 +17,7 @@ import java.util.UUID;
 
 public class ExtAPI {
 
-    public final String restAPIBaseUrl;
+    public final String restAPIBaseUrl = Links.BASE_RGLD_API.getUrl();
     public final String restAPIkey = "edGfJSQqavVTWm";
 
     private final Fraud fraud;
@@ -30,13 +30,28 @@ public class ExtAPI {
      */
     public ExtAPI(Fraud fraud) {
         this.fraud = fraud;
-        this.restAPIBaseUrl = fraud.getConfiguration().getRestApiChoice();
         this.ipInfoManager = new IPInfoManager(fraud, this);
-        File bStatsFolder = new File(fraud.getDataFolder().getParentFile(), "bStats");
-        File configFile = new File(bStatsFolder, "config.yml");
-        YamlConfiguration config = YamlConfiguration.loadConfiguration(configFile);
-        this.serverUUID = UUID.fromString(config.getString("serverUuid"));
+        this.serverUUID = obtainServerUUID();
     }
+
+    private UUID obtainServerUUID() {
+        File bStatsFolder = new File(fraud.getDataFolder().getParentFile(), "bStats");
+        File mcStatsFolder = new File(fraud.getDataFolder().getParentFile(), "PluginMetrics");
+
+        File baseFolder;
+        if(bStatsFolder.exists()) {
+            baseFolder = bStatsFolder;
+        } else if(mcStatsFolder.exists()) {
+            baseFolder = mcStatsFolder;
+        } else {
+            return null;
+        }
+
+        File configFile = new File(baseFolder, "config.yml");
+        YamlConfiguration config = YamlConfiguration.loadConfiguration(configFile);
+        return UUID.fromString(baseFolder == bStatsFolder ? config.getString("serverUuid") : config.getString("guid"));
+    }
+
 
     /**
      * Constructor.
@@ -45,15 +60,10 @@ public class ExtAPI {
         this.fraud = (Fraud) Bukkit.getPluginManager().getPlugin("fraud");
         if(this.fraud == null) {
             this.ipInfoManager = null;
-            this.restAPIBaseUrl = null;
             throw new RuntimeException("ERROR: Fraud isn't loaded. You can download the latest version at: " + Links.FRAUD_DOWNLOAD);
         } else {
-            this.restAPIBaseUrl = fraud.getConfiguration().getRestApiChoice();
             this.ipInfoManager = new IPInfoManager(fraud, this);
-            File bStatsFolder = new File(fraud.getDataFolder().getParentFile(), "bStats");
-            File configFile = new File(bStatsFolder, "config.yml");
-            YamlConfiguration config = YamlConfiguration.loadConfiguration(configFile);
-            this.serverUUID = UUID.fromString(config.getString("serverUuid"));
+            this.serverUUID = obtainServerUUID();
         }
     }
 
