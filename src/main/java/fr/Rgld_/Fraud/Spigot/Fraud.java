@@ -48,6 +48,9 @@ public class Fraud extends JavaPlugin {
     @Override
     public void onEnable() {
         this.c = new Console();
+        PluginDescriptionFile pdf = this.getDescription();
+        c.sm(MessageFormat.format("{0}--- {1} ---", GOLD, pdf.getName()));
+        c.sm();
 
         try {
             this.configuration = new Configuration(this);
@@ -58,9 +61,6 @@ public class Fraud extends JavaPlugin {
         }
 
         this.ipInfoManager = new IPInfoManager(this, new ExtAPI(this));
-        PluginDescriptionFile pdf = this.getDescription();
-        c.sm(MessageFormat.format("{0}--- {1} ---", GOLD, pdf.getName()));
-        c.sm();
 
         try {
             new EventManager(this).register();
