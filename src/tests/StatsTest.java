@@ -17,7 +17,7 @@ public class StatsTest {
 
 
     public static String getDownloadLink() throws IOException {
-        String url = Links.SPIGET_API_V2_BASE + "resources/69872";
+        String url = Links.BASE_SPIGET_API + "resources/69872";
         String[] infos = Utils.getContent(url);
         if (Integer.parseInt(infos[1]) != 200) {
             throw new IOException("An error occur during getting the download link of Fraud.");
