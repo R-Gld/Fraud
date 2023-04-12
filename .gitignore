@@ -1,5 +1,8 @@
 .idea
-*.iml
 target/
 .github/
+.run/
+*.iml
 /dependency-reduced-pom.xml
+.send
+.version

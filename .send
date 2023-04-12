@@ -1,0 +1,11 @@
+#!/bin/bash
+
+remotePath="/var/www/cdn/spigot/fraud/archives/$1/"
+
+sftp -o StrictHostKeyChecking=no Rgld_@rgld.fr <<EOF
+mkdir $remotePath
+cd $remotePath
+put -f ./target/Fraud.jar Fraud.jar
+bye
+EOF
+echo "Fraud.jar v$1 envoyé avec succès."
