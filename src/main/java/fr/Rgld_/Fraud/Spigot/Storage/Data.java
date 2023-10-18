@@ -303,8 +303,9 @@ public class Data {
      */
     public String getIP(String name) {
         try(Connection connection = connect()) {
-            String sql = MessageFormat.format("SELECT ip FROM `{0}` WHERE pseudo = \"{1}\"", TABLE_NAME_ips, name);
+            String sql = MessageFormat.format("SELECT ip FROM `{0}` WHERE pseudo = \"?\"", TABLE_NAME_ips);
             PreparedStatement psst = connection.prepareStatement(sql);
+            psst.setString(1, name);
             ResultSet rs = psst.executeQuery();
             return rs.getString("ip");
         } catch(SQLException | ClassNotFoundException e) {
