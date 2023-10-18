@@ -1,13 +1,12 @@
 package fr.Rgld_.Fraud.Spigot.Events;
 
-import com.google.common.collect.Lists;
-import fr.Rgld_.Fraud.Global.IPInfo;
 import fr.Rgld_.Fraud.Spigot.Events.Custom.DoubleAccountJoinEvent;
 import fr.Rgld_.Fraud.Spigot.Fraud;
+import fr.Rgld_.Fraud.Spigot.Helpers.IPInfo;
 import fr.Rgld_.Fraud.Spigot.Helpers.Messages;
 import fr.Rgld_.Fraud.Spigot.Helpers.Utils;
 import fr.Rgld_.Fraud.Spigot.Storage.Configuration;
-import fr.Rgld_.Fraud.Spigot.Storage.Data.Data;
+import fr.Rgld_.Fraud.Spigot.Storage.Data;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -36,20 +35,39 @@ public class JoinQuitEvent implements Listener {
      */
     public JoinQuitEvent(Fraud fraud) {
         this.fraud = fraud;
-        this.list = Lists.newArrayList();
+        this.list = new ArrayList<>();
     }
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
         Configuration config = fraud.getConfiguration();
-
         Player p = e.getPlayer();
         if(p.hasPermission("fraud.bypass.ip")) return;
         Data data = fraud.getData();
+        String playerIp = Utils.getAddress(p.getAddress());
+        if(data.hasPrivateIPv4(p)){
+            fraud.getConsole().sm("The player " + p.getName() + " was not added to the database because their IP (" + playerIp + ") is private.");
+            return;
+        }
         data.putPlayer(p);
         if(!config.alertOnJoinIsEnabled()) return;
-        List<String> altsList = Lists.newArrayList();
-        altsList.addAll(data.getList(p));
+        List<String> altsList = new ArrayList<>(data.getList(p));
+        IPInfo ipInfo = fraud.getIpInfoManager().getIPInfoConformConfig(playerIp);
+        List<String> bad_countries = config.getCountriesAlert();
+        System.out.println("ipInfo.getCountryCode() = " + ipInfo.getCountryCode());
+        if(bad_countries.contains(ipInfo.getCountryCode())) {
+            String code = ipInfo.getCountryCode();
+            String countryName = ipInfo.getCountryName();
+            String countries_format = Messages.BAD_COUNTRY_DETECTED.format(p.getName(),
+                                                                           countryName == null ?
+                                                                                   code :
+                                                                                   countryName + "(" + code + ")");
+            for(Player pls : Bukkit.getOnlinePlayers()) {
+                if (pls.hasPermission("fraud.receive.alert") && !fraud.getFraudCommand().getNotAlerted().contains(pls.getName())) {
+                    pls.sendMessage(countries_format);
+                }
+            }
+        }
         int altsNum = altsList.size();
         if((altsNum >= config.getDoubleAccountLimit() && Utils.cantGetAnAlt(altsList)) || (altsNum > config.getDoubleAccountLimit())) {
             // Player connected is or has a double account.
@@ -67,22 +85,6 @@ public class JoinQuitEvent implements Listener {
                     String abc = altsList.get(i);
                     altsList.set(i, (Utils.isConnected(abc) ? ChatColor.GREEN + abc : ChatColor.RED + abc));
                 }
-                IPInfo ipInfo = fraud.getIpInfoManager().getIPInfoConformConfig(Utils.getAddress(p.getAddress()));
-                List<String> bad_countries = config.getCountriesAlert();
-                if(bad_countries.contains(ipInfo.getCountryCode())) {
-                    String code = ipInfo.getCountryCode();
-                    String countryName = ipInfo.getCountryName();
-                    String countries_format = Messages.BAD_COUNTRY_DETECTED.format(p.getName(),
-                                                                                   countryName == null ?
-                                                                                           code :
-                                                                                           countryName + "(" + code + ")");
-                    for(Player pls : Bukkit.getOnlinePlayers()) {
-                        if (pls.hasPermission("fraud.receive.alert") && !fraud.getFraudCommand().getNotAlerted().contains(pls.getName())) {
-                            pls.sendMessage(countries_format);
-                        }
-                    }
-                }
-
                 String formatted = Messages.ALTS_DETECTED.format(p.getName(), Utils.joinList(altsList));
                 fraud.getConsole().sendMessage(formatted);
                 TextComponent info = new TextComponent("   §e§l➤ (i)");

@@ -6,7 +6,7 @@ import org.bukkit.ChatColor;
 /**
  * Facilitates the sending of message in console.
  */
-public class Console implements fr.Rgld_.Fraud.Global.Console {
+public class Console {
 
     public Console() {}
 

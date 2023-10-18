@@ -5,4 +5,3 @@ target/
 *.iml
 /dependency-reduced-pom.xml
 .send
-.version

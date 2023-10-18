@@ -2,6 +2,7 @@ package fr.Rgld_.Fraud.Spigot.api;
 
 import com.google.gson.GsonBuilder;
 import fr.Rgld_.Fraud.Spigot.Helpers.Links;
+import fr.Rgld_.Fraud.Spigot.Helpers.Updater;
 import fr.Rgld_.Fraud.Spigot.Helpers.Utils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -10,9 +11,9 @@ import org.json.simple.parser.JSONParser;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.Map;
 
 public class Plugin {
@@ -27,6 +28,7 @@ public class Plugin {
     private final String supportedLanguages;
     private final String[] testedVersions;
     private final Version[] versions;
+    private final Version latestVersion;
     private final Long[] updates;
     private final Review[] reviews;
     private final String[] links;
@@ -54,6 +56,7 @@ public class Plugin {
         this.supportedLanguages = supportedLanguages;
         this.testedVersions = testedVersions;
         this.versions = versions;
+        this.latestVersion = getLatestVersion(versions);
         this.updates = updates;
         this.reviews = reviews;
         this.links = links;
@@ -71,6 +74,20 @@ public class Plugin {
         this.price = price;
         this.existenceStatus = existenceStatus;
         this.id = id;
+    }
+
+    private Version getLatestVersion(final Version[] versions) {
+        Version output = null;
+        double latest = 0.0;
+        for(Version v : versions) {
+            Version.Data data = v.getData();
+            double version_vl = Updater.parseVersionStatic(data.getName());
+            if(version_vl > latest) {
+                latest = version_vl;
+                output = v;
+            }
+        }
+        return output;
     }
 
     public boolean isExternal() {
@@ -96,6 +113,9 @@ public class Plugin {
     }
     public Version[] getVersions() {
         return versions;
+    }
+    public Version getLatestVersion() {
+        return latestVersion;
     }
     public Long[] getUpdates() {
         return updates;
@@ -195,6 +215,9 @@ public class Plugin {
     }
 
     public static class Version {
+
+        private static final HashMap<String, Version.Data> cache = new HashMap<>();
+
         private final long pluginId;
         private final long id;
         private final String uuid;
@@ -212,7 +235,9 @@ public class Plugin {
             return uuid;
         }
 
-        public Data getData() throws IOException {
+        public Data getData() {
+            if(cache.containsKey(uuid)) return cache.get(uuid);
+
             String[] datas = Utils.getContent(Links.SPIGET_VERSIONS.format(pluginId, id));
             checkHTMLCode(Integer.parseInt(datas[1]), pluginId);
             String content = datas[0];
@@ -223,7 +248,10 @@ public class Plugin {
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-            return new Data((long) obj.get("downloads"), Rating.parseRating((JSONObject) obj.get("rating")), (String) obj.get("name"), (long) obj.get("releaseDate"));
+
+            Data data = new Data((long) obj.get("downloads"), Rating.parseRating((JSONObject) obj.get("rating")), (String) obj.get("name"), (long) obj.get("releaseDate"));
+            cache.put(uuid, data);
+            return data;
         }
         
         public static Version parseVersion(JSONObject obj, int pluginId) {
@@ -484,7 +512,6 @@ public class Plugin {
         long likes = (long) obj.get("likes");
         String sourceCodeLink = (String) obj.get("sourceCodeLink");
         String supportedLanguages = (String) obj.get("supportedLanguages");
-
         String[] testedVersion = (String[]) ((JSONArray) obj.get("testedVersions")).toArray(new String[0]);
 
         ArrayList<Version> versionsAL = new ArrayList<>();
@@ -515,7 +542,7 @@ public class Plugin {
         long updateDate = (long) obj.get("updateDate");
         long downloads = (long) obj.get("downloads");
         boolean premium = (boolean) obj.get("premium");
-        double price = Double.parseDouble("" + obj.get("price"));
+        double price = Double.parseDouble(String.valueOf(obj.get("price")));
         long existenceStatus = (long) obj.get("existenceStatus");
 
 

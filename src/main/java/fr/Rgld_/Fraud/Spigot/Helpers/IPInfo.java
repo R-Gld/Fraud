@@ -1,4 +1,4 @@
-package fr.Rgld_.Fraud.Global;
+package fr.Rgld_.Fraud.Spigot.Helpers;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -6,6 +6,8 @@ import java.util.*;
 
 
 public final class IPInfo {
+
+    public IPInfo() {}
 
     private final List<String> desc = new ArrayList<>();
     private String ip = null;

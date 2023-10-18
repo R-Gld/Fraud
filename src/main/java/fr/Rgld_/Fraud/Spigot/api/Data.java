@@ -1,7 +1,7 @@
 package fr.Rgld_.Fraud.Spigot.api;
 
-import fr.Rgld_.Fraud.Global.IPInfo;
 import fr.Rgld_.Fraud.Spigot.Fraud;
+import fr.Rgld_.Fraud.Spigot.Helpers.IPInfo;
 import fr.Rgld_.Fraud.Spigot.Helpers.Links;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -11,7 +11,7 @@ import java.util.List;
 public class Data {
 
     private final Fraud fraud;
-    private final fr.Rgld_.Fraud.Spigot.Storage.Data.Data Data;
+    private final fr.Rgld_.Fraud.Spigot.Storage.Data Data;
 
     /**
      * Constructor.

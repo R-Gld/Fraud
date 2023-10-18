@@ -1,7 +1,7 @@
 package fr.Rgld_.Fraud.Spigot.Storage;
 
-import fr.Rgld_.Fraud.Exceptions.IllegalConfigurationException;
 import fr.Rgld_.Fraud.Spigot.Fraud;
+import fr.Rgld_.Fraud.Spigot.Helpers.Exceptions.IllegalConfigurationException;
 import fr.Rgld_.Fraud.Spigot.Helpers.Messages;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
@@ -218,7 +218,7 @@ public class Configuration {
         /**
          * @return the {@link String} associated to the key "host".
          */
-        public String getIP() {
+        public String getHost() {
             checkMysqlType();
             return database.getString("parameters.ip");
         }
@@ -246,7 +246,7 @@ public class Configuration {
         }
 
         /** @return the {@link String} associated to the key "database". */
-        public String getDatabase() {
+        public String getDatabaseName() {
             checkMysqlType();
             return database.getString("parameters.database");
         }
@@ -259,7 +259,7 @@ public class Configuration {
 
         public String generateURL() {
             checkMysqlType();
-            return "jdbc:mysql://" + getIP() + ":" + getPort() + "/" + getDatabase();
+            return "jdbc:mysql://" + getHost() + ":" + getPort() + "/" + getDatabaseName();
         }
 
         public enum Type { SQLITE, MYSQL, UNKNOWN }

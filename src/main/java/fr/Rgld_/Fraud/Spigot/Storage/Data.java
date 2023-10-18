@@ -1,9 +1,9 @@
-package fr.Rgld_.Fraud.Spigot.Storage.Data;
+package fr.Rgld_.Fraud.Spigot.Storage;
 
 import com.google.common.collect.Lists;
 import fr.Rgld_.Fraud.Spigot.Fraud;
 import fr.Rgld_.Fraud.Spigot.Helpers.Utils;
-import fr.Rgld_.Fraud.Spigot.Storage.Configuration;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.io.File;
@@ -20,10 +20,12 @@ public class Data {
 
     private final String TABLE_NAME_ips = "ips";
     private final String TABLE_NAME_connection = "connections";
+    private final String TABLE_NAME_reports = "reports";
 
     private final Fraud fraud;
     private final Configuration.DatabaseSection.Type type;
     private File file = null;
+    private String[] createTableQuery;
 
     public Data(Fraud fraud) {
         this.fraud = fraud;
@@ -33,6 +35,24 @@ public class Data {
             case MYSQL:
                 try {
                     connect();
+                    createTableQuery = new String[] {
+
+                        // IP Table
+                        "CREATE TABLE IF NOT EXISTS " + TABLE_NAME_ips +
+                                "(id INT AUTO_INCREMENT PRIMARY KEY," +
+                                "pseudo text NOT NULL," +
+                                "ip text NOT NULL," +
+                                "INDEX (ip)," +
+                                "INDEX (pseudo));",
+
+                        // Connection Table
+                        "CREATE TABLE IF NOT EXISTS " + TABLE_NAME_connection +
+                                "(id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, " +
+                                "pseudo text NOT NULL, " +
+                                "first bigint, " +
+                                "last bigint," +
+                                "INDEX(pseudo));"
+                    };
                 } catch(SQLException e) {
                     System.err.println("There is a problem with the mysql connection." +
                                        "\nYou should check the parameters of the connection with the database." +
@@ -43,11 +63,29 @@ public class Data {
                     System.out.println("An error occur with the driver:");
                     e.printStackTrace();
                 }
+
                 break;
             case SQLITE:
                 file = new File(fraud.getDataFolder(), "data.sqlite");
                 try {
                     connect();
+                    createTableQuery = new String[] {
+                        // IP Table
+                        "CREATE TABLE IF NOT EXISTS " + TABLE_NAME_ips +
+                            "(id INTEGER PRIMARY KEY," +
+                            "pseudo VARCHAR(64) NOT NULL," +
+                            "ip VARCHAR(16) NOT NULL);" +
+                        "CREATE INDEX IF NOT EXISTS idx_ip ON " + TABLE_NAME_ips + " (ip);",
+                        "CREATE INDEX IF NOT EXISTS idx_pseudo ON " + TABLE_NAME_ips + " (pseudo);",
+
+                        // Connection Table
+                        "CREATE TABLE IF NOT EXISTS " + TABLE_NAME_connection +
+                            "(id INTEGER PRIMARY KEY, " +
+                            "pseudo VARCHAR(64) NOT NULL, " +
+                            "first INTEGER, " +
+                            "last INTEGER);",
+                        "CREATE INDEX IF NOT EXISTS idx_pseudo ON " + TABLE_NAME_connection + " (pseudo);"
+                    };
                 } catch(SQLException e) {
                     System.err.println("There is a problem with the sqlite connection." +
                                        "\nPlease send the following stacktrace to the developer of this plugin." +
@@ -63,22 +101,34 @@ public class Data {
                 throw new IllegalStateException("The type of storage is unknown. Please fix the config.");
         }
 
-        createIpsTable();
-        createConnectionTable();
-        createHistoryTable();
+        createTables();
+        initializeOnlinePlayers();
+    }
+
+    private void createTables() {
+        if(createTableQuery == null) throw new UnsupportedOperationException("The type of storage is unknown. Please fix the config.");
+        try (Connection connection = connect()) {
+            for(String query : createTableQuery) {
+                try (PreparedStatement statement = connection.prepareStatement(query)) {
+                    statement.executeUpdate();
+                }
+            }
+        } catch(SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
      * Connect to the database.
      *
-     * @throws SQLException if an error occur with the connection.
+     * @throws SQLException if an error occurs with the connection.
      * @throws ClassNotFoundException if the driver is not found.
      */
     public Connection connect() throws SQLException, ClassNotFoundException {
         switch(type) {
             case MYSQL:
                 Configuration.DatabaseSection db = fraud.getConfiguration().getDatabase();
-                Class.forName("com.mysql.cj.jdbc.Driver");
+                Class.forName("com.mysql.jdbc.Driver");
                 return DriverManager.getConnection(db.generateURL(), db.getUser(), db.getPassword());
             case SQLITE:
                 if(!file.exists()) try {
@@ -93,40 +143,10 @@ public class Data {
                 throw new IllegalStateException("The type of storage is unknown. Please fix the config.");
         }
     }
+    
 
-    /**
-     * Create the table ips if it doesn't exist.
-     */
-    public void createIpsTable() {
-        try(Connection connection = connect()) {
-            String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME_ips + "(id integer PRIMARY KEY,pseudo text NOT NULL,ip text NOT NULL);";
-            connection.createStatement().execute(sql);
-        } catch(SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Create the table history if it doesn't exist.
-     */
-    public void createHistoryTable() {
-        try(Connection connection = connect()) {
-            String TABLE_NAME_history = "history";
-            String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME_history + "(id integer PRIMARY KEY,pseudo text NOT NULL,ip text NOT NULL);";
-            connection.createStatement().execute(sql);
-        } catch(SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /** Create the table connection if it doesn't exist. */
-    public void createConnectionTable() {
-        try(Connection connection = connect()) {
-            String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME_connection + "(id integer PRIMARY KEY NOT NULL,pseudo text NOT NULL,first bigint,last bigint);";
-            connection.createStatement().execute(sql);
-        } catch(SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+    public void initializeOnlinePlayers () {
+        Bukkit.getOnlinePlayers().forEach(this::putPlayer);
     }
 
     /**
@@ -135,8 +155,14 @@ public class Data {
      * @param p the player who has the ip.
      */
     public void putPlayer(Player p) {
-        String name = p.getName();
         InetSocketAddress address = p.getAddress();
+        String name = p.getName();
+
+        if(hasPrivateIPv4(p)){
+            fraud.getConsole().sm("The player " + name + " was not added to the database because their IP (" + Utils.getAddress(address) + ") is private.");
+            return;
+        }
+
         try(Connection connection = connect()) {
             if(isRegisteredInConnection(name)) {
                 String sql = MessageFormat.format("UPDATE {0} SET last = ? WHERE pseudo = ?", TABLE_NAME_connection);
@@ -351,5 +377,31 @@ public class Data {
             e.printStackTrace();
         }
         return Lists.newArrayList();
+    }
+
+    public long ping() {
+        if(type.equals(Configuration.DatabaseSection.Type.SQLITE))
+            return (file.canRead() && file.canWrite()) ? 0 : -1;
+
+        long start = System.currentTimeMillis();
+        try(Connection connect = connect()) {
+            return System.currentTimeMillis()-start;
+        } catch(SQLException | ClassNotFoundException e) {
+            System.err.println("Error connecting to database: " + e.getMessage());
+            return -1;
+        }
+    }
+
+    public File getFile() {
+        return file;
+    }
+
+    /**
+     * Return true if the player ip is public, false otherwise.
+     * @param p player to check.
+     * @return true if the player ip is public, false otherwise.
+     */
+    public boolean hasPrivateIPv4(final Player p) {
+        return !Utils.isPublicIPV4Address(Utils.getAddress(p.getAddress()));
     }
 }

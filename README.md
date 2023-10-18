@@ -24,7 +24,7 @@
 - Examples ([file](https://github.com/R-Gld/Fraud/blob/master/src/tests/Example.java)):
 
 ```java
-import fr.Rgld_.Fraud.Global.IPInfo;
+import fr.Rgld_.Fraud.Spigot.Helpers.IPInfo;
 import fr.Rgld_.Fraud.Spigot.Helpers.Utils;
 import fr.Rgld_.Fraud.Spigot.api.Data;
 import org.bukkit.Bukkit;
@@ -67,8 +67,8 @@ public class Example {
         Data data = new Data();
         IPInfo ipInfoOfRgld_ = data.getIPInfo(ip);
         System.out.println(ip + " is located at these coordinates(lat/lon): " +
-                ipInfoOfRgld_.getLatitude() + "/" + ipInfoOfRgld_.getLongitude()
-        );
+                                   ipInfoOfRgld_.getLatitude() + "/" + ipInfoOfRgld_.getLongitude()
+                          );
     }
 }
 ```

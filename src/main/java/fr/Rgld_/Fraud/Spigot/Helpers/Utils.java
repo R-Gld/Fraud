@@ -12,14 +12,13 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.URL;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 /**
@@ -230,10 +229,10 @@ public class Utils {
      * @return the html code of the request or -1 if the request as an error
      */
     public static int postContent(final String url, final String content, final String dataType, final String accept, final String auth, final UUID uuid) {
+        HttpClient httpClient = HttpClientBuilder.create()
+                .setPublicSuffixMatcher(new PublicSuffixMatcher(Collections.emptyList(), Collections.emptyList()))
+                .build();
         try {
-            HttpClient httpClient = HttpClientBuilder.create()
-                    .setPublicSuffixMatcher(new PublicSuffixMatcher(Collections.emptyList(), Collections.emptyList()))
-                    .build();
             HttpPost request = new HttpPost(url);
             request.addHeader("Content-Type", dataType);
             request.addHeader("Accept", accept);
@@ -242,11 +241,76 @@ public class Utils {
             request.addHeader(AUTH.WWW_AUTH_RESP, auth);
             StringEntity params = new StringEntity(content, ContentType.APPLICATION_JSON);
             request.setEntity(params);
-            return httpClient.execute(request).getStatusLine().getStatusCode();
+            int statusCode = httpClient.execute(request).getStatusLine().getStatusCode();
+            System.out.println("\n\n\n\n\n\n\n\n");
+            System.out.println("method = POST");
+            System.out.println("url = " + url);
+            System.out.println("statusCode = " + statusCode);
+            System.out.println("\n\n\n\n\n\n\n\n");
+            return statusCode;
         } catch(FileNotFoundException | ConnectException ignored) {} catch (IOException e) {
             e.printStackTrace();
         }
         return -1;
+    }
+
+    public static boolean isPublicIPV4Address(InetSocketAddress addr) {
+        return isPublicIPV4Address(Utils.getAddress(addr));
+    }
+
+
+
+    public static boolean isPublicIPV4Address(String ipAddress) {
+        // Vérification de l'adresse IPv4
+        if (!ipAddress.matches("^\\d+\\.\\d+\\.\\d+\\.\\d+$")) {
+            return false;
+        }
+
+        // Définition des blocs d'adresses IP privées
+        String[] privateAddressBlocks = new String[] {
+            "10.0.0.0/8",      // Bloc A : 10.0.0.0 - 10.255.255.255
+            "172.16.0.0/12",   // Bloc B : 172.16.0.0 - 172.31.255.255
+            "192.168.0.0/16",  // Bloc C : 192.168.0.0 - 192.168.255.255
+            "127.0.0.0/8"      // Loopback : 127.0.0.0 - 127.255.255.255
+        };
+
+        // Vérification si l'adresse IP appartient à un bloc d'adresses privées
+        for (String block : privateAddressBlocks) {
+            if (isIPAddressInBlock(ipAddress, block)) {
+                return false;
+            }
+        }
+
+        // Si l'adresse IP ne correspond à aucun bloc privé, elle est considérée comme publique
+        return true;
+    }
+
+    public static boolean isIPAddressInBlock(String ipAddress, String cidrBlock) {
+        // Récupération de l'adresse IP et du masque de sous-réseau
+        String[] cidrParts = cidrBlock.split("/");
+        String cidrAddress = cidrParts[0];
+        int cidrMask = Integer.parseInt(cidrParts[1]);
+        int cidrValue = 0xFFFFFFFF << (32 - cidrMask);
+
+        // Conversion de l'adresse IP en entier
+        String[] ipParts = ipAddress.split("\\.");
+        int ipValue = 0;
+        for (int i = 0; i < 4; i++) {
+            ipValue |= Integer.parseInt(ipParts[i]) << (8 * (3 - i));
+        }
+
+        // Vérification si l'adresse IP appartient au bloc d'adresses
+        return (ipValue & cidrValue) == (inetAddressToInt(cidrAddress) & cidrValue);
+    }
+
+    public static int inetAddressToInt(String inetAddress) {
+        String[] addrArray = inetAddress.split("\\.");
+        int num = 0;
+        for (int i = 0; i < addrArray.length; i++) {
+            int power = 3 - i;
+            num += ((Integer.parseInt(addrArray[i]) % 256 * Math.pow(256, power)));
+        }
+        return num;
     }
 
 
@@ -259,4 +323,26 @@ public class Utils {
     public static String getAddress(InetSocketAddress address) {
         return address.toString().split(":")[0].substring(1);
     }
+
+    public static String getMD5Hash(String filePath) throws NoSuchAlgorithmException, IOException {
+        MessageDigest md = MessageDigest.getInstance("MD5");
+        FileInputStream fis = new FileInputStream(filePath);
+
+        byte[] dataBytes = new byte[1024];
+
+        int nread;
+        while ((nread = fis.read(dataBytes)) != -1) {
+            md.update(dataBytes, 0, nread);
+        }
+        byte[] mdbytes = md.digest();
+
+        //convert the byte to hex format
+        StringBuilder sb = new StringBuilder();
+        for (byte mdbyte : mdbytes) {
+            sb.append(Integer.toString((mdbyte & 0xff) + 0x100, 16).substring(1));
+        }
+        return sb.toString();
+    }
+
+
 }

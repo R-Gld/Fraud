@@ -1,4 +1,4 @@
-import fr.Rgld_.Fraud.Global.IPInfo;
+import fr.Rgld_.Fraud.Spigot.Helpers.IPInfo;
 import fr.Rgld_.Fraud.Spigot.Helpers.Utils;
 import fr.Rgld_.Fraud.Spigot.api.Data;
 import org.bukkit.Bukkit;

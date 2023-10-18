@@ -18,6 +18,7 @@ permissions:
     description: Give all the permission of the plugin Fraud.
     default: op
     children:
+      fraud.updater.notify: true
       fraud.bypass.*: true
       fraud.check.*: true
       fraud.notcause.alert: true
@@ -61,9 +62,6 @@ permissions:
   fraud.receive.alert:
     default: op
     description: When a player join for the first time the server, all the player who has this permission will receive a message if this player have a alt.
-  fraud.receive.alert.location:
-    default: op
-    description: A player who joins the server and who does not come from his country will cause an alert to players who have the permission.
   fraud.alert.switch:
     default: op
     description: Allows someone who receives the alerts to disable them. (/fd alert)
@@ -76,9 +74,6 @@ permissions:
   fraud.check.ip:
     default: op
     description: Let a player check if an ip has some alts.
-  fraud.clean-datas:
-    default: op
-    description: Let a player to reset the datas.
   fraud.reload:
     default: op
     description: Let a player to reload the configuration and datas files.

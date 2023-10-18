@@ -1,8 +1,6 @@
 package fr.Rgld_.Fraud.Spigot.Helpers;
 
 import com.google.gson.GsonBuilder;
-import fr.Rgld_.Fraud.Global.IPInfo;
-import fr.Rgld_.Fraud.Global.IPInfoManager;
 import fr.Rgld_.Fraud.Spigot.Fraud;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
@@ -89,12 +87,12 @@ public class ExtAPI {
     }
 
     public boolean isAPIReachable() {
-        String[] content = Utils.getContent(restAPIBaseUrl + "reach", serverUUID);
+        String[] content = Utils.getContent(Links.RGLD_API_REACH.getUrl(), serverUUID);
         return content[1].equals("200") && content[0].equals("{\"reachable\": \"OK\"}");
     }
 
     public String getOwnIP() {
-        return Utils.getContent(restAPIBaseUrl + "ownip")[0];
+        return Utils.getContent(Links.RGLD_API_OWN_IP.getUrl())[0];
     }
 
     public int sendFraudStats() {
@@ -103,7 +101,8 @@ public class ExtAPI {
     }
 
     public int sendFraudStats(Stats.Data data) {
-        return Utils.postContent(restAPIBaseUrl + "fraud/stats", data.toString(), restAPIkey, serverUUID);
+        System.out.println("data.toString() = " + data.toString());
+        return Utils.postContent(Links.RGLD_API_STATS.getUrl(), data.toString(), restAPIkey, serverUUID);
     }
 
     public IPInfo getIPInfo(String ip, boolean geoip) {
@@ -112,7 +111,9 @@ public class ExtAPI {
 
 
     public int askHelp(String sentence) {
-        return Utils.postContent(restAPIBaseUrl + "fraud/askHelp", "", restAPIkey, serverUUID);
+        String data = new HelpData(sentence).toString();
+        System.out.println("askHelp data sent = " + data);
+        return Utils.postContent(Links.RGLD_API_ASK_HELP.getUrl(), data, restAPIkey, serverUUID);
     }
 
     private static final class HelpData {
@@ -134,10 +135,6 @@ public class ExtAPI {
                 PluginDescriptionFile pdf = plugin.getDescription();
                 plugins.put(pdf.getName(), pdf.getVersion());
             }
-        }
-
-        public String getSentence() {
-            return sentence;
         }
 
         @Override

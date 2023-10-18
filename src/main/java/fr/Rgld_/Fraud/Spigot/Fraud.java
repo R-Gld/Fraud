@@ -1,16 +1,10 @@
 package fr.Rgld_.Fraud.Spigot;
 
-import fr.Rgld_.Fraud.Global.IPInfoManager;
-import fr.Rgld_.Fraud.Global.Updater;
-import fr.Rgld_.Fraud.Spigot.Commands.FraudCommand;
+import fr.Rgld_.Fraud.Spigot.Commands.FraudExecutor;
 import fr.Rgld_.Fraud.Spigot.Events.JoinQuitEvent;
-import fr.Rgld_.Fraud.Spigot.Helpers.Console;
-import fr.Rgld_.Fraud.Spigot.Helpers.ExtAPI;
-import fr.Rgld_.Fraud.Spigot.Helpers.Messages;
-import fr.Rgld_.Fraud.Spigot.Helpers.Stats;
+import fr.Rgld_.Fraud.Spigot.Helpers.*;
 import fr.Rgld_.Fraud.Spigot.Storage.Configuration;
-import fr.Rgld_.Fraud.Spigot.Storage.Data.Data;
-import fr.Rgld_.Fraud.Spigot.Storage.ErrorCatcher;
+import fr.Rgld_.Fraud.Spigot.Storage.Data;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -26,20 +20,21 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.text.MessageFormat;
 
+import static fr.Rgld_.Fraud.Spigot.Storage.Configuration.DatabaseSection.Type.MYSQL;
+import static fr.Rgld_.Fraud.Spigot.Storage.Configuration.DatabaseSection.Type.SQLITE;
 import static org.bukkit.ChatColor.*;
 
 /**
  * Represent the main class of the plugin <a href="https://www.spigotmc.org/resources/fraud-alts-finder.69872/" target="_blank">Fraud</a> on spigot.
  */
-@SuppressWarnings("ALL")
 public class Fraud extends JavaPlugin {
 
     public String actualVersionBc = "";
     private Updater updater;
     private Configuration configuration;
-    private Data Data;
-    private Console c;
-    private FraudCommand fraudCommand;
+    private Data data;
+    private Console console;
+    private FraudExecutor fraudExecutor;
     private IPInfoManager ipInfoManager;
 
     /**
@@ -47,16 +42,17 @@ public class Fraud extends JavaPlugin {
      */
     @Override
     public void onEnable() {
-        this.c = new Console();
+        this.console = new Console();
         PluginDescriptionFile pdf = this.getDescription();
-        c.sm(MessageFormat.format("{0}--- {1} ---", GOLD, pdf.getName()));
-        c.sm();
+        console.sm(MessageFormat.format("{0}--- {1} ---", GOLD, pdf.getName()));
+        console.sm();
+
 
         try {
             this.configuration = new Configuration(this);
-            c.sm(GREEN + "Configurations File loading / creating success.");
+            console.sm(GREEN + "Configurations File loading / creating success.");
         } catch(Throwable t) {
-            c.sm(RED + "Configurations File loading / creating failed: ");
+            console.sm(RED + "Configurations File loading / creating failed: ");
             t.printStackTrace();
         }
 
@@ -64,60 +60,76 @@ public class Fraud extends JavaPlugin {
 
         try {
             new EventManager(this).register();
-            c.sm(GREEN + "Events register success.");
+            console.sm(GREEN + "Events register success.");
         } catch(Exception e) {
-            c.sm(RED + "Events register failed: ");
+            console.sm(RED + "Events register failed: ");
             e.printStackTrace();
         }
 
 
         try {
             PluginCommand fraudPluginCommand = getCommand("fraud");
-            fraudCommand = new FraudCommand(this);
-            fraudPluginCommand.setExecutor(fraudCommand);
-            fraudPluginCommand.setTabCompleter(fraudCommand);
-            c.sm(GREEN + "Commands register success.");
+            fraudExecutor = new FraudExecutor(this);
+            fraudPluginCommand.setExecutor(fraudExecutor);
+            fraudPluginCommand.setTabCompleter(fraudExecutor);
+            console.sm(GREEN + "Commands register success.");
         } catch(Exception e) {
-            c.sm(RED + "Commands register failed: ");
+            console.sm(RED + "Commands register failed: ");
             e.printStackTrace();
         }
 
         try {
             new Stats(this);
-            c.sm(GREEN + "Stats are on.");
+            console.sm(GREEN + "Stats are on.");
         } catch(Throwable t) {
-            c.sm(RED + "Stats launch failed.");
+            console.sm(RED + "Stats launch failed.");
             t.printStackTrace();
         }
 
         try {
-            this.Data = new Data(this);
-            c.sm(GREEN + "Datas Files loading / creating success.");
-            for(Player pls : Bukkit.getOnlinePlayers()) {
-                Data.putPlayer(pls);
+            Configuration.DatabaseSection.Type dataStorageType = configuration.getDatabase().getType();
+            this.data = new Data(this);
+
+            console.sm(GREEN + "Datas Files loading / creating success.");
+            if(dataStorageType == MYSQL) {
+                console.sm(GOLD + "Checking database connection...");
+                long ping = data.ping();
+                if(ping != -1) {
+                    console.sm(GREEN + "Connection success in " + ping + "ms.");
+                } else {
+                    console.sm(RED + "Connection failed.");
+                    console.sm(RED + "Shutting down the plugin.");
+                    Bukkit.getPluginManager().disablePlugin(this);
+                }
+                console.sm(GREEN + "Mysql connection:");
+                console.sm(GREEN + "\t- Host: " + configuration.getDatabase().getHost());
+                console.sm(GREEN + "\t- Port: " + configuration.getDatabase().getPort());
+                console.sm(GREEN + "\t- User: " + configuration.getDatabase().getUser());
+                console.sm(GREEN + "\t- Database: " + configuration.getDatabase().getDatabaseName());
+                console.sm(GRAY + "\t - URL generated: " + configuration.getDatabase().generateURL());
+            } else if(dataStorageType == SQLITE) {
+                console.sm(GREEN + "SQLite connection:");
+                console.sm(GREEN + "\t- Path: " + data.getFile().getAbsolutePath());
+            } else {
+                console.sm(RED + "No recognized database type.");
+                console.sm(RED + "Shutting down the plugin.");
+                Bukkit.getPluginManager().disablePlugin(this);
             }
         } catch(Throwable t) {
-            c.sm(RED + "Datas Files loading / creating failed: ");
+            console.sm(RED + "Datas Files loading / creating failed: ");
             t.printStackTrace();
         }
 
         try {
             this.updater = new Updater(this);
-            c.sm(GREEN + "Updater launched with success.");
+            console.sm(GREEN + "Updater launched with success.");
             if(configuration.checkForUpdate()) {
                 Bukkit.getScheduler().scheduleSyncRepeatingTask(
                         this, this::launchUpdater,
                         0, 5 * 60 * 5);
             }
         } catch(Throwable t) {
-            c.sm(RED + "Updated failed to launch.");
-            t.printStackTrace();
-        }
-
-        try {
-            new ErrorCatcher(this);
-        } catch(Throwable t) {
-            c.sm(RED + "Error catcher create failed.");
+            console.sm(RED + "Updated failed to launch.");
             t.printStackTrace();
         }
 
@@ -127,15 +139,15 @@ public class Fraud extends JavaPlugin {
             metrics.addCustomChart(new SimplePie("alts_limits", () -> String.valueOf(getConfiguration().getDoubleAccountLimit())));
             metrics.addCustomChart(new SimplePie("kick_when_alt_detected", () -> String.valueOf(getConfiguration().isKickEnabled())));
         } catch(Throwable t) {
-            c.sm(RED + "Metrics connection failed.");
+            console.sm(RED + "Metrics connection failed.");
             t.printStackTrace();
         }
         Bukkit.getScheduler().scheduleSyncRepeatingTask(
                 this, this::askReview,
                 0, 5 * 60 * 200);
 
-        c.sm();
-        c.sm(MessageFormat.format("{0}--- {1} ---", GOLD, pdf.getName()));
+        console.sm();
+        console.sm(MessageFormat.format("{0}--- {1} ---", GOLD, pdf.getName()));
     }
 
     /**
@@ -161,13 +173,13 @@ public class Fraud extends JavaPlugin {
     @Override
     public void onDisable() {
         PluginDescriptionFile pdf = this.getDescription();
-        c.sm(MessageFormat.format("{0}--- {1} ---", GOLD, pdf.getName()));
-        c.sm();
+        console.sm(MessageFormat.format("{0}--- {1} ---", GOLD, pdf.getName()));
+        console.sm();
 
-        c.sm(RED + "Disabling " + pdf.getName() + "...");
+        console.sm(RED + "Disabling " + pdf.getName() + "...");
 
-        c.sm();
-        c.sm(MessageFormat.format("{0}--- {1} ---", GOLD, pdf.getName()));
+        console.sm();
+        console.sm(MessageFormat.format("{0}--- {1} ---", GOLD, pdf.getName()));
     }
 
     private void launchUpdater() {
@@ -187,19 +199,19 @@ public class Fraud extends JavaPlugin {
     }
 
     public Data getData() {
-        return Data;
+        return data;
     }
 
     public void setDatas(Data Data) {
-        this.Data = Data;
+        this.data = Data;
     }
 
     public Console getConsole() {
-        return c;
+        return console;
     }
 
-    public FraudCommand getFraudCommand() {
-        return fraudCommand;
+    public FraudExecutor getFraudCommand() {
+        return fraudExecutor;
     }
 
     /**

@@ -22,6 +22,12 @@ public enum Links {
     FRAUD_ISSUES(BASE_ANALYTICS.link + "fraud-issues", false),
     FRAUD_DOWNLOAD(BASE_ANALYTICS.link + "fraud-dl", false),
     FRAUD_DOWNLOAD_WITHOUT_ANALYTICS(BASE_RGLD_API.link + "fraud/download", false),
+    FRAUD_DOWNLOAD_WITHOUT_ANALYTICS_VERSION(BASE_RGLD_API.link + "fraud/download?version={0}", true),
+
+    RGLD_API_STATS(BASE_RGLD_API.link + "fraud/stats/", false),
+    RGLD_API_OWN_IP(BASE_RGLD_API.link + "ip/own", false),
+    RGLD_API_ASK_HELP(BASE_RGLD_API.link + "fraud/askHelp",  false),
+    RGLD_API_REACH(BASE_RGLD_API.link + "reach",  false),
 
     SPIGET_RESOURCE(BASE_SPIGET_API.link + "resources/{0}", true),
     SPIGET_AUTHORS(BASE_SPIGET_API.link + "authors/{0}", true),
@@ -29,7 +35,7 @@ public enum Links {
     SPIGET_REVIEWS(BASE_SPIGET_API.link + "resources/{0}/reviews", true)
     ;
 
-    private String link;
+    private final String link;
     private final boolean needFormat;
 
     Links(String link, boolean needFormat) {
@@ -55,10 +61,11 @@ public enum Links {
     }
 
     public String format(Object... args) {
+        if(!needFormat) throw new UnsupportedOperationException("This link doesn't need to be formatted.");
         List<String> argsCol = new ArrayList<>();
         for (Object arg : args) {
             argsCol.add(String.valueOf(arg));
         }
-        return MessageFormat.format(link, argsCol.toArray(new String[0]));
+        return MessageFormat.format(link, argsCol.toArray());
     }
 }

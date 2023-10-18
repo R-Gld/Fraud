@@ -1,4 +1,4 @@
-package fr.Rgld_.Fraud.Exceptions;
+package fr.Rgld_.Fraud.Spigot.Helpers.Exceptions;
 
 public class IllegalConfigurationException extends RuntimeException {
 

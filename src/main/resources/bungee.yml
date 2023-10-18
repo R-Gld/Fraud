@@ -1,4 +1,0 @@
-name: ${project.artifactId}
-version: ${project.version}
-author: Rgld_
-main: fr.Rgld_.Fraud.Bungee.Fraud
