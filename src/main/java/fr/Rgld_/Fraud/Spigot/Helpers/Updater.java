@@ -273,11 +273,9 @@ public class Updater implements Runnable {
         if(Integer.valueOf(result[1]) == 200) {
             JsonObject jsonObject = new JsonParser().parse(result[0]).getAsJsonObject().getAsJsonObject("data");
             String md5_distant = jsonObject.get("md5").getAsString();
-            System.out.println("distant_md5 = " + md5_distant);
             String md5_local = null;
             try {
                 md5_local = Utils.getMD5Hash("./plugins/Fraud.jar");
-                System.out.println("local_md5 = " + md5_local);
             } catch (NoSuchAlgorithmException | IOException e) {
                 System.err.println("§cError while getting the MD5 hash of the local file.");
                 e.printStackTrace();

@@ -1,15 +1,10 @@
 package fr.Rgld_.Fraud.Spigot.Helpers;
 
-import com.google.gson.GsonBuilder;
 import fr.Rgld_.Fraud.Spigot.Fraud;
 import org.bukkit.Bukkit;
-import org.bukkit.Server;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginDescriptionFile;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -32,6 +27,10 @@ public class ExtAPI {
         this.serverUUID = obtainServerUUID();
     }
 
+    /**
+     * Get the server UUID from bStats or mcStats.
+     * @return the server UUID
+     */
     private UUID obtainServerUUID() {
         File bStatsFolder = new File(fraud.getDataFolder().getParentFile(), "bStats");
         File mcStatsFolder = new File(fraud.getDataFolder().getParentFile(), "PluginMetrics");
@@ -52,7 +51,7 @@ public class ExtAPI {
 
 
     /**
-     * Constructor.
+     * Constructor without the plugin instance (useful for the API) (not recommended)
      */
     public ExtAPI() {
         this.fraud = (Fraud) Bukkit.getPluginManager().getPlugin("fraud");
@@ -86,61 +85,49 @@ public class ExtAPI {
         return serverUUID;
     }
 
+    /**
+     * Check if the API is reachable.
+     * @return true if the API is reachable, false otherwise
+     */
     public boolean isAPIReachable() {
         String[] content = Utils.getContent(Links.RGLD_API_REACH.getUrl(), serverUUID);
         return content[1].equals("200") && content[0].equals("{\"reachable\": \"OK\"}");
     }
 
+    /**
+     * Get the ip of the server.
+     * @return the ip of the server
+     */
     public String getOwnIP() {
         return Utils.getContent(Links.RGLD_API_OWN_IP.getUrl())[0];
     }
 
+    /**
+     * Send the stats of the server to the API.
+     * @return the response code of the request
+     */
     public int sendFraudStats() {
         Stats.Data data = new Stats.Data(fraud);
         return sendFraudStats(data);
     }
 
-    public int sendFraudStats(Stats.Data data) {
-        System.out.println("data.toString() = " + data.toString());
+    /**
+     * Send the stats of the server to the API.
+     * @param data the data to send
+     * @return the response code of the request
+     */
+    private int sendFraudStats(Stats.Data data) {
         return Utils.postContent(Links.RGLD_API_STATS.getUrl(), data.toString(), restAPIkey, serverUUID);
     }
 
+    /**
+     * Give some information about the ip given in argument.
+     * @param ip (a {@link String}) the ip of the player that is looked up.
+     * @param geoip if the geoip information should be returned
+     * @return a {@link IPInfo} that contains all the information of the ip given in arguments (like the city: {@link IPInfo#getCity()}, or the latitude and the longitude: {@link IPInfo#getLatitude()}/{@link IPInfo#getLongitude()}).
+     */
     public IPInfo getIPInfo(String ip, boolean geoip) {
         return ipInfoManager.getIpInfo(ip, geoip);
-    }
-
-
-    public int askHelp(String sentence) {
-        String data = new HelpData(sentence).toString();
-        System.out.println("askHelp data sent = " + data);
-        return Utils.postContent(Links.RGLD_API_ASK_HELP.getUrl(), data, restAPIkey, serverUUID);
-    }
-
-    private static final class HelpData {
-
-        private final String sentence;
-        private final String ip;
-        private final int port;
-        private final String bukkitVersion;
-        private final HashMap<String, String> plugins;
-
-        private HelpData(String sentence) {
-            this.sentence = sentence;
-            Server srv = Bukkit.getServer();
-            this.ip = srv.getIp();
-            this.port = srv.getPort();
-            this.bukkitVersion = srv.getBukkitVersion();
-            this.plugins = new HashMap<>();
-            for (Plugin plugin : srv.getPluginManager().getPlugins()) {
-                PluginDescriptionFile pdf = plugin.getDescription();
-                plugins.put(pdf.getName(), pdf.getVersion());
-            }
-        }
-
-        @Override
-        public String toString() {
-            return new GsonBuilder().create().toJson(this);
-        }
     }
     
 }

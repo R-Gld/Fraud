@@ -17,11 +17,10 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
 import java.net.InetSocketAddress;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class FraudExecutor implements CommandExecutor, TabCompleter {
 
@@ -63,39 +62,33 @@ public class FraudExecutor implements CommandExecutor, TabCompleter {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         this.data = fraud.getData();
         ExtAPI extAPI = new ExtAPI(fraud);
-        if(args.length > 1 && (args[0].equalsIgnoreCase("askhelp") || args[0].equalsIgnoreCase("ask-help"))) {
-            String sentence = buildSentence(args);
-            extAPI.askHelp(sentence);
-            return false;
-        }
         switch (args.length) {
             case 0:
                 break;
             case 1:
                 switch (args[0].toLowerCase()) {
-                    case "askhelp":
-                    case "ask-help": return cmd_askHelp(sender, args[0]);
                     case "v":
                     case "checkupdate":
-                    case "version": return cmd_version(sender, up);
-                    case "reload": return cmd_reload(sender);
-                    case "contact": return cmd_contact(sender);
+                    case "version":         return cmd_version(sender, up);
+                    case "reload":          return cmd_reload(sender);
+                    case "contact":         return cmd_contact(sender);
                     case "link":
-                    case "links": return cmd_links(sender);
-                    case "all": return cmd_all(sender);
+                    case "links":           return cmd_links(sender);
+                    case "all":             return cmd_all(sender);
                     case "dl":
-                    case "download": return cmd_download(sender, up);
-                    case "reach-geoapi": return cmd_reachGeoAPI(sender, extAPI);
-                    case "alert": return cmd_alert(sender);
+                    case "download":        return cmd_download(sender, up);
+                    case "reach-geoapi":    return cmd_reachGeoAPI(sender, extAPI);
+                    case "alert":           return cmd_alert(sender);
+                    case "gui":             return cmd_gui(sender);
                 }
                 break;
             case 2:
                 String arg1 = args[1];
                 switch (args[0].toLowerCase()) {
-                    case "check": return cmd_check(sender, arg1, data);
-                    case "forgot": return cmd_forgot(sender, arg1, data);
-                    case "geoip": return cmd_geoip(sender, arg1, extAPI);
-                    case "info": return cmd_info(sender, arg1, data);
+                    case "check":           return cmd_check(sender, arg1, data);
+                    case "forgot":          return cmd_forgot(sender, arg1, data);
+                    case "geoip":           return cmd_geoip(sender, arg1, extAPI);
+                    case "info":            return cmd_info(sender, arg1, data);
                 }
                 break;
         }
@@ -103,6 +96,31 @@ public class FraudExecutor implements CommandExecutor, TabCompleter {
         return false;
     }
 
+    /**
+     * This method is used to open the main user interface for the player who executed the command.
+     * @param sender The sender of the command.
+     * @return Returns true if the command was executed successfully, otherwise false.
+     */
+    private boolean cmd_gui(final CommandSender sender) {
+        if (!(sender instanceof Player)) {
+            sender.sendMessage(ChatColor.RED + "You must be a player to use this command.");
+            return false;
+        }
+        if (!sender.hasPermission("fraud.gui")) {
+            sender.sendMessage(Messages.NO_PERMISSION.getMessage());
+            return false;
+        }
+        fraud.getGuiManager().openMainGUI((Player) sender);
+        return true;
+    }
+
+    /**
+     * This method is used to get information about a specific player.
+     * @param sender The sender of the command.
+     * @param arg1 The name of the player to get information about.
+     * @param data The player's data.
+     * @return Returns true if the command was executed successfully, otherwise false.
+     */
     private boolean cmd_info(final CommandSender sender, final String arg1, final Data data) {
         List<String> alts = data.getListByPseudo(arg1);
         if (!alts.contains(sender.getName()) && !sender.hasPermission("fraud.info")) {
@@ -140,8 +158,15 @@ public class FraudExecutor implements CommandExecutor, TabCompleter {
                 }
             }
         } else sender.sendMessage(Messages.NOT_IN_DATAS.format(arg1));
-        return false;
+        return true;
     }
+    /**
+     * This method is used to get geolocation information about a specific IP address.
+     * @param sender The sender of the command.
+     * @param arg1 The IP address to get geolocation information about.
+     * @param extAPI The external API to use to get geolocation information.
+     * @return Returns true if the command was executed successfully, otherwise false.
+     */
     private boolean cmd_geoip(final CommandSender sender, final String arg1, final ExtAPI extAPI) {
         if(!sender.hasPermission("fraud.geoip")) {
             sender.sendMessage(Messages.NO_PERMISSION.getMessage());
@@ -152,8 +177,16 @@ public class FraudExecutor implements CommandExecutor, TabCompleter {
             return false;
         }
         sendIPInfo(arg1, sender, false);
-        return false;
+        return true;
     }
+
+    /**
+     * This method is used to forget a specific player.
+     * @param sender The sender of the command.
+     * @param arg1 The name of the player to forget.
+     * @param data The player's data.
+     * @return Returns true if the command was executed successfully, otherwise false.
+     */
     private boolean cmd_forgot(final CommandSender sender, final String arg1, final Data data) {
         if (!sender.hasPermission("fraud.forgot")) {
             sender.sendMessage(Messages.NO_PERMISSION.getMessage());
@@ -163,8 +196,16 @@ public class FraudExecutor implements CommandExecutor, TabCompleter {
             data.forgotPlayer(arg1);
             sender.sendMessage(Messages.PLAYER_FORGOTTEN.format(arg1));
         } else sender.sendMessage(Messages.NOT_IN_DATAS.format(arg1));
-        return false;
+        return true;
     }
+
+    /**
+     * This method is used to check a specific player or IP address.
+     * @param sender The sender of the command.
+     * @param arg1 The name of the player or the IP address to check.
+     * @param data The data of the player or the IP address.
+     * @return Returns true if the command was executed successfully, otherwise false.
+     */
     private boolean cmd_check(final CommandSender sender, final String arg1, final Data data) {
         if (!sender.hasPermission("fraud.check.player.one") && !arg1.equals(sender.getName())) {
             sender.sendMessage(Messages.NO_PERMISSION.getMessage());
@@ -198,8 +239,14 @@ public class FraudExecutor implements CommandExecutor, TabCompleter {
                 listAlts(data.getListByPseudo(arg1), sender, arg1, false);
             }
         }
-        return false;
+        return true;
     }
+
+    /**
+     * This method is used to enable or disable alerts for the sender of the command.
+     * @param sender The sender of the command.
+     * @return Returns true if the command was executed successfully, otherwise false.
+     */
     private boolean cmd_alert(final CommandSender sender) {
         if (!(sender.hasPermission("fraud.alert.switch"))) {
             sender.sendMessage(Messages.NO_PERMISSION.getMessage());
@@ -207,13 +254,20 @@ public class FraudExecutor implements CommandExecutor, TabCompleter {
         }
         if (na.contains(sender.getName())) {
             na.remove(sender.getName());
-            sender.sendMessage(Messages.ALERT_ON.getMessage());
+            sender.sendMessage(Messages.ALERT_ON_.getMessage());
         } else {
             na.add(sender.getName());
-            sender.sendMessage(Messages.ALERT_OFF.getMessage());
+            sender.sendMessage(Messages.ALERT_OFF_.getMessage());
         }
-        return false;
+        return true;
     }
+
+    /**
+     * This method is used to check if the geolocation API is accessible.
+     * @param sender The sender of the command.
+     * @param extAPI The external API to use to check accessibility.
+     * @return Returns true if the command was executed successfully, otherwise false.
+     */
     private boolean cmd_reachGeoAPI(final CommandSender sender, final ExtAPI extAPI) {
         sender.sendMessage(ChatColor.RED + "Try to contact the rest api...");
         if(extAPI.isAPIReachable()) {
@@ -222,8 +276,15 @@ public class FraudExecutor implements CommandExecutor, TabCompleter {
             sender.sendMessage(ChatColor.RED + " ⟶ Not reachable. ❌");
             sender.sendMessage(ChatColor.RED + " ⟶ Please contact the developer to fix this problem. (" + ChatColor.GOLD + "/fd contact" + ChatColor.RED + ") !");
         }
-        return false;
+        return true;
     }
+
+    /**
+     * This method is used to download and install the latest version of the plugin.
+     * @param sender The sender of the command.
+     * @param up The Updater object to use to download and install the update.
+     * @return Returns true if the command was executed successfully, otherwise false.
+     */
     private boolean cmd_download(final CommandSender sender, final Updater up) {
         if (!sender.hasPermission("fraud.download")) {
             sender.sendMessage(Messages.NO_PERMISSION.getMessage());
@@ -240,44 +301,107 @@ public class FraudExecutor implements CommandExecutor, TabCompleter {
                 sender.sendMessage(ChatColor.GRAY + "§o(You can download it manually with this url: " + ChatColor.BLUE + "§nhttps://url.rgld.fr/fraud-dl" + ChatColor.GRAY + "§o)");
             }
         }
-        return false;
+        return true;
     }
+    /**
+     * This method is used to get a list of all players with alternate accounts.
+     * @param sender The sender of the command.
+     * @return Returns true if the command was executed successfully, otherwise false.
+     */
     private boolean cmd_all(final CommandSender sender) {
         if (!sender.hasPermission("fraud.check.player.all")) {
             sender.sendMessage(Messages.NO_PERMISSION.getMessage());
             return false;
         }
-        List<String> everChecked = Lists.newArrayList();
-        List<Player> concernedPlayers = Lists.newArrayList();
-        for (Player pls : Bukkit.getOnlinePlayers()) {
-            if (everChecked.contains(pls.getName())) continue;
-            List<String> plsAlts = data.getList(pls);
-            everChecked.addAll(plsAlts);
-            if (plsAlts.size() >= 2 && Utils.cantGetAnAlt(plsAlts) || (plsAlts.size() >= (fraud.getConfiguration().getDoubleAccountLimit() + 1))) {
-                concernedPlayers.add(pls);
+
+        ConcurrentHashMap<String, List<String>> concernedPlayers = data.getAllPlayersWDA_String();
+        if(concernedPlayers.isEmpty()) {
+            sender.sendMessage(Messages.ALL_ALTS_EMPTY.getMessage());
+        } else {
+            sender.sendMessage(Messages.ALL_ALTS_ANNOUNCER.getMessage());
+            for(String ip : concernedPlayers.keySet()) {
+                List<String> players = concernedPlayers.get(ip);
+                listAlts(players, sender, ip, true);
             }
         }
+
+        /*
+        List<Player> concernedPlayers = data.getAllPlayersWDA();
+
         if (concernedPlayers.isEmpty()) {
             sender.sendMessage(Messages.ALL_EMPTY.getMessage());
         } else {
             sender.sendMessage(Messages.ALL_ALTS_ASKED_ANNOUNCER.getMessage());
-            for (Player pls : concernedPlayers) {
-                List<String> plsAlts = data.getList(pls);
-                listAlts(plsAlts, sender, !pls.getName().equals(pls.getDisplayName()) ? pls.getName() + "§8(" + pls.getDisplayName() + "§8)" : pls.getName(), true);
+            for (Player player : concernedPlayers) {
+                List<String> playerAlts = data.getList(player);
+                String displayName = player.getName().equals(player.getDisplayName())
+                                     ? player.getName()
+                                     : player.getName() + "§8(" + player.getDisplayName() + "§8)";
+                listAlts(playerAlts, sender, displayName, true);
+            }
+        }*/
+
+        return true;
+    }
+
+    /**
+     * Send to the {@link CommandSender} a string formatted with all the alts of the player concerned.
+     *
+     * @param listOfAlts a list of {@link String} that contain every alt of a player
+     * @param sender {@link CommandSender} the sender of the command.
+     * @param target A {@link String} that contain the name of the player that is looked up here.
+     * @param all A {@link Boolean} true if it must show the string for the /fd all or other.
+     */
+    private void listAlts(List<String> listOfAlts, CommandSender sender, String target, boolean all) {
+        if (listOfAlts == null || listOfAlts.isEmpty()) {
+            sender.sendMessage(Messages.NO_ALTS.format(target));
+            return;
+        }
+        List<String> copyOfList = Lists.newArrayList();
+        copyOfList.addAll(listOfAlts);
+
+        for (int i = 0; i < listOfAlts.size(); i++) {
+            String p = listOfAlts.get(i);
+            copyOfList.set(i, (Utils.isConnected(p) ? ChatColor.GREEN + p : ChatColor.RED + p));
+        }
+        String joined = Utils.joinList(copyOfList);
+        String msg = (all ? Messages.ALL_ALTS_ASKED.format(target, joined) : Messages.ALTS_ASKED.format(target, joined));
+        sender.sendMessage(msg);
+        String name = copyOfList.get(0).substring(2);
+        if(data.isFullRegistered(name)) {
+            if (sender instanceof Player) {
+                TextComponent info = new TextComponent("   §e§l➤ (i)");
+                info.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(Messages.INFO_HOVER.getMessage())));
+                info.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/fraud info " + name));
+                ((Player) sender).spigot().sendMessage(info);
+            } else {
+                sender.sendMessage("   §e§l➤ (i) /fraud info " + name);
             }
         }
-        return false;
     }
+
+    /**
+     * This method is used to display the plugin's links.
+     * @param sender The sender of the command.
+     * @return Returns true if the command was executed successfully, otherwise false.
+     */
     private boolean cmd_links(final CommandSender sender) {
         sender.sendMessage("§6 ⟶ §ePlugin Links");
-        sender.sendMessage("\t§6Spigot Resource: §9§n" + Links.FRAUD_SPIGOT);
+        sender.sendMessage("\t§6Spigot Page: §9§n" + Links.FRAUD_SPIGOT);
         sender.sendMessage("\t§6Source-Code: §9§n" + Links.FRAUD_SOURCECODE);
-        sender.sendMessage("\t§6Download Latest: §9§n" + Links.FRAUD_DOWNLOAD);
+        sender.sendMessage("\t§6Latest Download: §9§n" + Links.FRAUD_DOWNLOAD);
+        sender.sendMessage("\t§6API Status Page: §9§n" + Links.RGLD_API_STATUS_PAGE);
         sender.sendMessage("§6 ⟶ §eServices used");
-        sender.sendMessage("\t§6RIPE: §9§nhttps://www.ripe.net§r \n\t§7§o(Used to get information about ISP of an ip)");
-        sender.sendMessage("\t§6MaxMind: §9§nhttps://www.maxmind.com/en/geoip2-services-and-databases§r \n\t§7§o(Used to get information about the geolocation of an ip)");
-        return false;
+        sender.sendMessage("\t§6RIPE: §9§n" + Links.EXTERNAL_LINK_RIPE + "§r \n\t§7§o(Used to get information about ISP of an ip)");
+        sender.sendMessage("\t§6MaxMind: §9§n" + Links.EXTERNAL_LINK_MAXMIND + "§r \n\t§7§o(Used to get information about the geolocation of an ip)");
+        return true;
     }
+
+    /**
+     * This method is used to display the contact information of the plugin's developer.
+     * @param sender The sender of the command.
+     * @return Returns true if the command was executed successfully, otherwise false.
+     */
     private boolean cmd_contact(final CommandSender sender) {
         sender.sendMessage("§6§lYou can contact the developer of this plugin via:");
         String discord = "§6 ⟶ Discord: §e§l§oRomain | Rgld_#5344";
@@ -285,7 +409,7 @@ public class FraudExecutor implements CommandExecutor, TabCompleter {
         if(sender instanceof Player) {
             TextComponent text = new TextComponent(email);
             text.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§7Click here to send an §6email§7.").create()));
-            text.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "mailto://spigot@rgld.fr"));
+            text.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, Links.SEND_MAIL.getUrl()));
             ((Player) sender).spigot().sendMessage(text);
             TextComponent text_1 = new TextComponent(discord);
             text_1.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§7Click here to §6add me §7on §6discord§7.").create()));
@@ -296,8 +420,13 @@ public class FraudExecutor implements CommandExecutor, TabCompleter {
             sender.sendMessage(email);
         }
         sender.sendMessage("§6 ⟶ Twitter: §e§l§o" + Links.PERSONNAL_TWITTER);
-        return false;
+        return true;
     }
+    /**
+     * This method is used to reload the plugin.
+     * @param sender The sender of the command.
+     * @return Returns true if the command was executed successfully, otherwise false.
+     */
     private boolean cmd_reload(final CommandSender sender) {
         if (!sender.hasPermission("fraud.reload")) {
             sender.sendMessage(Messages.NO_PERMISSION.getMessage());
@@ -307,33 +436,50 @@ public class FraudExecutor implements CommandExecutor, TabCompleter {
             fraud.setDatas(new Data(fraud));
             fraud.getConfiguration().loadConfig();
             fraud.getIpInfoManager().getIpInfoMap().clear();
+            new ExtAPI(fraud).sendFraudStats();
             sender.sendMessage(Messages.RELOAD_SUCCESS.getMessage());
         } catch (Throwable t) {
             sender.sendMessage(Messages.RELOAD_FAILED.getMessage());
             t.printStackTrace();
         }
-        return false;
-    }
-    private boolean cmd_version(final CommandSender sender, final Updater up) {
-        String version = fraud.getDescription().getVersion();
-        double dVersion = up.parseVersion(version);
-        String latest = up.getLatestOnlineVersion();
-        double dLatest = up.parseVersion(latest);
-        boolean isUpToDate = up.isUpToDate();
-        sender.sendMessage(ChatColor.GRAY + "Installed Fraud version: v" + version);
-        sender.sendMessage(ChatColor.GRAY + "Latest Fraud version available: v" + latest);
-        sender.sendMessage((dLatest > dVersion ? "§c§l❌ §cOutdated\n§c§lYou should download the new version, check /fraud link" : (dLatest == dVersion ? "§a§l✔ §aUp-to-date" : "§6Ur a precursor 😉")));
-        return false;
-    }
-    private boolean cmd_askHelp(final CommandSender sender, final String arg) {
-        sender.sendMessage(ChatColor.RED + "You should add a sentence to this command. Example: /fd " + arg + " I can't detect alts.");
-        return false;
+        return true;
     }
 
     /**
+     * This method is used to display the version of the plugin.
+     * @param sender The sender of the command.
+     * @param up The Updater object to use to get version information.
+     * @return Returns true if the command was executed successfully, otherwise false.
+     */
+    private boolean cmd_version(final CommandSender sender, final Updater up) {
+        // Retrieve current and latest version information
+        String currentVersion = fraud.getDescription().getVersion();
+        double numericCurrentVersion = up.parseVersion(currentVersion);
+
+        String latestVersion = up.getLatestOnlineVersion();
+        double numericLatestVersion = up.parseVersion(latestVersion);
+
+        // Send version information to the sender
+        sender.sendMessage(ChatColor.GRAY + "Installed Fraud version: v" + currentVersion);
+        sender.sendMessage(ChatColor.GRAY + "Latest Fraud version available: v" + latestVersion);
+
+        // Compare versions and inform the sender accordingly
+        if (numericLatestVersion > numericCurrentVersion) {
+            sender.sendMessage("§c§l❌ §cOutdated\n§c§lYou should download the new version, check /fraud link");
+        } else if (numericLatestVersion == numericCurrentVersion) {
+            sender.sendMessage("§a§l✔ §aUp-to-date");
+        } else {
+            sender.sendMessage("§6Ur a precursor 😉");
+        }
+
+        return true;
+    }
+
+
+    /**
      * Build a sentence from the arguments given in parameters.
-     * @param args
-     * @return
+     * @param args an array of {@link String} that contain every args given by the {@link CommandSender}.
+     * @return a {@link String} that contain every args given in parameters.
      */
     private String buildSentence(String[] args) {
         StringBuilder builder = new StringBuilder();
@@ -361,120 +507,79 @@ public class FraudExecutor implements CommandExecutor, TabCompleter {
      * @param conformConfig is the information send to the sender had to be conformed to the configuration (geolocation part) ?
      */
     private void sendIPInfo(String ip, CommandSender sender, boolean conformConfig) {
-        boolean isGeoIPApiActivated = fraud.getConfiguration().isGeoIPAPIActivated();
-        boolean somethingSent = false;
-        boolean geoIPOrCC = isGeoIPApiActivated || conformConfig;
-        IPInfo ii;
-
-        if(conformConfig) {
-            ii = fraud.getIpInfoManager().getIPInfoConformConfig(ip);
-        } else {
-            ii = fraud.getIpInfoManager().getIpInfo(ip, isGeoIPApiActivated);
-        }
-
+        IPInfo ipInfo = retrieveIPInfo(ip, conformConfig);
         sender.sendMessage(Messages.INFO_IP_INFORMATION.format(ip));
 
-        if(!isObjNull(ii.getContinent()) && geoIPOrCC) {
-            String continent = ii.getContinent();
-            sender.sendMessage(Messages.INFO_IP_continent.format(continent));
+        boolean informationSent = sendGeoInformation(ipInfo, sender, conformConfig);
+        informationSent |= sendCoordinateInformation(ipInfo, sender, conformConfig);
+
+        if (!informationSent) {
+            sender.sendMessage(Messages.INFO_NO_INFORMATION.getMessage());
+        }
+    }
+
+    private IPInfo retrieveIPInfo(String ip, boolean conformConfig) {
+        return conformConfig
+            ? fraud.getIpInfoManager().getIPInfoConformConfig(ip)
+            : fraud.getIpInfoManager().getIpInfo(ip, fraud.getConfiguration().isGeoIPAPIActivated());
+    }
+
+    private boolean sendGeoInformation(IPInfo ipInfo, CommandSender sender, boolean geoIPOrCC) {
+        boolean somethingSent = false;
+
+        if (isObjectNotNull(ipInfo.getContinent()) && geoIPOrCC) {
+            sender.sendMessage(Messages.INFO_CONTINENT.format(ipInfo.getContinent()));
             somethingSent = true;
         }
 
-        if(!isObjNull(ii.getCountryCode()) && !isObjNull(ii.getCountryName())) {
-            String countryName = ii.getCountryName();
-            String countryCode = ii.getCountryCode();
-            sender.sendMessage(Messages.INFO_IP_country.format(countryName, countryCode));
+        if (isObjectNotNull(ipInfo.getCountryCode()) && isObjectNotNull(ipInfo.getCountryName())) {
+            sender.sendMessage(Messages.INFO_COUNTRY.format(ipInfo.getCountryName(), ipInfo.getCountryCode()));
             somethingSent = true;
         }
 
-        if(!isObjNull(ii.getSubDivision()) && geoIPOrCC) {
-            String subDiv = ii.getSubDivision();
-            sender.sendMessage(Messages.INFO_IP_sub_division.format(subDiv));
+        if (isObjectNotNull(ipInfo.getSubDivision()) && geoIPOrCC) {
+            sender.sendMessage(Messages.INFO_SUB_DIVISION.format(ipInfo.getSubDivision()));
             somethingSent = true;
         }
 
-        if(!isObjNull(ii.getCity()) && geoIPOrCC) {
-            String city = ii.getCity();
-            sender.sendMessage(Messages.INFO_IP_city.format(city));
+        if (isObjectNotNull(ipInfo.getCity()) && geoIPOrCC) {
+            sender.sendMessage(Messages.INFO_CITY.format(ipInfo.getCity()));
             somethingSent = true;
         }
 
-        if(!isObjNull(ii.getPostalCode()) && geoIPOrCC) {
-            String postalCode = ii.getPostalCode();
-            sender.sendMessage(Messages.INFO_IP_postal_code.format(postalCode));
+        if (isObjectNotNull(ipInfo.getPostalCode()) && geoIPOrCC) {
+            sender.sendMessage(Messages.INFO_POSTAL_CODE.format(ipInfo.getPostalCode()));
             somethingSent = true;
         }
 
-        if(!isObjNull(ii.getLatitude()) && !isObjNull(ii.getLongitude()) && geoIPOrCC) {
-            String lat = ii.getLatitude();
-            String lon = ii.getLongitude();
-            String urlMaps = MessageFormat.format("https://www.google.fr/maps/search/{0},{1}", lat, lon);
-            if(sender instanceof Player) {
-                TextComponent text = new TextComponent(Messages.INFO_IP_coordinates.format(lat, lon));
-                text.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(Messages.INFO_IP_coordinates_click.getMessage()).create()));
+        return somethingSent;
+    }
+
+
+    private boolean sendCoordinateInformation(IPInfo ipInfo, CommandSender sender, boolean geoIPOrCC) {
+        if (isObjectNotNull(ipInfo.getLatitude()) && isObjectNotNull(ipInfo.getLongitude()) && geoIPOrCC) {
+            String lat = ipInfo.getLatitude();
+            String lon = ipInfo.getLongitude();
+            String urlMaps = Utils.generateURLGmap(lat, lon);
+            if (sender instanceof Player) {
+                TextComponent text = new TextComponent(Messages.INFO_COORDINATES.format(lat, lon));
+                text.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(Messages.INFO_COORDINATES_CLICK.getMessage()).create()));
                 text.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, urlMaps));
                 ((Player) sender).spigot().sendMessage(text);
-            } else
-                sender.sendMessage(Messages.INFO_IP_coordinates.format(lat, lon) + "(" + urlMaps + ")");
-            somethingSent = true;
-        }
-
-        String netname = ii.getNetname();
-        String desc = buildDesc(ii);
-        if(!(isObjNull(netname) && isObjNull(desc))) {
-            String other_information =
-                    (!isObjNull(netname) ? netname + "/" : "") +
-                    desc;
-            if(!isObjNull(other_information.replace("/", ""))) {
-                sender.sendMessage(Messages.INFO_IP_others.format(other_information));
-                somethingSent = true;
+            } else {
+                sender.sendMessage(Messages.INFO_COORDINATES.format(lat, lon) + " (" + urlMaps + ")");
             }
+            return true;
         }
-
-        if(!somethingSent) {
-            sender.sendMessage(Messages.INFO_IP_no_information.getMessage());
-        }
+        return false;
     }
 
-    /**
-     * Return true if the object is null or empty. False otherwise.
-     * @param obj
-     * @return true if the object is null or empty. False otherwise.
-     */
-    private boolean isObjNull(Object obj) {
-        return obj == null || (obj instanceof String && ((String) obj).trim().isEmpty() || "null".equals(obj));
+    private boolean isObjectNotNull(Object obj) {
+        return obj != null && (!(obj instanceof String) || !((String) obj).trim().isEmpty());
     }
 
-
-    /**
-     * Send to the {@link CommandSender} a string formatted with all the alts of the player concerned.
-     *
-     * @param listOfAlts a list of {@link String} that contain every alt of a player
-     * @param sender {@link CommandSender} the sender of the command.
-     * @param target A {@link String} that contain the name of the player that is looked up here.
-     * @param all A {@link Boolean} true if it must show the string for the /fd all or other.
-     */
-    private void listAlts(List<String> listOfAlts, CommandSender sender, String target, boolean all) {
-        if (listOfAlts == null || listOfAlts.isEmpty()) {
-            sender.sendMessage(Messages.NO_ALTS.format(target));
-            return;
-        }
-        List<String> copyOfList = Lists.newArrayList();
-        copyOfList.addAll(listOfAlts);
-
-        for (int i = 0; i < listOfAlts.size(); i++) {
-            String p = listOfAlts.get(i);
-            copyOfList.set(i, (Utils.isConnected(p) ? ChatColor.GREEN + p : ChatColor.RED + p));
-        }
-        String joined = Utils.joinList(copyOfList);
-        sender.sendMessage(MessageFormat.format((all ? Messages.ALL_ALTS_ASKED.getMessage() : Messages.ALTS_ASKED.getMessage()), target, joined));
-        String name = copyOfList.get(0).substring(2);
-        if (sender instanceof Player && data.isFullRegistered(name)) {
-            TextComponent info = new TextComponent("   §e§l➤ (i)");
-            info.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(Messages.INFO_HOVER.getMessage())));
-            info.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/fraud info " + name));
-            ((Player) sender).spigot().sendMessage(info);
-        }
+    private String buildDesc(IPInfo ipInfo) {
+        return String.join("/", ipInfo.getDesc());
     }
 
     /**
@@ -493,13 +598,13 @@ public class FraudExecutor implements CommandExecutor, TabCompleter {
         if (args.length == 1) {
             // If the user hasn't typed anything yet, show all possible commands.
             if (args[0].isEmpty()) {
-                completions.addAll(Arrays.asList("askhelp", "check", "contact", "dl", "download", "forgot", "geoip",
+                completions.addAll(Arrays.asList("check", "contact", "dl", "download", "forgot", "geoip",
                                                  "info", "link", "links", "reload", "v", "version", "all", "reach-geoapi", "alert"));
             }
             // If the user has typed a partial command, show all possible matching commands.
             else {
                 String partialCommand = args[0].toLowerCase();
-                for (String commandName : new String[] { "askhelp", "check", "contact", "dl", "download", "forgot", "geoip",
+                for (String commandName : new String[] { "check", "contact", "dl", "download", "forgot", "geoip",
                         "info", "link", "links", "reload", "v", "version", "all", "reach-geoapi", "alert" }) {
                     if (commandName.startsWith(partialCommand)) {
                         completions.add(commandName);
@@ -524,9 +629,14 @@ public class FraudExecutor implements CommandExecutor, TabCompleter {
      * Returns a list of all possible arguments that match the given partial argument.
      */
     private List<String> getMatchingArguments(String partialArgument) {
-        // TODO: Implement this method to return all possible arguments that match the given partial argument.
-        // This will depend on the specific logic of each command method.
-        return Collections.emptyList();
+        List<String> matchingArguments = new ArrayList<>();
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            String playerName = player.getName();
+            if (playerName.toLowerCase().startsWith(partialArgument)) {
+                matchingArguments.add(playerName);
+            }
+        }
+        return matchingArguments;
     }
 
 
@@ -545,6 +655,7 @@ public class FraudExecutor implements CommandExecutor, TabCompleter {
         sender.sendMessage(Messages.HELP_COMMAND_DOWNLOAD.format(label));       // /fd download
         sender.sendMessage(Messages.HELP_COMMAND_FORGOT.format(label));         // /fd forgot <player>
         sender.sendMessage(Messages.HELP_COMMAND_GEOIP.format(label));          // /fd info <player>
+        sender.sendMessage(Messages.HELP_COMMAND_GUI.format(label));            // /fd gui
         sender.sendMessage(Messages.HELP_COMMAND_INFO.format(label));           // /fd info <player>
         sender.sendMessage(Messages.HELP_COMMAND_LINK.format(label));           // /fd link
         sender.sendMessage(Messages.HELP_COMMAND_RELOAD.format(label));         // /fd reload
@@ -553,19 +664,6 @@ public class FraudExecutor implements CommandExecutor, TabCompleter {
         sender.sendMessage("");
         sender.sendMessage("§7§oBy Rgld_");
         sender.sendMessage(ChatColor.GOLD + "----==={ " + ChatColor.YELLOW + fraud.getDescription().getName() + ChatColor.GOLD + " }===----");
-    }
-
-    /**
-     * @param ipInfo IPInfo object
-     * @return a {@link String} that contain every info about the ip of the player separated by a "|".
-     */
-    private String buildDesc(IPInfo ipInfo) {
-        StringBuilder builder = new StringBuilder();
-        for (String str : ipInfo.getDesc()) {
-            builder.append(str);
-            builder.append("/");
-        }
-        return builder.toString();
     }
 
     public void setDownloading(boolean downloading) {

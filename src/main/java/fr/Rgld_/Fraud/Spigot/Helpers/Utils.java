@@ -19,7 +19,10 @@ import java.net.InetSocketAddress;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.MessageFormat;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Contain several functions useful for the plugin.
@@ -111,17 +114,17 @@ public class Utils {
     public static String formatDate(long time) {
         Calendar c = new GregorianCalendar(); /* -> */ c.setTimeInMillis(time);
         Calendar now = new GregorianCalendar();
-        if(c.equals(now)) return Messages.NOW.getMessage();
+        if(c.equals(now)) return Messages.TIME_NOW.getMessage();
         boolean future = c.after(now);
         StringBuilder sb = new StringBuilder();
         int[] types = { 1, 2, 5, 11, 12, 13 };
         String[] names =
-              { Messages.YEAR.getMessage(), Messages.YEARS.getMessage(),
-                Messages.MONTH.getMessage(), Messages.MONTHS.getMessage(),
-                Messages.DAY.getMessage(), Messages.DAYS.getMessage(),
-                Messages.HOUR.getMessage(), Messages.HOURS.getMessage(),
-                Messages.MINUTE.getMessage(), Messages.MINUTES.getMessage(),
-                Messages.SECOND.getMessage(), Messages.SECONDS.getMessage() };
+              { Messages.TIME_YEAR.getMessage(), Messages.TIME_YEARS.getMessage(),
+                Messages.TIME_MONTH.getMessage(), Messages.TIME_MONTHS.getMessage(),
+                Messages.TIME_DAY.getMessage(), Messages.TIME_DAYS.getMessage(),
+                Messages.TIME_HOUR.getMessage(), Messages.TIME_HOURS.getMessage(),
+                Messages.TIME_MINUTE.getMessage(), Messages.TIME_MINUTES.getMessage(),
+                Messages.TIME_SECOND.getMessage(), Messages.TIME_SECONDS.getMessage() };
         int accuracy = 0;
         for(int i = 0; i < types.length && accuracy <= 2; i++) {
             int diff = dateDiff(types[i], now, c, future);
@@ -131,11 +134,11 @@ public class Utils {
             }
         }
         if(sb.length() == 0) {
-            return Messages.NOW.getMessage();
+            return Messages.TIME_NOW.getMessage();
         }
         LinkedList<String> words = new LinkedList<>(Lists.newArrayList(sb.toString().trim().split(" ")));
         if(words.size() > 2)
-            words.add(words.size() - 2, Messages.AND.getMessage());
+            words.add(words.size() - 2, Messages.TIME_AND.getMessage());
         return String.join(" ", words);
     }
 
@@ -241,13 +244,7 @@ public class Utils {
             request.addHeader(AUTH.WWW_AUTH_RESP, auth);
             StringEntity params = new StringEntity(content, ContentType.APPLICATION_JSON);
             request.setEntity(params);
-            int statusCode = httpClient.execute(request).getStatusLine().getStatusCode();
-            System.out.println("\n\n\n\n\n\n\n\n");
-            System.out.println("method = POST");
-            System.out.println("url = " + url);
-            System.out.println("statusCode = " + statusCode);
-            System.out.println("\n\n\n\n\n\n\n\n");
-            return statusCode;
+            return httpClient.execute(request).getStatusLine().getStatusCode();
         } catch(FileNotFoundException | ConnectException ignored) {} catch (IOException e) {
             e.printStackTrace();
         }
@@ -262,9 +259,7 @@ public class Utils {
 
     public static boolean isPublicIPV4Address(String ipAddress) {
         // Vérification de l'adresse IPv4
-        if (!ipAddress.matches("^\\d+\\.\\d+\\.\\d+\\.\\d+$")) {
-            return false;
-        }
+        if (!ipAddress.matches("^\\d+\\.\\d+\\.\\d+\\.\\d+$")) return false;
 
         // Définition des blocs d'adresses IP privées
         String[] privateAddressBlocks = new String[] {
@@ -275,11 +270,7 @@ public class Utils {
         };
 
         // Vérification si l'adresse IP appartient à un bloc d'adresses privées
-        for (String block : privateAddressBlocks) {
-            if (isIPAddressInBlock(ipAddress, block)) {
-                return false;
-            }
-        }
+        for (String block : privateAddressBlocks) if (isIPAddressInBlock(ipAddress, block)) return false;
 
         // Si l'adresse IP ne correspond à aucun bloc privé, elle est considérée comme publique
         return true;
@@ -308,7 +299,7 @@ public class Utils {
         int num = 0;
         for (int i = 0; i < addrArray.length; i++) {
             int power = 3 - i;
-            num += ((Integer.parseInt(addrArray[i]) % 256 * Math.pow(256, power)));
+            num += (int) (Integer.parseInt(addrArray[i]) % 256 * Math.pow(256, power));
         }
         return num;
     }
@@ -341,8 +332,17 @@ public class Utils {
         for (byte mdbyte : mdbytes) {
             sb.append(Integer.toString((mdbyte & 0xff) + 0x100, 16).substring(1));
         }
+        fis.close();
         return sb.toString();
     }
 
+    public static String extractFirstIPV4(String input) {
+        String regex = "\\b\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\b";
+        Matcher matcher = Pattern.compile(regex).matcher(input);
+        return (matcher.find() ? matcher.group() : null);
+    }
 
+    public static String generateURLGmap(final String lat, final String lon) {
+        return MessageFormat.format("https://www.google.fr/maps/search/{0},{1}", lat, lon);
+    }
 }

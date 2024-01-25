@@ -3,7 +3,6 @@ package fr.Rgld_.Fraud.Spigot.Storage;
 import fr.Rgld_.Fraud.Spigot.Fraud;
 import fr.Rgld_.Fraud.Spigot.Helpers.Exceptions.IllegalConfigurationException;
 import fr.Rgld_.Fraud.Spigot.Helpers.Messages;
-import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -22,6 +21,12 @@ public class Configuration {
     private final Fraud fraud;
     private final File file;
     private YamlConfiguration fileConfig;
+
+    public MessageManager getMessageManager() {
+        return messageManager;
+    }
+
+    private MessageManager messageManager;
 
     public Configuration(Fraud fraud) throws IOException, InvalidConfigurationException {
         this.fraud = fraud;
@@ -137,11 +142,17 @@ public class Configuration {
      * Read all the messages settled up on the config and store them in the enum {@link Messages}.
      */
     private void initializeMessages() {
-        for(Messages message : Messages.values()) {
+        try {
+            this.messageManager = new MessageManager(fraud);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        /*for(Messages message : Messages.values()) {
             if(!message.isEditable()) continue;
             if(!checkMessages(message)) return;
             message.setMessage(ChatColor.translateAlternateColorCodes('&', getString("messages." + message.getConfig())));
-        }
+        }*/
     }
 
     /**
@@ -207,6 +218,7 @@ public class Configuration {
             switch(database.getString("type").toLowerCase()) {
                 case "sqlite":
                     return Type.SQLITE;
+                case "mariadb":
                 case "mysql":
                     return Type.MYSQL;
                 default:
@@ -253,7 +265,7 @@ public class Configuration {
 
         private void checkMysqlType() {
             if(getType() != Type.MYSQL)
-                throw new IllegalConfigurationException("The database type is not mysql, you can't use the mysql parameters.");
+                throw new IllegalConfigurationException("The database type is not mysql or mariadb, you can't use the mysql or mariadb parameters.");
         }
 
 

@@ -14,7 +14,6 @@ public enum Links {
     PERSONNAL_TWITTER(BASE_ANALYTICS.link + "twitter", false),
     ADD_DISCORD(BASE_ANALYTICS.link + "add-discord", false),
     GITHUB(BASE_ANALYTICS.link + "github", false),
-    MAIL(BASE_ANALYTICS.link + "mail", false),
 
 
     FRAUD_SPIGOT(BASE_ANALYTICS.link + "fraud-spg", false),
@@ -24,10 +23,16 @@ public enum Links {
     FRAUD_DOWNLOAD_WITHOUT_ANALYTICS(BASE_RGLD_API.link + "fraud/download", false),
     FRAUD_DOWNLOAD_WITHOUT_ANALYTICS_VERSION(BASE_RGLD_API.link + "fraud/download?version={0}", true),
 
+
     RGLD_API_STATS(BASE_RGLD_API.link + "fraud/stats/", false),
     RGLD_API_OWN_IP(BASE_RGLD_API.link + "ip/own", false),
-    RGLD_API_ASK_HELP(BASE_RGLD_API.link + "fraud/askHelp",  false),
     RGLD_API_REACH(BASE_RGLD_API.link + "reach",  false),
+
+    RGLD_API_STATUS_PAGE(BASE_ANALYTICS.link + "status-rapi", false),
+    SEND_MAIL(BASE_ANALYTICS.link + "send-mail", false),
+
+    EXTERNAL_LINK_RIPE(BASE_ANALYTICS.link + "fraud-ripe", false),
+    EXTERNAL_LINK_MAXMIND(BASE_ANALYTICS.link + "fraud-maxmind", false),
 
     SPIGET_RESOURCE(BASE_SPIGET_API.link + "resources/{0}", true),
     SPIGET_AUTHORS(BASE_SPIGET_API.link + "authors/{0}", true),

@@ -22,11 +22,21 @@ public class IPInfoManager {
         this.ipInfoHashMap = new HashMap<>();
     }
 
+    /**
+     * Getter of the ipInfoHashMap
+     * @return the ipInfoHashMap
+     */
     public HashMap<String, IPInfo> getIpInfoMap() {
         return ipInfoHashMap;
     }
 
 
+    /**
+     * Get the information of an ip.
+     * @param ip the ip to get the information
+     * @param geoip if the geoip information should be returned
+     * @return the information of the ip
+     */
     public IPInfo getIpInfo(String ip, boolean geoip) {
         IPInfo ipInfo = new IPInfo();
         ipInfo.setIP(ip);
@@ -69,6 +79,11 @@ public class IPInfoManager {
         return ipInfo;
     }
 
+    /**
+     * Get the information of an ip.
+     * @param ip the ip to get the information
+     * @return the information of the ip
+     */
     public IPInfo getIPInfoConformConfig(String ip) {
         if(ipInfoHashMap.containsKey(ip)) return ipInfoHashMap.get(ip);
         boolean geoip = fraud.getConfiguration().isGeoIPAPIActivated();

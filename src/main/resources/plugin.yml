@@ -29,6 +29,7 @@ permissions:
       fraud.download: true
       fraud.forgot: true
       fraud.geoip: true
+      fraud.gui: true
   fraud.bypass.*:
     description: Give all the bypass available
     default: op
@@ -98,3 +99,6 @@ permissions:
   fraud.geoip:
     default: op
     description: Let a player get the geolocation of an ip.
+  fraud.gui:
+    default: op
+    description: Let a player open the gui of the plugin.

@@ -8,21 +8,17 @@ import org.bukkit.ChatColor;
  */
 public class Console {
 
-    public Console() {}
-
     public void sm(String message) {
         sendMessage(message);
+    }
+    public void sm() {
+        sm("");
+    }
+    public void sendMessage() {
+        sm();
     }
 
     public void sendMessage(String message) {
         Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', message));
-    }
-
-    public void sm() {
-        sendMessage();
-    }
-
-    public void sendMessage() {
-        sm("");
     }
 }

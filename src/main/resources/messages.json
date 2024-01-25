@@ -1,0 +1,101 @@
+{
+  "no permission": "&cSorry but you can''t do that. You don''t have the permission!",
+  "bad country detected": "&6{0}&c comes from a suspicious country: &6{1}",
+  "alts detected": "&cSome double-accounts where been detected in the account of &6{0}&c, here there are:\n&r{1}",
+  "alts asked": "&cHere is the list of alts of &6{0}&c:\n{1}",
+  "all alts announcer": "&cHere is the list of alts of all connected players:",
+  "all alts asked": "  &6{0}&c:\n      {1}",
+  "all alts empty": "&cThere is no players connected who has alts.",
+  "info": {
+    "hover": "&6Click to get more information&6.",
+    "wait_for_the_other_part": "&7&oPlease wait for the information part about the ip...",
+    "header": "&cHere is the information about the alts of &6{0}&c:",
+    "header_ip": "&cHere is the information about the alts of &6{0}&e&o({1})&c:",
+    "player": "  &c- &6{0}&c:\n     &c• First Join: &6{1}\n     &c• Last Join: &6{2}",
+    "ip_information": "&cHere is the information about the ip &6{0}&c:",
+    "ip_location": "&cHere is the location of this ip &6{0}&c:",
+    "continent": "  &c• Continent: &6{0}",
+    "country": "  &c• Country: &6{0} ({1})",
+    "sub-division": "  &c• Sub-Division: &6{0}",
+    "postal-code": "  &c• Postal-Code: &6{0}",
+    "city": "  &c• City: &6{0}",
+    "coordinates": "  &c• Coordinates(lat/lon)&c: &6{0}&c/&6{1} &7&o(Click Here)",
+    "coordinates_click": "&7Click here to see the location on &6Google Maps&7.",
+    "others": "  &c• Others Information: &6{0}",
+    "no information": "  &c• Sorry, we couldn't find any information about this IP address."
+  },
+  "no alts": "&6{0}&c never connected double accounts.",
+  "not in datas": "&6{0}&c isn''t in the files.",
+  "player forgotten": "&6{0} has been removed of the files.",
+  "not valid ip": "&cThis ip is not valid.",
+  "reload": {
+    "success": "&cReload success.",
+    "failed": "&cReload failed. &oStacktrace print in console."
+  },
+  "alert": {
+    "on_": "&aYou''ll now receive the connections alerts.",
+    "off_": "&cYou''ll no longer receive the connections alerts."
+  },
+  "help": {
+    "command": {
+      "all": "&f&l/{0} all &7- Check all players about alts / double-accounts.",
+      "alert": "&f&l/{0} alert &7- Disables connection alerts.",
+      "check": "&f&l/{0} check <player> &7- Check if a player have some alts / double-accounts.",
+      "contact": "&f&l/{0} contact &7- Contact me if you have any problem, plugin error or requests.",
+      "download": "&f&l/{0} (download|dl) &7- Download the latest version of the plugin (must be restart after this).",
+      "forgot": "&f&l/{0} forgot <player> &7- Remove all the data about this player. &8&o&n(WARNING: this is not cancellable).",
+      "geoip": "&f&l/{0} geoip <ip> &7- Locate the ip in the real world.",
+      "gui": "&f&l/{0} gui &7- Open the GUI. &6&lNEW FEATURE",
+      "info": "&f&l/{0} info <player> &7- Give some info about the connection of a player.",
+      "link": "&f&l/{0} links &7- Give some links about the plugin(Source-code, Spigot, Direct Download).",
+      "reload": "&f&l/{0} reload &7- Reload the configuration and data files.",
+      "stats": "&f&l/{0} (statistics|stats) &7 - Give you statistics about players.",
+      "version": "&f&l/{0} (version|checkupdate|v) &7- Give the version of the plugin."
+    }
+  },
+  "time": {
+    "and": "and",
+    "now": "now",
+    "year": "year",
+    "years": "years",
+    "month": "month",
+    "months": "months",
+    "day": "day",
+    "days": "days",
+    "hour": "hour",
+    "hours": "hours",
+    "minute": "minute",
+    "minutes": "minutes",
+    "second": "second",
+    "seconds": "seconds"
+  },
+  "gui": {
+    "general": {
+      "close": "&cClose",
+      "back": "&cBack"
+    },
+    "main": {
+      "alts": "&cAlts",
+      "infos": "&cInfos"
+    },
+    "alts": {
+      "ip": "&6IP {0}"
+    },
+    "detail": {
+      "ip details": "&6&oIP Details",
+      "get more info": "&7→ Click here to get information.",
+      "more alts": "&c{0} more alts...",
+      "no alts": "&cNo alts found.",
+      "no information": "&cNo information found.",
+      "first connection": "&cFirst connection: {0}",
+      "last connection": "&cLast connection: {0}",
+      "geo continent": "&c→ Continent: &6{0}",
+      "geo country": "&c→ Country: &6{0} ({1})",
+      "geo sub-division": "&c→ Sub-Division: &6{0}",
+      "geo postal-code": "&c→ Postal-Code: &6{0}",
+      "geo city": "&c→ City: &6{0}",
+      "geo coordinates": "&c→ Coordinates(lat/lon)&c: &6{0}&c/&6{1} (Click to get see on GMaps)",
+      "others": "&c→ Others Information: &6{0}"
+    }
+  }
+}

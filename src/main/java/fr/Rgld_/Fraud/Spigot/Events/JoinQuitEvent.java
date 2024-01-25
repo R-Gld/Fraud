@@ -54,7 +54,6 @@ public class JoinQuitEvent implements Listener {
         List<String> altsList = new ArrayList<>(data.getList(p));
         IPInfo ipInfo = fraud.getIpInfoManager().getIPInfoConformConfig(playerIp);
         List<String> bad_countries = config.getCountriesAlert();
-        System.out.println("ipInfo.getCountryCode() = " + ipInfo.getCountryCode());
         if(bad_countries.contains(ipInfo.getCountryCode())) {
             String code = ipInfo.getCountryCode();
             String countryName = ipInfo.getCountryName();

@@ -1,21 +1,16 @@
-# You can enable or disable the alerts when a player join with an alt or from a seen country.
+# Toggle alerts for when a player joins using an alternate account or from a recognized country. (true = enabled, false = disabled)
 onJoin alert: true
 
-# With this limit, you can let a player have some alts without cause any alert on player who has the "fraud.receive.alert" permission.
-# Set to -1 to disable this limit.
-# Default is 2
+# Limit the number of alternate accounts a player can have without triggering an alert for users with "fraud.receive.alert" permission. Set to -1 to remove the limit. Default: 2
 alts limit: 2
 
-# Set this to false to no longer receive an alert offering you to post a review on the plugin’s spigot page.
+# Disable or enable requests for reviewing the plugin on the Spigot page. (false = no requests, true = requests enabled)
 ask for review: false
 
-
-# The GeoIp can tell with some precision the player’s location in the world. If you do not want to access this information, set it to false.
-# Even if this is set to false, you will still have the information of the country of connection.
+# Enable or disable GeoIP functionality, which provides approximate location data of players. Disabling it will still allow country connection information to be available. (true = enabled, false = disabled)
 geoip-enable: true
 
-# type = sqlite or mysql
-# Si type is set to mysql, you should add 4 more fields.
+# Choose the type of data storage (sqlite or (mysql/mariadb). If 'mysql'(or 'mariadb' is chosen, additional parameters (ip, port, user, password, database) must be specified.
 data store:
   type: sqlite
   #type: mysql
@@ -27,21 +22,18 @@ data store:
   #  database: "Fraud"
 
 update:
-  # If this is true, every 5 minutes, a check will be made to see if the plugin is up-to-date.
-  # If it is not up-to-date, a message will be sent to all players with the permission "fraud.update".
+  # Check for plugin updates every 5 minutes and notify players with "fraud.update" permission if an update is available. (true = enabled, false = disabled)
   check for update: true
+  # Toggle automatic downloading of updates. (true = enabled, false = disabled)
   auto download: false
-  
+
 kick:
-  # If this is set to enabled, if it is set that the player has too much double count, he will be kick.
+  # Enable or disable kicking players who exceed the alt account limit. (true = enabled, false = disabled)
   enabled: false
-  # The number of alts to trigger the kick is adjustable on “alts limit” on line 7.
-  # {0} is the number of accounts on the ip. | \n is used to returned to the line.
+  # Message displayed when a player is kicked for exceeding the alt account limit. '{0}' represents the number of accounts from the same IP. '\n' is used for line breaks.
   kick reason: "§f§lThe server has detected that you have too many accounts on your ip §7§l({0} accounts)§f§l.\n§f§lYou can not log in with as much of an account as that!\n§f§lContact an administrator if you think this is an error."
 
-# A player who joins the server and who does not come from his country will cause an alert to players who have the "fraud.receive.alert.location" permissions.
-# Set '*' to disable the countries alert.
-# If the global alerts, it will not cause any alert even theses.
+# Alert players with "fraud.receive.alert.location" permission when a player joins from a country different from their usual. Use '*' to disable country-specific alerts. Global alert settings override this.
 countries alert:
   - "FR"
   - "BE"
@@ -51,83 +43,3 @@ countries alert:
   - "MC"
   - "DZ"
   - "MA"
-
-# |---------------------------------------------------------------------|
-# | These messages accept the chat color format with the '&' character. |
-# |---------------------------------------------------------------------|
-messages:
-  no permission: "&cSorry but you can''t do that. You don''t have the permission!"
-  # {0} is the name of the player/ip | {1} is the country of the player
-  bad country detected: "&6{0}&c comes from a suspicious country: &6{1}"
-  # {0} is the name of the player/ip | {1} is the list of alts
-  alts detected: "&cSome double-accounts where been detected in the account of &6{0}&c, here there are:\n&r{1}"
-  alts asked: "&cHere is the list of alts of &6{0}&c:\n{1}"
-  all alts announcer: "&cHere is the list of alts of all connected players:"
-  all alts asked: "  &6{0}&c:\n      {1}"
-  all alts empty: "&cThere is no players connected who has alts."
-  info:
-    hover: "&6Click to get more information&6."
-    wait_for_the_other_part: "&7&oPlease wait for the information part about the ip..."
-    # {0} is the name of the player | {1} is the ip of the player
-    header: "&cHere is the information about the alts of &6{0}&c:"
-    header_ip: "&cHere is the information about the alts of &6{0}&e&o({1})&c:"
-    # {0} is the name of the player | {1} is the first join | {2} is the last join
-    player: "  &c- &6{0}&c:\n     &c• First Join: &6{1}\n     &c• Last Join: &6{2}"
-    # {0} is the ip of the player | {1} is the country of the ip | {2} is the others information
-    ip_information: "&cHere is the information about the ip &6{0}&c:"
-    ip_location: "&cHere is the location of this ip &6{0}&c:"
-    continent: "  &c• Continent: &6{0}"
-    # {0} is the country name | {1} is the country code
-    country: "  &c• Country: &6{0} ({1})"
-    sub-division: "  &c• Sub-Division: &6{0}"
-    postal-code: "  &c• Postal-Code: &6{0}"
-    city: "  &c• City: &6{0}"
-    # {0} is latitude | {1} is longitude.
-    coordinates: "  &c• Coordinates(lat/lon)&c: &6{0}&c/&6{1} &7&o(Click Here)"
-    coordinates_click: "&7Click here to see the location on &6Google Maps&7."
-    others: "  &c• Others Information: &6{0}"
-    no information: "  &c• Sorry, we couldn't find any information about this IP address."
-  # {0} is the name of the player.
-  no alts: "&6{0}&c never connected double accounts."
-  not in datas: "&6{0}&c isn''t in the files."
-  player forgotten: "&6{0} has been removed of the files."
-  # {0} the ip
-  not valid ip: "&cThis ip is not valid."
-  reload:
-    success: "&cReload success."
-    failed: "&cReload failed. &oStacktrace print in console."
-  alert:
-    # DO NOT REMOVE THE "_" CHAR.
-    on_: "&aYou''ll now receive the connections alerts."
-    off_: "&cYou''ll no longer receive the connections alerts."
-  help:
-    command:
-      # {0} is the label of the command. Ex: "fraud", "fd" It can change if you use some alias of the command.
-      all: "&f&l/{0} all &7- Check all players about alts / double-accounts."
-      alert: "&f&l/{0} alert &7- Disables connection alerts."
-      check: "&f&l/{0} check <player> &7- Check if a player have some alts / double-accounts."
-      contact: "&f&l/{0} contact &7- Contact me if you have any problem, plugin error or requests."
-      download: "&f&l/{0} (download|dl) &7- Download the latest version of the plugin (must be restart after this)."
-      forgot: "&f&l/{0} forgot <player> &7- Remove all the data about this player. &8&o&n(WARNING: this is not cancellable)."
-      geoip: "&f&l/{0} geoip <ip> &7- Locate the ip in the real world."
-      info: "&f&l/{0} info <player> &7- Give some info about the connection of a player."
-      link: "&f&l/{0} links &7- Give some links about the plugin(Source-code, Spigot, Direct Download)."
-      reload: "&f&l/{0} reload &7- Reload the configuration and data files."
-      stats: "&f&l/{0} (statistics|stats) &7 - Give you statistics about players."
-      version: "&f&l/{0} (version|checkupdate|v) &7- Give the version of the plugin."
-  time:
-    and: "and"
-    now: "now"
-    year: "year"
-    years: "years"
-    month: "month"
-    months: "months"
-    day: "day"
-    days: "days"
-    hour: "hour"
-    hours: "hours"
-    minute: "minute"
-    minutes: "minutes"
-    second: "second"
-    seconds: "seconds"
-

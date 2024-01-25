@@ -36,6 +36,7 @@ public class Fraud extends JavaPlugin {
     private Console console;
     private FraudExecutor fraudExecutor;
     private IPInfoManager ipInfoManager;
+    private GUIManager guiManager;
 
     /**
      * Equivalent of a <code>public static main(String[] args)</code> in a Main class. It's the function that initialise the plugin.
@@ -49,18 +50,19 @@ public class Fraud extends JavaPlugin {
 
 
         try {
-            this.configuration = new Configuration(this);
             console.sm(GREEN + "Configurations File loading / creating success.");
+            this.configuration = new Configuration(this);
         } catch(Throwable t) {
             console.sm(RED + "Configurations File loading / creating failed: ");
             t.printStackTrace();
         }
 
         this.ipInfoManager = new IPInfoManager(this, new ExtAPI(this));
+        this.guiManager = new GUIManager(this);
 
         try {
-            new EventManager(this).register();
             console.sm(GREEN + "Events register success.");
+            new EventManager(this).register();
         } catch(Exception e) {
             console.sm(RED + "Events register failed: ");
             e.printStackTrace();
@@ -68,29 +70,29 @@ public class Fraud extends JavaPlugin {
 
 
         try {
+            console.sm(GREEN + "Commands register success.");
             PluginCommand fraudPluginCommand = getCommand("fraud");
             fraudExecutor = new FraudExecutor(this);
             fraudPluginCommand.setExecutor(fraudExecutor);
             fraudPluginCommand.setTabCompleter(fraudExecutor);
-            console.sm(GREEN + "Commands register success.");
         } catch(Exception e) {
             console.sm(RED + "Commands register failed: ");
             e.printStackTrace();
         }
 
         try {
-            new Stats(this);
             console.sm(GREEN + "Stats are on.");
+            new Stats(this);
         } catch(Throwable t) {
             console.sm(RED + "Stats launch failed.");
             t.printStackTrace();
         }
 
         try {
+            console.sm(GREEN + "Datas Files loading / creating success.");
             Configuration.DatabaseSection.Type dataStorageType = configuration.getDatabase().getType();
             this.data = new Data(this);
 
-            console.sm(GREEN + "Datas Files loading / creating success.");
             if(dataStorageType == MYSQL) {
                 console.sm(GOLD + "Checking database connection...");
                 long ping = data.ping();
@@ -109,7 +111,7 @@ public class Fraud extends JavaPlugin {
                 console.sm(GRAY + "\t - URL generated: " + configuration.getDatabase().generateURL());
             } else if(dataStorageType == SQLITE) {
                 console.sm(GREEN + "SQLite connection:");
-                console.sm(GREEN + "\t- Path: " + data.getFile().getAbsolutePath());
+                console.sm(GREEN + "\t- Path: '" + data.getFile().getAbsolutePath() + "'");
             } else {
                 console.sm(RED + "No recognized database type.");
                 console.sm(RED + "Shutting down the plugin.");
@@ -121,8 +123,8 @@ public class Fraud extends JavaPlugin {
         }
 
         try {
-            this.updater = new Updater(this);
             console.sm(GREEN + "Updater launched with success.");
+            this.updater = new Updater(this);
             if(configuration.checkForUpdate()) {
                 Bukkit.getScheduler().scheduleSyncRepeatingTask(
                         this, this::launchUpdater,
@@ -178,6 +180,8 @@ public class Fraud extends JavaPlugin {
 
         console.sm(RED + "Disabling " + pdf.getName() + "...");
 
+        data.getDataSource().close();
+
         console.sm();
         console.sm(MessageFormat.format("{0}--- {1} ---", GOLD, pdf.getName()));
     }
@@ -193,25 +197,23 @@ public class Fraud extends JavaPlugin {
     public Updater getUpdater() {
         return updater;
     }
-
     public Configuration getConfiguration() {
         return configuration;
     }
-
     public Data getData() {
         return data;
     }
-
     public void setDatas(Data Data) {
         this.data = Data;
     }
-
     public Console getConsole() {
         return console;
     }
-
     public FraudExecutor getFraudCommand() {
         return fraudExecutor;
+    }
+    public GUIManager getGuiManager() {
+        return guiManager;
     }
 
     /**
@@ -224,8 +226,12 @@ public class Fraud extends JavaPlugin {
             this.fraud = fraud;
         }
 
+        /**
+         * Register all the events of the plugin.
+         */
         void register() {
             a(new JoinQuitEvent(fraud));
+            a(fraud.getGuiManager());
         }
         private void a(Listener listener) {
             Bukkit.getPluginManager().registerEvents(listener, fraud);
