@@ -51,9 +51,9 @@ public class Fraud extends JavaPlugin {
         try {
             console.sm(GREEN + "Configurations File loading / creating success.");
             this.configuration = new Configuration(this);
-        } catch(Throwable t) {
+        } catch(Exception e) {
             console.sm(RED + "Configurations File loading / creating failed: ");
-            t.printStackTrace();
+            e.printStackTrace();
         }
 
         this.ipInfoManager = new IPInfoManager(this, new ExtAPI(this));
@@ -79,9 +79,9 @@ public class Fraud extends JavaPlugin {
         try {
             console.sm(GREEN + "Stats are on.");
             new Stats(this);
-        } catch(Throwable t) {
+        } catch(Exception e) {
             console.sm(RED + "Stats launch failed.");
-            t.printStackTrace();
+            e.printStackTrace();
         }
 
         try {
@@ -113,9 +113,9 @@ public class Fraud extends JavaPlugin {
                 console.sm(RED + "Shutting down the plugin.");
                 Bukkit.getPluginManager().disablePlugin(this);
             }
-        } catch(Throwable t) {
+        } catch(Exception e) {
             console.sm(RED + "Datas Files loading / creating failed: ");
-            t.printStackTrace();
+            e.printStackTrace();
         }
 
         try {
@@ -126,9 +126,9 @@ public class Fraud extends JavaPlugin {
                         this, this::launchUpdater,
                         0, 5 * 60 * 5);
             }
-        } catch(Throwable t) {
+        } catch(Exception e) {
             console.sm(RED + "Updated failed to launch.");
-            t.printStackTrace();
+            e.printStackTrace();
         }
 
         try {
@@ -136,9 +136,9 @@ public class Fraud extends JavaPlugin {
             Metrics metrics = new Metrics(this, pluginId);
             metrics.addCustomChart(new SimplePie("alts_limits", () -> String.valueOf(getConfiguration().getDoubleAccountLimit())));
             metrics.addCustomChart(new SimplePie("kick_when_alt_detected", () -> String.valueOf(getConfiguration().isKickEnabled())));
-        } catch(Throwable t) {
+        } catch(Exception e) {
             console.sm(RED + "Metrics connection failed.");
-            t.printStackTrace();
+            e.printStackTrace();
         }
         Bukkit.getScheduler().scheduleSyncRepeatingTask(
                 this, this::askReview,
