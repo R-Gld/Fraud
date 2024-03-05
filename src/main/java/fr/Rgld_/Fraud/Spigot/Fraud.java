@@ -1,6 +1,6 @@
 package fr.Rgld_.Fraud.Spigot;
 
-import fr.Rgld_.Fraud.Spigot.Commands.FraudExecutor;
+import fr.Rgld_.Fraud.Spigot.Commands.FraudCommand;
 import fr.Rgld_.Fraud.Spigot.Events.JoinQuitEvent;
 import fr.Rgld_.Fraud.Spigot.Helpers.*;
 import fr.Rgld_.Fraud.Spigot.Storage.Configuration;
@@ -12,7 +12,6 @@ import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -34,7 +33,7 @@ public class Fraud extends JavaPlugin {
     private Configuration configuration;
     private Data data;
     private Console console;
-    private FraudExecutor fraudExecutor;
+    private FraudCommand fraudCommand;
     private IPInfoManager ipInfoManager;
     private GUIManager guiManager;
 
@@ -71,10 +70,7 @@ public class Fraud extends JavaPlugin {
 
         try {
             console.sm(GREEN + "Commands register success.");
-            PluginCommand fraudPluginCommand = getCommand("fraud");
-            fraudExecutor = new FraudExecutor(this);
-            fraudPluginCommand.setExecutor(fraudExecutor);
-            fraudPluginCommand.setTabCompleter(fraudExecutor);
+            fraudCommand = new FraudCommand(this);
         } catch(Exception e) {
             console.sm(RED + "Commands register failed: ");
             e.printStackTrace();
@@ -209,8 +205,8 @@ public class Fraud extends JavaPlugin {
     public Console getConsole() {
         return console;
     }
-    public FraudExecutor getFraudCommand() {
-        return fraudExecutor;
+    public FraudCommand getFraudCommand() {
+        return fraudCommand;
     }
     public GUIManager getGuiManager() {
         return guiManager;

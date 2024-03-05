@@ -10,10 +10,7 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
+import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 
 import java.net.InetSocketAddress;
@@ -22,7 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class FraudExecutor implements CommandExecutor, TabCompleter {
+public class FraudCommand implements CommandExecutor, TabCompleter {
 
     private final Fraud fraud;
     private Data data;
@@ -30,8 +27,11 @@ public class FraudExecutor implements CommandExecutor, TabCompleter {
     private final Updater up;
     private boolean downloading = false;
 
-    public FraudExecutor(Fraud fraud) {
+    public FraudCommand(Fraud fraud) {
         this.fraud = fraud;
+        PluginCommand fraudPluginCommand = fraud.getCommand("fraud");
+        fraudPluginCommand.setExecutor(this);
+        fraudPluginCommand.setTabCompleter(this);
         this.na = new ArrayList<>();
         this.up = new Updater(fraud);
     }
