@@ -93,7 +93,7 @@ public class Data {
                 break;
             case SQLITE:
                 file = new File(fraud.getDataFolder(), "data.sqlite");
-                if(!file.canRead() || !file.canWrite()) {
+                if((!file.canRead() || !file.canWrite()) && file.exists()) {
                     System.err.println("The file " + file.getAbsolutePath() + " can't be read or write. Please adjust the permissions or modify the configuration for a MySQL connection.");
                     fraud.getPluginLoader().disablePlugin(fraud);
                     return;
