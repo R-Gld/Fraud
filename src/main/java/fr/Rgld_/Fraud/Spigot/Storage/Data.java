@@ -252,7 +252,15 @@ public class Data {
 
     public void forgotPlayer(String name) {
         String ip = getIP(name);
-        cache.get(ip).remove(name);
+        if (ip != null) {
+            List<String> cached = cache.get(ip);
+            if (cached != null) {
+                cached.remove(name);
+                if (cached.isEmpty()) {
+                    cache.remove(ip);
+                }
+            }
+        }
         String sql = MessageFormat.format("DELETE FROM `{0}` WHERE pseudo = ?", TABLE_NAME.ips.getName());
         try(Connection connection = connect();
             PreparedStatement psst = connection.prepareStatement(sql)) {
